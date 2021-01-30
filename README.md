@@ -18,8 +18,11 @@ run the program with *Valgrind*.
 
 ## Short report
 ### What we did
+We used the 'Pair Programming' technique: one at a time was coding and the others were checking. All together discussed about design choices.
 We started creating the header files and deciding the structure of the project.
 We thought a lot about best choices for the project.
 ### What we understood
-We understood how to create and use *Makefile*.
+We understood:
+- how to create and use *Makefile*;
+- how objects are stored in memory (when in the heap, when in the stack).
 ### Benchmarked

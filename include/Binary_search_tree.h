@@ -1,3 +1,8 @@
+#include <functional> // std::less
+#include <stdint.h> // int32_t
+#include <memory> // unique_ptr
+// #include <iostream>
+
 #ifndef ADVANCED_PROGRAMMING_EXAM_2020_BINARY_SEARCH_TREE_H
 #define ADVANCED_PROGRAMMING_EXAM_2020_BINARY_SEARCH_TREE_H
 

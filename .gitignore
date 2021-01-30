@@ -1,0 +1,5 @@
+/bin/
+*.idea
+*.iml
+/ubuntu_setup_env.sh
+/.vscode/
