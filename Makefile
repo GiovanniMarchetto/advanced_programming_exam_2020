@@ -52,3 +52,10 @@ build:
 .PHONY: run
 run:
 	$(BUILD_DIR)/$(TARGET_EXEC)
+
+.PHONY: valgrind
+valgrind:
+	valgrind $(BUILD_DIR)/$(TARGET_EXEC)
+
+.PHONY: all_with_valgrind
+all_with_valgrind: clean build valgrind

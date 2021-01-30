@@ -1,4 +1,4 @@
-# advanced_programming_exam_2020
+# Binary search tree 
 Repository for the Advanced Programming course's project (A.Y. 2020-2021)
 
 ## How to compile and run
@@ -10,8 +10,16 @@ of the project:
 executable files;
 - `make build` allows to build the executable files for the program;
 - `make run` allows to run the program (if executable files are already built).
+- `all_with_valgrind` is the same as `make all`, but the program is executed
+with *Valgrind*.
+
+In order to detect memory errors, the command `make valgrind` can be used to
+run the program with *Valgrind*.
 
 ## Short report
 ### What we did
+We started creating the header files and deciding the structure of the project.
+We thought a lot about best choices for the project.
 ### What we understood
+We understood how to create and use *Makefile*.
 ### Benchmarked
