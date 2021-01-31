@@ -20,6 +20,47 @@ template <typename value_type,
 		  typename OP = std::less<key_type>>
 class bst
 {
+	/** Class for a node in the Binary search tree.*/
+	class Node
+	{
+		/** Key of the node.*/
+		key_type key;
+
+		/** Value of the node.*/
+		value_type value;
+
+		/** Left child of this node.*/
+		std::unique_ptr<Node> left;
+
+		/** Right child of this node.*/
+		std::unique_ptr<Node> right;
+
+	public:
+		/** Create a new node.
+		 * @param key Key of this node.
+		 * @param value Value of this node.*/
+		Node(const key_type key, const value_type value);
+
+		/** Overload of the < operator to define an order relation
+		 * between nodes according to the class template */
+		//friend bool operator<(const Node& lhs, const Node& rhs);
+		bool operator<(const Node &other) const;
+	};
+
+	/** Pointer to the root node of the tree.*/
+	std::unique_ptr<Node> root;
+
+	/** Number of nodes in the tree.*/
+	std::size_t size;
+
+public:
+	/** Default constructor.*/
+	bst() = default;
+
+	/** Default destructor for the proper cleanup.*/
+	~bst() = default;
+
+	void insert(const std::pair<const key_type, value_type> &x);
 };
 
 #endif //ADVANCED_PROGRAMMING_EXAM_2020_BST_H
