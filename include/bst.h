@@ -1,10 +1,10 @@
 #include <functional> // std::less
-#include <stdint.h> // int32_t
-#include <memory> // unique_ptr
+#include <stdint.h>	  // int32_t
+#include <memory>	  // unique_ptr
 // #include <iostream>
 
-#ifndef ADVANCED_PROGRAMMING_EXAM_2020_BINARY_SEARCH_TREE_H
-#define ADVANCED_PROGRAMMING_EXAM_2020_BINARY_SEARCH_TREE_H
+#ifndef ADVANCED_PROGRAMMING_EXAM_2020_BST_H
+#define ADVANCED_PROGRAMMING_EXAM_2020_BST_H
 
 /**
  * Class for the binary search tree (BST).
@@ -15,13 +15,11 @@
  * @tparam OP The type of the comparison operator, which is used
  *            to compare two keys (not required to be specified).
  */
-template<typename value_type,
-	typename key_type = std::int32_t,
-	typename OP = std::less <key_type>>
-	class Binary_search_tree {
-        
-
+template <typename value_type,
+		  typename key_type = std::int32_t,
+		  typename OP = std::less<key_type>>
+class bst
+{
 };
 
-
-#endif //ADVANCED_PROGRAMMING_EXAM_2020_BINARY_SEARCH_TREE_H
+#endif //ADVANCED_PROGRAMMING_EXAM_2020_BST_H
