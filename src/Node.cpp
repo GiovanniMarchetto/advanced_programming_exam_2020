@@ -1,3 +1,6 @@
+#ifndef ADVANCED_PROGRAMMING_EXAM_2020_NODE_CPP
+#define ADVANCED_PROGRAMMING_EXAM_2020_NODE_CPP
+
 #include "bst.h"
 
 template <typename value_type, typename key_type, typename OP>
@@ -10,3 +13,5 @@ inline bool bst<value_type, key_type, OP>::Node::operator<(const typename bst<va
     OP op{};
     return op(key, other.key);
 }
+
+#endif //ADVANCED_PROGRAMMING_EXAM_2020_NODE_CPP
