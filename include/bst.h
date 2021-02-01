@@ -20,6 +20,9 @@ template <typename value_type,
 		  typename OP = std::less<key_type>>
 class bst
 {
+	/** Instantiation of a comparison operator object.*/
+    OP op{};
+
 	/** Class for a node in the Binary search tree.*/
 	class Node
 	{
@@ -63,4 +66,6 @@ public:
 	void insert(const std::pair<const key_type, value_type> &x);
 };
 
+#include "bst.cpp"
+#include "Node.cpp"
 #endif //ADVANCED_PROGRAMMING_EXAM_2020_BST_H
