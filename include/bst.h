@@ -63,6 +63,4 @@ public:
 	void insert(const std::pair<const key_type, value_type> &x);
 };
 
-#include "bst.cpp"
-#include "Node.cpp"
 #endif //ADVANCED_PROGRAMMING_EXAM_2020_BST_H
