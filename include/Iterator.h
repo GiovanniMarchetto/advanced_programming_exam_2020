@@ -1,5 +1,5 @@
 #include "Node.h"
-#include "bst.h" //TODO: why? commentare?
+#include "bst.h" //TODO: needed?
 
 #ifndef ADVANCED_PROGRAMMING_EXAM_2020_ITERATOR_H
 #define ADVANCED_PROGRAMMING_EXAM_2020_ITERATOR_H
@@ -10,13 +10,13 @@ template <typename value_t,
 template <typename O>
 class bst<value_t, key_type, OP>::Iterator
 {
-    using node = Node<value_t, key_type>;
+    using node = Node<value_t, key_type, OP>;
     node *current_node;
 
-    static const node *get_successor(const node *node)
+    static node *get_successor(node *node)                  // TODO : const??
     {
         if (node->get_right())
-            return get_minimum_node_in_subtree(node->get_right());
+            return get_minimum_left_node_in_subtree(node->get_right());
 
         auto parent = node->get_parent();
         while (parent && node == parent->get_right())
@@ -28,15 +28,8 @@ class bst<value_t, key_type, OP>::Iterator
         return parent;
     }
 
-    static const node *get_minimum_node_in_subtree(const node *node)
-    {
-        while (node->get_left())
-            node = node->get_left();
-
-        return node;
-    }
-
 public:
+
     using value_type = O;
     using reference = value_type &;
     using pointer = value_type *;
