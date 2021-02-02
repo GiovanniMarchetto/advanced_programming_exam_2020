@@ -22,6 +22,9 @@ int main()
     std::cout << (B < C) << std::endl;  // expected: 1
     std::cout << (C < B) << std::endl;  // expected: 0
 
+    std::cout << B.compare(C) << std::endl;  // expected: 1
+    std::cout << C.compare(B) << std::endl;  // expected: 0
+
     return 0;
 
 }

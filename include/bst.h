@@ -20,7 +20,7 @@ template <typename value_type,
 		  typename OP = std::less<key_type>>
 class bst
 {
-    using node = Node<value_type, key_type, OP>;
+    using node = Node<value_type, key_type>;
 
 	/** Pointer to the root node of the tree.*/
 	std::unique_ptr<node> root;
@@ -34,6 +34,11 @@ class bst
     class Iterator;
 
 public:
+
+    /** Function object that compares nodes by comparing of the
+     * key components of the nodes.*/
+    OP node_key_compare{};
+
 	/** Default constructor.*/
 	bst() = default;
 

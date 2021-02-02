@@ -9,12 +9,9 @@
 /** Class for a node in a Binary search tree.
  * @tparam value_type The type of the value of an instance of this class.
  * @tparam key_type The type of the key of an instance of this class.
- * @tparam op The type of the comparison operator, which is used
- *            to compare two keys (not required to be specified).
  */
 template <typename value_type,
-          typename key_type = std::int32_t,
-          typename OP = std::less<key_type>>
+          typename key_type = std::int32_t>
 class Node
 {
     /** Left child of this node.*/
@@ -106,11 +103,27 @@ public:
     /** Move assignment.*/
     Node &operator=(Node &&) = default;
 
+    /** Comparison function according to the given Comparator
+     * applied to the keys.
+     * @returns the result of the given comparator applied to the key
+     * of this instance (as first argument) and the key of the given
+     *  instance (as second argument).*/
+    template<typename Comparator>
+    bool compare(const Node& other, const Comparator comparator = std::less<key_type>()) const {
+        return comparator(this->key, other.key);
+    }
+    /** See the same overloaded function for details. This comparison
+     * function always uses std::less .*/
+    bool compare(const Node& other) const {
+        return compare(other, std::less<key_type>{});
+    }
+
     /** Overload of the < operator to define an order relation
-     * between nodes according to the class template */
+     * between two instances according to their key.
+     * @returns true if the key of this instance is strictly less
+     *          of the one given as parameter, false otherwise.*/
     bool operator<(const Node &other) const {
-        OP op{};
-        return op(key, other.key);
+        return key < other.key;
     }
 };
 
