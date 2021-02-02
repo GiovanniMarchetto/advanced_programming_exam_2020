@@ -20,17 +20,17 @@ class Node
     /** Right child of this node.*/
     std::unique_ptr<Node> right;
 
-    /** Getter for the left children. Returns a raw pointer to the left child node.*/
-    const Node* get_left() const { return left.get(); }
-
-    /** Getter for the right children. Returns a raw pointer to the left child node.*/
-    const Node* get_right() const { return right.get(); }
+    /** Parent of this node.*/
+    Node *parent;
 
     /** Setter: the left child of this instance will be set with the given pointer.*/
-    void set_left(Node* const node = nullptr) { left.reset(node); }
+    void set_left(Node *const node = nullptr) { left.reset(node); }
 
     /** Setter: the right child of this instance will be set with the given pointer.*/
-    void set_right(Node* const node = nullptr) { right.reset(node); }
+    void set_right(Node *const node = nullptr) { right.reset(node); }
+
+    /** Setter: the parent of this instance will be set with the given node.*/
+    void set_parent(Node *const node = nullptr) { parent = node; }
 
 public:
     /** Key of the node.*/
@@ -38,7 +38,15 @@ public:
 
     /** Value of the node.*/
     value_type value;
+    
+    /** Getter for the left children. Returns a raw pointer to the left child node.*/
+    const Node *get_left() const { return left.get(); }
 
+    /** Getter for the right children. Returns a raw pointer to the left child node.*/
+    const Node *get_right() const { return right.get(); }
+
+    /** Getter for the parent. Returns a raw pointer to the parent node.*/
+    const Node *get_parent() const { return parent; }
 
     // ---START--- Compatibility with std::pair
 
@@ -46,13 +54,12 @@ public:
     Node(std::pair<key_type, value_type> pair) : Node{pair.first, pair.second} {};
 
     /** Returns a pointer to a (copy of the) representation of this instance as an std::pair.*/
-    std::pair<key_type, value_type>* get_pair() const
+    std::pair<key_type, value_type> *get_pair() const
     {
         return new std::pair(key_type{key}, value_type{value});
     }
 
     // ---END--- Compatibility with std::pair
-
 
     /** Constructor.
      * @param key Key of this node.
@@ -77,12 +84,11 @@ public:
         auto tmp_left = node.get_left();
         auto tmp_right = node.get_right();
 
-        if ( tmp_left )
-            set_left( new Node(*tmp_left) );
+        if (tmp_left)
+            set_left(new Node(*tmp_left));
 
-        if ( tmp_right )
-            set_right( new Node(*tmp_right) );
-
+        if (tmp_right)
+            set_right(new Node(*tmp_right));
     }
 
     /** Copy assignment. Deep copy is performed.*/
@@ -108,13 +114,15 @@ public:
      * @returns the result of the given comparator applied to the key
      * of this instance (as first argument) and the key of the given
      *  instance (as second argument).*/
-    template<typename Comparator>
-    bool compare(const Node& other, const Comparator comparator = std::less<key_type>()) const {
+    template <typename Comparator>
+    bool compare(const Node &other, const Comparator comparator = std::less<key_type>()) const
+    {
         return comparator(this->key, other.key);
     }
     /** See the same overloaded function for details. This comparison
      * function always uses std::less .*/
-    bool compare(const Node& other) const {
+    bool compare(const Node &other) const
+    {
         return compare(other, std::less<key_type>{});
     }
 
@@ -122,7 +130,8 @@ public:
      * between two instances according to their key.
      * @returns true if the key of this instance is strictly less
      *          of the one given as parameter, false otherwise.*/
-    bool operator<(const Node &other) const {
+    bool operator<(const Node &other) const
+    {
         return key < other.key;
     }
 };

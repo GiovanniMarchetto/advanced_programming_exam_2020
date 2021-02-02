@@ -28,10 +28,10 @@ class bst
 	/** Number of nodes in the tree.*/
 	std::size_t size;
 
-    /** Class Iterator for the tree.
+	/** Class Iterator for the tree.
      * @tparam O The value type for the iterator.*/
-    template <typename O>
-    class Iterator;
+	template <typename O>
+	class Iterator;
 
 public:
 
@@ -46,9 +46,9 @@ public:
 	~bst() = default;
 
 	void insert(const std::pair<const key_type, value_type> &x);
-
 };
 
-#include "bst.cpp"  // TODO : https://stackoverflow.com/q/495021
+#include "Iterator.h"
+#include "bst.cpp" // TODO : https://stackoverflow.com/q/495021
 
 #endif //ADVANCED_PROGRAMMING_EXAM_2020_BST_H
