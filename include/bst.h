@@ -3,6 +3,9 @@
 #include <memory>     // unique_ptr
 #include "Node.h"
 
+#include <string>
+#include <sstream>
+
 #ifndef ADVANCED_PROGRAMMING_EXAM_2020_BST_H
 #define ADVANCED_PROGRAMMING_EXAM_2020_BST_H
 
@@ -146,6 +149,48 @@ public:
             os << el << " ";
         os << "}";
         return os;
+    }
+
+    /** Function for printing the structrure of the tree into a string
+     * which is returned by reference.*/
+    const std::string& print_tree(std::string& str_buffer) const {
+        return print_subtree(tree_root_node.get(), str_buffer);   // TODO : this should use getter instead of std::unique_ptr<??>::get
+    }
+
+    /** Given a pointer to the root of a subtree, this function returns
+     * a std::string containing a view of the subtree.*/
+    template <typename value_type_, typename key_type_, typename OP_>
+    static std::string&
+    print_subtree(const Node<value_type_, key_type_, OP_> * subtree_root_node,
+                  std::string& str_buffer) {
+        
+        str_buffer.append("   ");   // each level of the tree implies an indentation
+
+        // TODO : to be optimized (does std::string use move-ctr? Better to use char*? Should use string initialization std::string{} instead of literal "")
+        if( !subtree_root_node )    // empty tree
+            return str_buffer.append("|--[]");
+
+        std::string str_left_buff{str_buffer},
+                    str_right_buff{str_buffer};
+        print_subtree(subtree_root_node->get_left(),  str_left_buff);
+        print_subtree(subtree_root_node->get_right(), str_right_buff);
+
+        std::stringstream os{}; // TODO : improve efficiency (this is used here only for using the overloading of << in Node)
+        os << "|--" << *subtree_root_node;   //save info of current node into the stream
+
+        // Buffer to return
+        str_buffer.append(os.str());            // append info of current node
+        if( subtree_root_node->get_left() ||
+            subtree_root_node->get_right() )    // if at least one child is defined, then print
+        {
+            str_buffer.append("\n")
+                      .append(str_left_buff)   // append info of left child node
+                      .append("\n")
+                      .append(str_right_buff); // append info of right child node
+        }
+        
+        return str_buffer;
+
     }
 };
 

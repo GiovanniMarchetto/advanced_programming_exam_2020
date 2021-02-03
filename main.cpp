@@ -15,6 +15,10 @@ std::ostream &operator<<(std::ostream &os, const std::vector<int> &vec) // TODO 
     return os;
 }
 
+// For random generation
+#include <cstdlib>     // srand, rand
+#include <ctime>       // time
+
 int main()
 {
     std::cout << "--------------------------------" << std::endl;
@@ -84,6 +88,33 @@ int main()
     //Node<std::vector<int>> vnode3(12, std::move(*(new std::vector<int>{1, 2, 3}))); // value is moved -> memory leak due to the user
     Node<bst<char>, int> n_bst(1, bst_); // value is copied
     std::cout << n_bst << std::endl;
+
+
+
+
+
+
+
+
+    // TEST: Insertion of a number of random generated nodes and printing
+    std::cout << "\nTEST: Insertion of a number of random generated nodes and printing:" << std::endl;
+    int NUMBER_OF_NODES{20};
+    int MAX_KEY_VAL{15};  // if MAX_KEY_VAL<NUMBER_OF_NODES test behaviour with duplicated keys
+    bst<char> bst_3{};
+    std::srand(std::time(NULL));    // random seed initialization
+    for(int i{0}; i<NUMBER_OF_NODES; ++i)
+    {
+        int random_key{rand() % MAX_KEY_VAL}; // between 0 and N-1
+        char random_val{static_cast<char>(rand()% 26 + static_cast<int>('a')) };   // between 'a' and 'z'
+        bst_3.insert(std::pair<int, char>(random_key, random_val));
+    }
+
+    // Print the tree structure
+    std::string str{};
+    std::cout << bst_3.print_tree(str) << std::endl;
+    // Print tree traversal
+    std::cout << bst_3<< std::endl;
+
 
     return 0;
 }
