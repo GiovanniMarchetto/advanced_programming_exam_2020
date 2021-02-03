@@ -29,10 +29,7 @@ class bst
     std::size_t size;
 
     /** Getter for the root node. Returns a raw pointer.*/
-    node *get_tree_root_node()
-    {
-        return tree_root_node.get();
-    }
+    node *get_tree_root_node() const { return tree_root_node.get(); }
 
     /** Setter: the root node of this instance will be set with the given raw pointer.*/
     void set_tree_root_node(node *const node = nullptr) { tree_root_node.reset(node); }
@@ -52,28 +49,27 @@ public:
      * key components of the nodes.*/
     OP node_key_compare{}; // TODO : do we need this member?
 
-    // // TODO : check following lines
     /** Class Iterator for the tree.*/
     template <typename O>
     class Iterator;
-    using iterator = Iterator<node>; // TODO : verify this template (should be value_type?)
+    using iterator = Iterator<node>;
     using const_iterator = Iterator<const node>;
+
     /** Begin function to use in a for-range loop. Returns an iterator.*/
     iterator begin() noexcept // the iterator does not acquire resource, so noexcept (nothing will go wrong)
     {
-        return iterator{get_minimum_left_node_in_subtree(tree_root_node.get())};
-    } // TODO : see this again (it use the unique_ptr instead of the getter)
+        return iterator{get_minimum_left_node_in_subtree(get_tree_root_node())};
+    }
     /** Begin function to use in a for-range loop. Returns a const iterator.*/
     const_iterator begin() const noexcept // const-iterator ensure to be protected when invoking a const function
     {
-        return const_iterator{get_minimum_left_node_in_subtree(tree_root_node.get())};
-    } // TODO : to be verified // TODO : see this again (it use the unique_ptr instead of the getter)
+        return const_iterator{get_minimum_left_node_in_subtree(get_tree_root_node())};
+    }
 
     /** End function to use in a for-range loop. Returns an iterator.*/
     auto end() noexcept { return iterator{nullptr}; }
     /** End function to use in a for-range loop. Returns a const iterator.*/
     auto end() const noexcept { return const_iterator{nullptr}; }
-    //  TODO : end TODO (things to check)
 
     /** Default constructor.*/
     bst() = default;
@@ -84,14 +80,14 @@ public:
     /** Copy constructor.*/
     bst(const bst &other) : size{other.size}
     {
-        if (other.tree_root_node.get())
-            tree_root_node.reset(new node{*other.tree_root_node.get()});
+        if (other.get_tree_root_node())
+            set_tree_root_node(new node{*other.get_tree_root_node()});
     }
 
     /** Copy assignment.*/
     bst &operator=(const bst &other)
     {
-        tree_root_node.reset();
+        set_tree_root_node();
         auto tmp{bst(other)};
         *this = std::move(tmp);
         return *this;
@@ -105,13 +101,11 @@ public:
 
     /** Insertion of a new node. This function inserts the given
 	 * node, but children are discarded.*/
-    // std::pair<Iterator<value_type>, bool> insert(const std::pair<key_type,value_type>&);
     std::pair<iterator, bool> insert(const std::pair<key_type, value_type> &x) // TODO : noexcept ??
     {
-        using Node = bst<value_type, key_type, OP>::node; // TODO : check
-        Node *node = new Node{x};                         // TODO : check
+        using Node = bst<value_type, key_type, OP>::node;
+        Node *node = new Node{x};
 
-        // TODO : changes variables names and clear useless comments
         Node *prev{nullptr};
         Node *curr = get_tree_root_node();
 
@@ -141,7 +135,6 @@ public:
 
         ++size;
         return std::make_pair<iterator, bool>(iterator{node}, true); // TODO : r-value? move assignment??
-        // TODO : check
     }
 
     /** Overloading of the << operator. This function provides a view

@@ -51,8 +51,21 @@ public:
 
     // ---START--- Compatibility with std::pair
 
-    /** Constructor: creates a new instance of this class starting from an std::pair.*/
-    Node(std::pair<key_type, value_type> pair) : Node{pair.first, pair.second} {}; // TODO : corretto ? r-value? explicit? // TODO : what happens if this (or any other) constructor receives nullptr ?
+    /** Constructor: creates a new instance of this class starting from an std::pair.
+     * Key and value from the given pair are copied.*/
+    Node(const std::pair<key_type, value_type> &pair) : Node{pair.first, pair.second} {
+                                                            // TODO : test
+
+                                                        };
+
+    /** Constructor: creates a new instance of this class starting from an std::pair.
+     * Key and value from the given pair are moved.*/
+    Node(std::pair<key_type, value_type> &&pair) : Node{std : move(pair.first), std::move(pair.second)}
+    {
+        // TODO : test
+        std::cout << "move" << std::endl;
+        //Node n{std::pair<std::string, std::node>("a",Node{})};
+    };
 
     /** Returns a pointer to a (copy of the) representation of this instance as an std::pair.*/
     std::pair<key_type, value_type> *get_pair() const { return new std::pair(key_type{key}, value_type{value}); }
@@ -118,24 +131,19 @@ public:
     template <typename Comparator>
     bool compare(const Node &other, const Comparator comparator = std::less<key_type>()) const
     {
-        return comparator(key, other.key);
+        //if (!(&other))
+            return comparator(key, other.key);
+        //return false; // TODO : to handle with exceptions
     }
     /** See the same overloaded function for details. This comparison
-     * function always uses std::less .*/
-    bool compare(const Node &other) const
-    {
-        return *this < other; // TODO : check
-    }
+     * function always uses the default.*/
+    bool compare(const Node &other) const { return *this < other; }
 
     /** Overload of the < operator to define an order relation
      * between two instances according to their key.
      * @returns true if the key of this instance is strictly less
      *          of the one given as parameter, false otherwise.*/
-    bool operator<(const Node &other) const
-    {
-        // BUG TO FIX: Handle the case other==nullptr      // TODO : check if ok (maybe also the other comparator functions are bugged)
-        return OP{}(key, other.key); //std::less<key_type>(key, other.key);
-    }
+    bool operator<(const Node &other) const { return compare(other, OP{}); }
 
     /** Overloading of the << operator. This function provides a view
      * of the node.*/
