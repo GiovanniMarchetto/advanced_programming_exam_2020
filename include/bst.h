@@ -50,7 +50,7 @@ class bst
 public:
     /** Function object that compares nodes by comparing of the
      * key components of the nodes.*/
-    OP node_key_compare{};
+    OP node_key_compare{}; // TODO : do we need this member?
 
     // // TODO : check following lines
     /** Class Iterator for the tree.*/
@@ -80,6 +80,28 @@ public:
 
     /** Default destructor for the proper cleanup.*/
     ~bst() = default;
+
+    /** Copy constructor.*/
+    bst(const bst &other) : size{other.size}
+    {
+        if (other.tree_root_node.get())
+            tree_root_node.reset(new node{*other.tree_root_node.get()});
+    }
+
+    /** Copy assignment.*/
+    bst &operator=(const bst &other)
+    {
+        tree_root_node.reset();
+        auto tmp{bst(other)};
+        *this = std::move(tmp);
+        return *this;
+    }
+
+    /** Move constructor.*/
+    bst(bst &&) = default;
+
+    /** Move assignment.*/
+    bst &operator=(bst &&) = default;
 
     /** Insertion of a new node. This function inserts the given
 	 * node, but children are discarded.*/

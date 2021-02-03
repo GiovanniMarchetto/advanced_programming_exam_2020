@@ -69,7 +69,7 @@ public:
      * constructing instance.
      * @param key Key of this node.
      * @param value Value of this node.*/
-    Node(key_type&& key, value_type&& value) : left{}, right{}, key{std::move(key)}, value{std::move(value)} {}
+    Node(key_type &&key, value_type &&value) : left{}, right{}, key{std::move(key)}, value{std::move(value)} {}
 
     /** Default constructor.*/
     Node() = default;
@@ -79,17 +79,17 @@ public:
 
     /** Copy constructor (deep copy). The given node and all the children
      * linked by it are copied.*/
-    explicit Node(const Node &node) : key{node.key}, value{node.value}
+    explicit Node(const Node &node, Node *parent = nullptr) : key{node.key}, value{node.value}
     {
-
         auto tmp_left = node.get_left();
         auto tmp_right = node.get_right();
 
-        if (tmp_left)
-            set_left(new Node(*tmp_left));
+        set_parent(parent);
 
+        if (tmp_left)
+            set_left(new Node(*tmp_left, this));
         if (tmp_right)
-            set_right(new Node(*tmp_right));
+            set_right(new Node(*tmp_right, this));
     }
 
     /** Copy assignment. Deep copy is performed.*/
