@@ -11,8 +11,8 @@
  * @tparam key_type The type of the key of an instance of this class.
  */
 template <typename value_type,
-		  typename key_type = std::int32_t,
-		  typename OP = std::less<key_type>>
+          typename key_type = std::int32_t,
+          typename OP = std::less<key_type>>
 class Node
 {
     /** Left child of this node.*/
@@ -36,7 +36,7 @@ public:
     // interface to access pointers to children/parent node. This functions
     // are not intended to hide or forbid changes in the instance. By using
     // getters/setters, the user should not worry about technical implementation
-    // of pointers (e.g., the interface always use raw pointers, but the 
+    // of pointers (e.g., the interface always use raw pointers, but the
     // implementation may use smart pointers). This means: values returned by
     // getters may be editable.
 
@@ -80,11 +80,7 @@ public:
     Node() = default;
 
     /** Default destructor.*/
-    ~Node()
-    {
-        left.release();
-        right.release();
-    };
+    ~Node() = default;
 
     /** Copy constructor (deep copy). The given node and all the children
      * linked by it are copied.*/
@@ -143,14 +139,14 @@ public:
     bool operator<(const Node &other) const
     {
         // BUG TO FIX: Handle the case other==nullptr      // TODO : check if ok (maybe also the other comparator functions are bugged)
-        return OP{}(key, other.key);//std::less<key_type>(key, other.key);
+        return OP{}(key, other.key); //std::less<key_type>(key, other.key);
     }
 
     /** Overloading of the << operator. This function provides a view
      * of the node.*/
-    friend
-    std::ostream& operator<<(std::ostream& os, const Node& node) {
-        os << "[" << node.key <<" => " << node.value << "]" ;
+    friend std::ostream &operator<<(std::ostream &os, const Node &node)
+    {
+        os << "[" << node.key << " => " << node.value << "]";
         return os;
     }
 };

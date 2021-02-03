@@ -13,7 +13,7 @@ class bst<value_t, key_type, OP>::Iterator
     using node = Node<value_t, key_type, OP>;
     node *current_node;
 
-    static node *get_successor(node *node)                  // TODO : const??
+    static node *get_successor(node *node) // TODO : const??
     {
         if (node->get_right())
             return get_minimum_left_node_in_subtree(node->get_right());
@@ -29,7 +29,6 @@ class bst<value_t, key_type, OP>::Iterator
     }
 
 public:
-
     using value_type = O;
     using reference = value_type &;
     using pointer = value_type *;
@@ -61,9 +60,9 @@ public:
         return a.current_node == b.current_node;
     }
 
-    friend bool operator!=(const Iterator &a, const Iterator &b) 
-    { 
-        return !(a == b); 
+    friend bool operator!=(const Iterator &a, const Iterator &b)
+    {
+        return !(a == b);
     }
 
     //getter and setter

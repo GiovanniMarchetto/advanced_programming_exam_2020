@@ -1,6 +1,6 @@
 #include <functional> // std::less
-#include <stdint.h>	  // int32_t
-#include <memory>	  // unique_ptr
+#include <stdint.h>   // int32_t
+#include <memory>     // unique_ptr
 #include "Node.h"
 
 #ifndef ADVANCED_PROGRAMMING_EXAM_2020_BST_H
@@ -16,8 +16,8 @@
  *            to compare two keys (not required to be specified).
  */
 template <typename value_type,
-		  typename key_type = std::int32_t,
-		  typename OP = std::less<key_type>>
+          typename key_type = std::int32_t,
+          typename OP = std::less<key_type>>
 class bst
 {
     using node = Node<value_type, key_type, OP>;
@@ -25,11 +25,12 @@ class bst
     /** Pointer to the root node of the tree.*/
     std::unique_ptr<node> tree_root_node;
 
-	/** Number of nodes in the tree.*/
-	std::size_t size;
+    /** Number of nodes in the tree.*/
+    std::size_t size;
 
     /** Getter for the root node. Returns a raw pointer.*/
-    node *get_tree_root_node() {
+    node *get_tree_root_node()
+    {
         return tree_root_node.get();
     }
 
@@ -38,51 +39,55 @@ class bst
 
     /** Given a pointer to a node, this function return the leftmost
      * (minimum) node in the substree whose root is the specified node.*/
-    static node *get_minimum_left_node_in_subtree(node *node)    // TODO : const??
+    static node *get_minimum_left_node_in_subtree(node *node) // TODO : const??
     {
-        while (node->get_left())
+        while (node && node->get_left())
             node = node->get_left();
 
         return node;
     }
 
 public:
-
     /** Function object that compares nodes by comparing of the
      * key components of the nodes.*/
     OP node_key_compare{};
 
-
     // // TODO : check following lines
     /** Class Iterator for the tree.*/
-    template<typename O>
+    template <typename O>
     class Iterator;
-    using iterator = Iterator<node>;       // TODO : verify this template (should be value_type?)
+    using iterator = Iterator<node>; // TODO : verify this template (should be value_type?)
     using const_iterator = Iterator<const node>;
     /** Begin function to use in a for-range loop. Returns an iterator.*/
-    iterator begin() noexcept {return iterator{get_minimum_left_node_in_subtree(tree_root_node.get())}; }   // the iterator does not acquire resource, so noexcept (nothing will go wrong)  // TODO : see this again (it use the unique_ptr instead of the getter)
+    iterator begin() noexcept // the iterator does not acquire resource, so noexcept (nothing will go wrong)
+    {
+        return iterator{get_minimum_left_node_in_subtree(tree_root_node.get())};
+    } // TODO : see this again (it use the unique_ptr instead of the getter)
     /** Begin function to use in a for-range loop. Returns a const iterator.*/
-    const_iterator begin() const noexcept {return const_iterator{get_minimum_left_node_in_subtree(tree_root_node.get())}; }   // const-iterator ensure to be protected when invoking a const function   // TODO : to be verified // TODO : see this again (it use the unique_ptr instead of the getter)
+    const_iterator begin() const noexcept // const-iterator ensure to be protected when invoking a const function
+    {
+        return const_iterator{get_minimum_left_node_in_subtree(tree_root_node.get())};
+    } // TODO : to be verified // TODO : see this again (it use the unique_ptr instead of the getter)
+
     /** End function to use in a for-range loop. Returns an iterator.*/
     auto end() noexcept { return iterator{nullptr}; }
     /** End function to use in a for-range loop. Returns a const iterator.*/
     auto end() const noexcept { return const_iterator{nullptr}; }
     //  TODO : end TODO (things to check)
 
+    /** Default constructor.*/
+    bst() = default;
 
-	/** Default constructor.*/
-	bst() = default;
+    /** Default destructor for the proper cleanup.*/
+    ~bst() = default;
 
-	/** Default destructor for the proper cleanup.*/
-	~bst() = default;
-
-	/** Insertion of a new node. This function inserts the given
+    /** Insertion of a new node. This function inserts the given
 	 * node, but children are discarded.*/
     // std::pair<Iterator<value_type>, bool> insert(const std::pair<key_type,value_type>&);
     std::pair<iterator, bool> insert(const std::pair<key_type, value_type> &x) // TODO : noexcept ??
     {
-        using Node = bst<value_type, key_type, OP>::node;   // TODO : check
-        Node *node = new Node{x};                           // TODO : check
+        using Node = bst<value_type, key_type, OP>::node; // TODO : check
+        Node *node = new Node{x};                         // TODO : check
 
         // TODO : changes variables names and clear useless comments
         Node *prev{nullptr};
@@ -96,8 +101,8 @@ public:
             else
                 curr = curr->get_right();
         }
-            
-        if(prev && !(*node<*prev || *prev<*node)) // node == prev
+
+        if (prev && !(*node < *prev || *prev < *node)) // node == prev
         {
             delete node;
             return std::make_pair<iterator, bool>(iterator{prev}, false);
@@ -111,29 +116,22 @@ public:
             prev->set_left(node);
         else
             prev->set_right(node);
-        
+
         ++size;
         return std::make_pair<iterator, bool>(iterator{node}, true); // TODO : r-value? move assignment??
         // TODO : check
     }
 
-
-    
-
-
     /** Overloading of the << operator. This function provides a view
      * of the tree, iterating over its nodes.*/
-    friend
-    std::ostream& operator<<(std::ostream& os, const bst& _bst) {
+    friend std::ostream &operator<<(std::ostream &os, const bst &_bst)
+    {
         os << "[size=" << _bst.size << "] { ";
-        for( const auto& el : _bst)
+        for (const auto &el : _bst)
             os << el << " ";
         os << "}";
         return os;
     }
-
-
-
 };
 
 #include "Iterator.h"
