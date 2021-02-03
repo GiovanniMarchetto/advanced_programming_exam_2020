@@ -31,15 +31,6 @@ public:
     /** Value of the node.*/
     value_type value;
 
-    // TODO : should we keep this comment???
-    // Note: getters/setters in this class are used to provide an uniform
-    // interface to access pointers to children/parent node. This functions
-    // are not intended to hide or forbid changes in the instance. By using
-    // getters/setters, the user should not worry about technical implementation
-    // of pointers (e.g., the interface always use raw pointers, but the
-    // implementation may use smart pointers). This means: values returned by
-    // getters may be editable.
-
     /** Getter for the left children. Returns a raw pointer to the left child node.*/
     Node *get_left() const { return left.get(); }
 
@@ -47,7 +38,7 @@ public:
     Node *get_right() const { return right.get(); }
 
     /** Getter for the parent. Returns a raw pointer to the parent node.*/
-    Node *get_parent() { return parent; }
+    Node *get_parent() const { return parent; }
 
     /** Setter: the left child of this instance will be set with the given pointer.*/
     void set_left(Node *const node = nullptr) { left.reset(node); }
@@ -64,17 +55,21 @@ public:
     Node(std::pair<key_type, value_type> pair) : Node{pair.first, pair.second} {}; // TODO : corretto ? r-value? explicit? // TODO : what happens if this (or any other) constructor receives nullptr ?
 
     /** Returns a pointer to a (copy of the) representation of this instance as an std::pair.*/
-    std::pair<key_type, value_type> *get_pair() const
-    {
-        return new std::pair(key_type{key}, value_type{value});
-    }
+    std::pair<key_type, value_type> *get_pair() const { return new std::pair(key_type{key}, value_type{value}); }
 
     // ---END--- Compatibility with std::pair
 
-    /** Constructor.
+    /** Constructor. Given arguments are copied into the members of the
+     * constructing instance.
      * @param key Key of this node.
      * @param value Value of this node.*/
-    Node(const key_type key, const value_type value) : left{}, right{}, key{key}, value{value} {}
+    Node(const key_type &key, const value_type &value) : left{}, right{}, key{key}, value{value} {}
+
+    /** Constructor. Given arguments are moved into the members of the
+     * constructing instance.
+     * @param key Key of this node.
+     * @param value Value of this node.*/
+    Node(key_type&& key, value_type&& value) : left{}, right{}, key{std::move(key)}, value{std::move(value)} {}
 
     /** Default constructor.*/
     Node() = default;
