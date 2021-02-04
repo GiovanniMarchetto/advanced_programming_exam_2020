@@ -113,7 +113,7 @@ public:
     template <typename K, typename V>
     std::pair<iterator, bool> private_insert(K &&k, V &&v) //TODO: DOVREBBE ESSERE PRIVATO, insert o emplace?
     {
-        using Node = bst<value_type, key_type, OP>::node;
+        using Node = bst<value_type, key_type, OP>::node; // TODO: inutile per ora, se si sposta implementazione su altro file diventa utile
         Node *node = new Node{std::forward<K>(k), std::forward<V>(v)};
 
         Node *prev{nullptr};
@@ -168,11 +168,40 @@ public:
         return private_insert(std::forward<Types>(args)...);
     }
 
-    void balance()
+    /** Unbalance the tree to the worst case. */
+    void unbalance()
     {
         bst tmp{};
         for (node &el : *this)
-            tmp.private_insert(std::move(el.key), std::move(el.value));
+            tmp.emplace(std::move(el.key), std::move(el.value));
+        *this = std::move(tmp);
+    }
+
+    /** Balance recursive function. */
+    void recursive_balance(size_t start, size_t stop, bst &balanced, node *arr[]) //TODO: DOVREBBE ESSERE PRIVATO
+    {
+        if (start != stop)
+        {
+            size_t mid{(start + stop) / 2};
+            balanced.emplace(std::move(arr[mid]->key), std::move(arr[mid]->value));
+            recursive_balance(start, mid, balanced, arr);
+            recursive_balance(mid + 1, stop, balanced, arr);
+        }
+    }
+
+    /** Balance the tree (recursively). */
+    void balance()
+    {
+        bst tmp{};
+
+        node *nodes[get_size()];
+        size_t i{0};
+        for (auto &el : *this)
+        {
+            nodes[i] = &el;
+            ++i;
+        }
+        recursive_balance(0, get_size(), tmp, nodes);
         *this = std::move(tmp);
     }
 
@@ -218,7 +247,7 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const bst &_bst)
     {
         os << "[size=" << _bst.size << "] { ";
-        for (auto &el : _bst)
+        for (const auto &el : _bst)
             os << el << " ";
         os << "}";
         return os;

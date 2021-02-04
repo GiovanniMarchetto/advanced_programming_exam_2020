@@ -139,15 +139,16 @@ int main()
     int NUMBER_OF_NODES{50};
     int MAX_NUMBER_OF_KEY{15}; // if MAX_NUMBER_OF_KEY<NUMBER_OF_NODES test behaviour with duplicated keys
     bst<char> bst_3{};
-    std::srand(std::time(NULL)); // random seed initialization
-    //std::srand(123); // fixed seed for reproducible tests
+    //std::srand(std::time(NULL)); // random seed initialization
+    std::srand(123); // fixed seed for reproducible tests
     for (int i{0}; i < NUMBER_OF_NODES; ++i)
     {
         int random_key{rand() % MAX_NUMBER_OF_KEY};                              // between 0 and MAX_NUMBER_OF_KEY-1
         char random_val{static_cast<char>(rand() % 26 + static_cast<int>('a'))}; // between 'a' and 'z'
         bst_3.insert(std::pair<int, char>(random_key, random_val));              // move insert
     }
-
+    //bst_3.unbalance();
+    bst_3.balance();
     // Print the tree structure
     std::string str{};
     std::cout << bst_3.print_tree(str) << std::endl;
@@ -218,7 +219,7 @@ int main()
     std::cout << NUMBER_OF_NODES_INSERTION_BENCHMARK << " nodes have been inserted into an std::map in " << duration_insertion_in_std_map << " us. ";
     std::cout << " Average insertion time: " << (duration_insertion_in_std_map / (0.0 + NUMBER_OF_NODES_INSERTION_BENCHMARK)) << " us." << std::endl;
 
-    // TEST (BENCHMARK): Insertion time
+    // TEST (BENCHMARK): Search time
     std::cout << "\n--------------TEST (BENCHMARK): Search time: ----------------" << std::endl;
     int KEY_TO_FIND{10}; // random
     long int duration_search_in_our_tree{},
