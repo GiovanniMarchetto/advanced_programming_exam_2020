@@ -4,6 +4,16 @@
 #ifndef ADVANCED_PROGRAMMING_EXAM_2020_ITERATOR_H
 #define ADVANCED_PROGRAMMING_EXAM_2020_ITERATOR_H
 
+/**
+ * Class for the iterator of the binary search tree (BST).
+ * This class is heavy coupled with the class bst.
+ * See the class bst for the template description.
+ * @tparam value_type
+ * @tparam key_type
+ * @tparam OP
+ * @tparam O Type of the object pointed by an instance 
+ *              of this class.
+ */
 template <typename value_t,
           typename key_type,
           typename OP>
@@ -13,6 +23,7 @@ class bst<value_t, key_type, OP>::Iterator
     using node = Node<value_t, key_type, OP>;
     node *current_node;
 
+    /** Given the pointer to a node this function returns its successor. */
     static node *get_successor(node *node) // TODO : const??
     {
         if (node->get_right())
@@ -64,10 +75,6 @@ public:
     {
         return !(a == b);
     }
-
-    //getter and setter
-    node *get_current() const { return current_node; }
-    void set_current(node *p) { current_node = p; }
 };
 
 #endif //ADVANCED_PROGRAMMING_EXAM_2020_ITERATOR_H
