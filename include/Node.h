@@ -132,7 +132,7 @@ public:
     bool compare(const Node &other, const Comparator comparator = std::less<key_type>()) const
     {
         //if (!(&other))
-            return comparator(key, other.key);
+        return comparator(key, other.key);
         //return false; // TODO : to handle with exceptions
     }
     /** See the same overloaded function for details. This comparison

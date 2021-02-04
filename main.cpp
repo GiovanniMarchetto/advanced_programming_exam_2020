@@ -18,7 +18,7 @@ std::ostream &operator<<(std::ostream &os, const std::vector<int> &vec) // TODO 
     os << std::endl;
     return os;
 }
-void print_tree_from_iterator(bst<char>::iterator& iterator, bst<char>& bst)
+void print_tree_from_iterator(bst<char>::iterator &iterator, bst<char> &bst)
 {
     while (iterator != bst.end())
     {
@@ -27,7 +27,7 @@ void print_tree_from_iterator(bst<char>::iterator& iterator, bst<char>& bst)
     }
     std::cout << std::endl;
 };
-void print_tree_from_iterator(bst<char>::const_iterator& iterator, const bst<char>& bst)
+void print_tree_from_iterator(bst<char>::const_iterator &iterator, const bst<char> &bst)
 {
     while (iterator != bst.end())
     {
@@ -36,7 +36,6 @@ void print_tree_from_iterator(bst<char>::const_iterator& iterator, const bst<cha
     }
     std::cout << std::endl;
 };
-
 
 int main()
 {
@@ -80,11 +79,13 @@ int main()
     // TEST: insertion of a node
     std::cout << "--------------TEST: insertion of a node----------------------" << std::endl;
     bst<char> bst_{};
-    bst_.insert(std::pair<int, char>(2, 'y'));
-    bst_.insert(std::pair<int, char>(0, 'z'));
-    bst_.insert(std::pair<int, char>(1, 'x'));
-    bst_.insert(std::pair<int, char>(3, 'w'));
-    bst_.insert(std::pair<int, char>(4, 'c'));
+    auto paio = std::pair<int, char>(2, 'y');
+    bst_.insert(paio);                         //expected: copy insert
+    bst_.insert(std::pair<int, char>(0, 'z')); //expected: move insert
+    bst_.insert(std::pair<int, char>(1, 'x')); //expected: move insert
+    bst_.insert(std::pair<int, char>(3, 'w')); //expected: move insert
+    bst_.emplace(4, 'c');                      //expected: variadic emplace
+    bst_.insert({5, 'f'});                     //expected: move insert (implicit conversion from initializer list to std::pair)
     std::cout << bst_ << std::endl;
 
     // // TEST: to try the copy semantics of bst
@@ -114,11 +115,12 @@ int main()
     int MAX_NUMBER_OF_KEY{15}; // if MAX_NUMBER_OF_KEY<NUMBER_OF_NODES test behaviour with duplicated keys
     bst<char> bst_3{};
     std::srand(std::time(NULL)); // random seed initialization
+    //std::srand(123); // fixed seed for reproducible tests
     for (int i{0}; i < NUMBER_OF_NODES; ++i)
     {
         int random_key{rand() % MAX_NUMBER_OF_KEY};                              // between 0 and MAX_NUMBER_OF_KEY-1
         char random_val{static_cast<char>(rand() % 26 + static_cast<int>('a'))}; // between 'a' and 'z'
-        bst_3.insert(std::pair<int, char>(random_key, random_val));
+        bst_3.insert(std::pair<int, char>(random_key, random_val));              // move insert
     }
 
     // Print the tree structure

@@ -1,6 +1,7 @@
 #include <functional> // std::less
 #include <stdint.h>   // int32_t
 #include <memory>     // unique_ptr
+#include <utility>    //std::forward, move
 #include "Node.h"
 
 #include <string>
@@ -102,12 +103,13 @@ public:
     /** Move assignment.*/
     bst &operator=(bst &&) = default;
 
-    /** Insertion of a new node. This function inserts the given
-	 * node, but children are discarded.*/
-    std::pair<iterator, bool> insert(const std::pair<key_type, value_type> &x) // TODO : noexcept ??
+    /** Inserts a new element into the container given key and value (which
+     * are forwarded) if there is no element with the key in the container. */
+    template <typename K, typename V>
+    std::pair<iterator, bool> private_insert(K &&k, V &&v) //TODO: DOVREBBE ESSERE PRIVATO, insert o emplace?
     {
         using Node = bst<value_type, key_type, OP>::node;
-        Node *node = new Node{x};
+        Node *node = new Node{std::forward<K>(k), std::forward<V>(v)};
 
         Node *prev{nullptr};
         Node *curr = get_tree_root_node();
@@ -117,14 +119,13 @@ public:
             prev = curr;
             if (*node < *curr)
                 curr = curr->get_left();
-            else
+            else if (*curr < *node)
                 curr = curr->get_right();
-        }
-
-        if (prev && !(*node < *prev || *prev < *node)) // node == prev
-        {
-            delete node;
-            return std::make_pair<iterator, bool>(iterator{prev}, false);
+            else
+            {
+                delete node;
+                return std::make_pair<iterator, bool>(iterator{prev}, false);
+            }
         }
 
         node->set_parent(prev);
@@ -138,6 +139,36 @@ public:
 
         ++size;
         return std::make_pair<iterator, bool>(iterator{node}, true); // TODO : r-value? move assignment??
+    }
+
+    /** Inserts a new element into the container given a pair with key and value
+     * (which are copied) if there is no element with the key in the container. */
+    std::pair<iterator, bool> insert(const std::pair<key_type, value_type> &x) // TODO : noexcept ??
+    {
+        return private_insert(x.first, x.second);
+    }
+
+    /** Inserts a new element into the container given a pair with key and value
+     * (which are moved) if there is no element with the key in the container. */
+    std::pair<iterator, bool> insert(std::pair<key_type, value_type> &&x)
+    {
+        return private_insert(std::move(x.first), std::move(x.second));
+    }
+
+    /** Inserts a new element into the container constructed in-place with 
+     * the given args if there is no element with the key in the container. */
+    template <class... Types>
+    std::pair<iterator, bool> emplace(Types &&...args)
+    {
+        return private_insert(std::forward<Types>(args)...);
+    }
+
+    void balance()
+    {
+        bst tmp{};
+        for (node &el : *this)
+            tmp.private_insert(std::move(el.key), std::move(el.value));
+        *this = std::move(tmp);
     }
 
     node *private_find(const key_type &key_to_find) const // TODO : move this in private part
