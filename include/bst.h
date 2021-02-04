@@ -53,6 +53,9 @@ public:
      * key components of the nodes.*/
     OP node_key_compare{};
 
+    /** Getter for the number of nodes in the tree. */
+    size_t get_size() const { return size; }
+
     /** Class Iterator for the tree.*/
     template <typename O>
     class Iterator;

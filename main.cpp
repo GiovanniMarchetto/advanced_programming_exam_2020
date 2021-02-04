@@ -10,6 +10,10 @@
 #include <cstdlib> // srand, rand
 #include <ctime>   // time
 
+// For benchmark timing test and comparison
+#include <map>
+#include <chrono>
+
 std::ostream &operator<<(std::ostream &os, const std::vector<int> &vec) // TODO : to be deleted (was used just for testing copy/move ctr in Node.h (the ones which take key and value))
 {
     os << "\n";
@@ -36,6 +40,25 @@ void print_tree_from_iterator(bst<char>::const_iterator &iterator, const bst<cha
     }
     std::cout << std::endl;
 };
+
+// void create_vector_of_nodes (const std::size_t& number_of_nodes_to_create, std::vector<std::pair<int, char>>& vec) {
+
+//     auto find_pair_by_key_in_vector = [](const auto& key, const auto& vector){
+//         for (const auto& el : vector )
+//             if (el.first == key) return true;
+//         return false;
+//     };
+
+//     while( vec.size() < number_of_nodes_to_create )
+//     {
+//         // Random generation of a pair
+//         int random_key{rand()};
+//         char random_val{static_cast<char>(rand() % 26 + static_cast<int>('a'))}; // between 'a' and 'z'
+//         if ( ! find_pair_by_key_in_vector(random_key, vec) )                 // if not already present
+//             vec.push_back(std::pair<int, char>(random_key, random_val));// move insert
+//     }
+
+// };
 
 int main()
 {
@@ -110,7 +133,9 @@ int main()
     std::cout << n_bst << std::endl;
 
     // TEST: Insertion of a number of random generated nodes and printing
-    std::cout << "\nTEST: Insertion of a number of random generated nodes and printing:" << std::endl;
+    std::cout << "\n--------------TEST: Insertion of a number of random---------\n"
+                 "--------------        generated nodes and printing:---------"
+              << std::endl;
     int NUMBER_OF_NODES{50};
     int MAX_NUMBER_OF_KEY{15}; // if MAX_NUMBER_OF_KEY<NUMBER_OF_NODES test behaviour with duplicated keys
     bst<char> bst_3{};
@@ -139,6 +164,80 @@ int main()
     // Print the tree by using the iterator starting from the node marked with the key to find.
     print_tree_from_iterator(it, bst_3);
     print_tree_from_iterator(cit, bst_3);
+
+    // TEST (BENCHMARK): Insertion time
+    std::cout << "\n--------------TEST (BENCHMARK): Insertion time: -------------" << std::endl;
+    std::size_t NUMBER_OF_NODES_INSERTION_BENCHMARK{500};
+    // Random generation of pairs with distinct keys (temporarily saved in a
+    // vector to time only the insertion time)
+    auto create_vector_of_nodes = [](const std::size_t &number_of_nodes_to_create, std::vector<std::pair<int, char>> &vec) {
+        std::srand(std::time(NULL)); // random seed initialization
+
+        auto find_pair_by_key_in_vector = [](const auto &key, const auto &vector) {
+            for (const auto &el : vector)
+                if (el.first == key)
+                    return true;
+            return false;
+        };
+
+        while (vec.size() < number_of_nodes_to_create)
+        {
+            // Random generation of a pair
+            int random_key{rand()};
+            char random_val{static_cast<char>(rand() % 26 + static_cast<int>('a'))}; // between 'a' and 'z'
+            if (!find_pair_by_key_in_vector(random_key, vec))                        // if not already present
+                vec.push_back(std::pair<int, char>(random_key, random_val));         // move insert
+        }
+    };
+    std::vector<std::pair<int, char>> vector_of_nodes_to_insert{};
+    create_vector_of_nodes(NUMBER_OF_NODES_INSERTION_BENCHMARK, vector_of_nodes_to_insert);
+
+    bst<char, int> bst_benchmark_insertion{};
+    std::map<char, int> std_map_benchmark_insertion{};
+    long int duration_insertion_in_our_tree{},
+        duration_insertion_in_std_map{};
+    for (std::size_t i{0}; i < NUMBER_OF_NODES_INSERTION_BENCHMARK; ++i)
+    {
+        std::pair<int, char> pair_to_insert{vector_of_nodes_to_insert.at(i)}; // the pair is temporarely saved here just before being inserted
+
+        // Insertion in our tree
+        auto t1 = std::chrono::high_resolution_clock::now();
+        bst_benchmark_insertion.insert(pair_to_insert); // pair is copied
+        auto t2 = std::chrono::high_resolution_clock::now();
+        duration_insertion_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+
+        // Insertion in std::map
+        t1 = std::chrono::high_resolution_clock::now();
+        std_map_benchmark_insertion.insert(pair_to_insert); // pair is copied
+        t2 = std::chrono::high_resolution_clock::now();
+        duration_insertion_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    }
+
+    std::cout << NUMBER_OF_NODES_INSERTION_BENCHMARK << " nodes have been inserted into the tree in " << duration_insertion_in_our_tree << " us. ";
+    std::cout << " Average insertion time: " << (duration_insertion_in_our_tree / (0.0 + NUMBER_OF_NODES_INSERTION_BENCHMARK)) << " us.\n";
+    std::cout << NUMBER_OF_NODES_INSERTION_BENCHMARK << " nodes have been inserted into an std::map in " << duration_insertion_in_std_map << " us. ";
+    std::cout << " Average insertion time: " << (duration_insertion_in_std_map / (0.0 + NUMBER_OF_NODES_INSERTION_BENCHMARK)) << " us." << std::endl;
+
+    // TEST (BENCHMARK): Insertion time
+    std::cout << "\n--------------TEST (BENCHMARK): Search time: ----------------" << std::endl;
+    int KEY_TO_FIND{10}; // random
+    long int duration_search_in_our_tree{},
+        duration_search_in_std_map{};
+    {
+        auto t1 = std::chrono::high_resolution_clock::now();
+        bst_benchmark_insertion.find(KEY_TO_FIND);
+        auto t2 = std::chrono::high_resolution_clock::now();
+        duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+
+        t1 = std::chrono::high_resolution_clock::now();
+        std_map_benchmark_insertion.find(KEY_TO_FIND);
+        t2 = std::chrono::high_resolution_clock::now();
+        duration_search_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    }
+
+    std::cout << "Time for finding a key (" << bst_benchmark_insertion.get_size() << " nodes in the tree): " << duration_search_in_our_tree << " us.\n";
+    std::cout << "Time for finding a key (" << bst_benchmark_insertion.get_size() << " nodes in the std::map): " << duration_search_in_std_map << " us.\n\n"
+              << std::endl;
 
     return 0;
 }
