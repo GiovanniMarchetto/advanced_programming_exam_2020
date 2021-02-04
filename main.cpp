@@ -90,22 +90,16 @@ int main()
     std::cout << n_bst << std::endl;
 
 
-
-
-
-
-
-
     // TEST: Insertion of a number of random generated nodes and printing
     std::cout << "\nTEST: Insertion of a number of random generated nodes and printing:" << std::endl;
-    int NUMBER_OF_NODES{20};
-    int MAX_KEY_VAL{15};  // if MAX_KEY_VAL<NUMBER_OF_NODES test behaviour with duplicated keys
+    int NUMBER_OF_NODES{50};
+    int MAX_NUMBER_OF_KEY{15};  // if MAX_NUMBER_OF_KEY<NUMBER_OF_NODES test behaviour with duplicated keys
     bst<char> bst_3{};
     std::srand(std::time(NULL));    // random seed initialization
     for(int i{0}; i<NUMBER_OF_NODES; ++i)
     {
-        int random_key{rand() % MAX_KEY_VAL}; // between 0 and N-1
-        char random_val{static_cast<char>(rand()% 26 + static_cast<int>('a')) };   // between 'a' and 'z'
+        int random_key{rand() % MAX_NUMBER_OF_KEY};                                 // between 0 and MAX_NUMBER_OF_KEY-1
+        char random_val{static_cast<char>(rand()% 26 + static_cast<int>('a')) };    // between 'a' and 'z'
         bst_3.insert(std::pair<int, char>(random_key, random_val));
     }
 

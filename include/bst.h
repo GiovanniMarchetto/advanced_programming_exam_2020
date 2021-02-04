@@ -167,7 +167,7 @@ public:
         str_buffer.append("   ");   // each level of the tree implies an indentation
 
         // TODO : to be optimized (does std::string use move-ctr? Better to use char*? Should use string initialization std::string{} instead of literal "")
-        if( !subtree_root_node )    // empty tree
+        if( !subtree_root_node )    // empty subtree
             return str_buffer.append("|--[]");
 
         std::string str_left_buff{str_buffer},
