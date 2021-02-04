@@ -12,7 +12,7 @@
  * @tparam value_type Type of the value of each node of the tree.
  * @tparam key_type Type of the key of each node of the tree (not
  *               required to be specified).
- * @tparam OP The type of the comparison operator, which is used
+ * @tparam OP Type of the comparison operator, which is used
  *            to compare two keys (not required to be specified).
  */
 template <typename value_type,
