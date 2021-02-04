@@ -6,6 +6,10 @@
 #include "bst.h"
 #include <vector>
 
+// For random generation
+#include <cstdlib> // srand, rand
+#include <ctime>   // time
+
 std::ostream &operator<<(std::ostream &os, const std::vector<int> &vec) // TODO : to be deleted (was used just for testing copy/move ctr in Node.h (the ones which take key and value))
 {
     os << "\n";
@@ -14,10 +18,25 @@ std::ostream &operator<<(std::ostream &os, const std::vector<int> &vec) // TODO 
     os << std::endl;
     return os;
 }
+void print_tree_from_iterator(bst<char>::iterator& iterator, bst<char>& bst)
+{
+    while (iterator != bst.end())
+    {
+        std::cout << *iterator << " ";
+        ++iterator;
+    }
+    std::cout << std::endl;
+};
+void print_tree_from_iterator(bst<char>::const_iterator& iterator, const bst<char>& bst)
+{
+    while (iterator != bst.end())
+    {
+        std::cout << *iterator << " ";
+        ++iterator;
+    }
+    std::cout << std::endl;
+};
 
-// For random generation
-#include <cstdlib>     // srand, rand
-#include <ctime>       // time
 
 int main()
 {
@@ -54,8 +73,8 @@ int main()
     std::cout << (B < C) << " "; // expected: 1
     std::cout << (C < B) << " "; // expected: 0
     //std::cout << (F < D) << std::endl;                      // expected: exception (?)   // TODO : test well comparison functions
-    std::cout << C.compare(B) << " "; // expected: 0
-    std::cout << B.compare(C) << " "; // expected: 1
+    std::cout << C.compare(B) << " ";       // expected: 0
+    std::cout << B.compare(C) << " ";       // expected: 1
     std::cout << C.compare(B) << std::endl; // expected: 0
 
     // TEST: insertion of a node
@@ -73,7 +92,7 @@ int main()
     bst<char> bst_2{bst_};
     std::cout << bst_2 << std::endl;
 
-    // // TEST: copy and move semantic of the value of a node during its construction
+    // TEST: copy and move semantic of the value of a node during its construction
     std::cout << "--------------TEST: copy and move semantic of the value------" << std::endl;
     std::cout << "--------------        of a node during its construction------" << std::endl;
     std::string k = "key_lv";
@@ -89,17 +108,16 @@ int main()
     Node<bst<char>, int> n_bst(1, bst_); // value is copied
     std::cout << n_bst << std::endl;
 
-
     // TEST: Insertion of a number of random generated nodes and printing
     std::cout << "\nTEST: Insertion of a number of random generated nodes and printing:" << std::endl;
     int NUMBER_OF_NODES{50};
-    int MAX_NUMBER_OF_KEY{15};  // if MAX_NUMBER_OF_KEY<NUMBER_OF_NODES test behaviour with duplicated keys
+    int MAX_NUMBER_OF_KEY{15}; // if MAX_NUMBER_OF_KEY<NUMBER_OF_NODES test behaviour with duplicated keys
     bst<char> bst_3{};
-    std::srand(std::time(NULL));    // random seed initialization
-    for(int i{0}; i<NUMBER_OF_NODES; ++i)
+    std::srand(std::time(NULL)); // random seed initialization
+    for (int i{0}; i < NUMBER_OF_NODES; ++i)
     {
-        int random_key{rand() % MAX_NUMBER_OF_KEY};                                 // between 0 and MAX_NUMBER_OF_KEY-1
-        char random_val{static_cast<char>(rand()% 26 + static_cast<int>('a')) };    // between 'a' and 'z'
+        int random_key{rand() % MAX_NUMBER_OF_KEY};                              // between 0 and MAX_NUMBER_OF_KEY-1
+        char random_val{static_cast<char>(rand() % 26 + static_cast<int>('a'))}; // between 'a' and 'z'
         bst_3.insert(std::pair<int, char>(random_key, random_val));
     }
 
@@ -107,8 +125,18 @@ int main()
     std::string str{};
     std::cout << bst_3.print_tree(str) << std::endl;
     // Print tree traversal
-    std::cout << bst_3<< std::endl;
+    std::cout << bst_3 << std::endl;
 
+    // TEST: Finding a node
+    std::cout << "--------------TEST: finding a node by key -------------------" << std::endl;
+    int key_to_find{5};
+    std::cout << "Key to find: " << key_to_find << std::endl;
+    bst<char>::iterator it{bst_3.find(key_to_find)};
+    const bst<char> bst_4{bst_3};
+    bst<char>::const_iterator cit{bst_4.find(key_to_find)};
+    // Print the tree by using the iterator starting from the node marked with the key to find.
+    print_tree_from_iterator(it, bst_3);
+    print_tree_from_iterator(cit, bst_3);
 
     return 0;
 }

@@ -50,7 +50,7 @@ class bst
 public:
     /** Function object that compares nodes by comparing of the
      * key components of the nodes.*/
-    OP node_key_compare{}; // TODO : do we need this member?
+    OP node_key_compare{};
 
     /** Class Iterator for the tree.*/
     template <typename O>
@@ -140,12 +140,46 @@ public:
         return std::make_pair<iterator, bool>(iterator{node}, true); // TODO : r-value? move assignment??
     }
 
+    node *private_find(const key_type &key_to_find) const // TODO : move this in private part
+    {
+        node *node{get_tree_root_node()}; // search starts from the root
+
+        while (node && key_to_find != node->key)
+        {
+            if (node_key_compare(key_to_find, node->key))
+                node = node->get_left();
+            else
+                node = node->get_right();
+        }
+
+        return node;
+    }
+
+    /** Function for finding a given key. If the key is present, it returns an
+     * iterator to the proper node, end() otherwise.
+     * @param x The key.*/
+    const_iterator find(const key_type &x) const
+    {
+        const node *node{private_find(x)};
+        if (node)
+            return const_iterator{node};
+        return end();
+    }
+
+    iterator find(const key_type &x)
+    {
+        node *node{private_find(x)};
+        if (node)
+            return iterator{node};
+        return end();
+    }
+
     /** Overloading of the << operator. This function provides a view
      * of the tree, iterating over its nodes.*/
     friend std::ostream &operator<<(std::ostream &os, const bst &_bst)
     {
         os << "[size=" << _bst.size << "] { ";
-        for (const auto &el : _bst)
+        for (auto &el : _bst)
             os << el << " ";
         os << "}";
         return os;
@@ -153,44 +187,45 @@ public:
 
     /** Function for printing the structrure of the tree into a string
      * which is returned by reference.*/
-    const std::string& print_tree(std::string& str_buffer) const {
-        return print_subtree(tree_root_node.get(), str_buffer);   // TODO : this should use getter instead of std::unique_ptr<??>::get
+    const std::string &print_tree(std::string &str_buffer) const
+    {
+        return print_subtree(tree_root_node.get(), str_buffer); // TODO : this should use getter instead of std::unique_ptr<??>::get
     }
 
     /** Given a pointer to the root of a subtree, this function returns
      * a std::string containing a view of the subtree.*/
     template <typename value_type_, typename key_type_, typename OP_>
-    static std::string&
-    print_subtree(const Node<value_type_, key_type_, OP_> * subtree_root_node,
-                  std::string& str_buffer) {
-        
-        str_buffer.append("   ");   // each level of the tree implies an indentation
+    static std::string &
+    print_subtree(const Node<value_type_, key_type_, OP_> *subtree_root_node,
+                  std::string &str_buffer)
+    {
+
+        str_buffer.append("   "); // each level of the tree implies an indentation
 
         // TODO : to be optimized (does std::string use move-ctr? Better to use char*? Should use string initialization std::string{} instead of literal "")
-        if( !subtree_root_node )    // empty subtree
+        if (!subtree_root_node) // empty subtree
             return str_buffer.append("|--[]");
 
         std::string str_left_buff{str_buffer},
-                    str_right_buff{str_buffer};
-        print_subtree(subtree_root_node->get_left(),  str_left_buff);
+            str_right_buff{str_buffer};
+        print_subtree(subtree_root_node->get_left(), str_left_buff);
         print_subtree(subtree_root_node->get_right(), str_right_buff);
 
-        std::stringstream os{}; // TODO : improve efficiency (this is used here only for using the overloading of << in Node)
-        os << "|--" << *subtree_root_node;   //save info of current node into the stream
+        std::stringstream os{};            // TODO : improve efficiency (this is used here only for using the overloading of << in Node)
+        os << "|--" << *subtree_root_node; //save info of current node into the stream
 
         // Buffer to return
-        str_buffer.append(os.str());            // append info of current node
-        if( subtree_root_node->get_left() ||
-            subtree_root_node->get_right() )    // if at least one child is defined, then print
+        str_buffer.append(os.str()); // append info of current node
+        if (subtree_root_node->get_left() ||
+            subtree_root_node->get_right()) // if at least one child is defined, then print
         {
             str_buffer.append("\n")
-                      .append(str_left_buff)   // append info of left child node
-                      .append("\n")
-                      .append(str_right_buff); // append info of right child node
+                .append(str_left_buff) // append info of left child node
+                .append("\n")
+                .append(str_right_buff); // append info of right child node
         }
-        
-        return str_buffer;
 
+        return str_buffer;
     }
 };
 

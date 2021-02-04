@@ -20,11 +20,10 @@ template <typename value_t,
 template <typename O>
 class bst<value_t, key_type, OP>::Iterator
 {
-    using node = Node<value_t, key_type, OP>;
-    node *current_node;
+    O *current_node;
 
     /** Given the pointer to a node this function returns its successor. */
-    static node *get_successor(node *node) // TODO : const??
+    static O *get_successor(O *node) // TODO : const??
     {
         if (node->get_right())
             return get_minimum_left_node_in_subtree(node->get_right());
@@ -46,7 +45,8 @@ public:
     using difference_type = std::ptrdiff_t;
     using iterator_category = std::forward_iterator_tag;
 
-    explicit Iterator(node *p) : current_node{p} {}
+    explicit Iterator(O *p) : current_node{p} {}
+    explicit Iterator(Iterator&&) = default;
 
     reference operator*() const { return *current_node; }
     pointer operator->() const { return &**this; }
