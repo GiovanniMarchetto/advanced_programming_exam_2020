@@ -29,7 +29,7 @@ void print_tree_from_iterator(bst<char>::iterator &iterator, bst<char> &bst)
 };
 void print_tree_from_iterator(bst<char>::const_iterator &iterator, const bst<char> &bst)
 {
-    while (iterator != bst.end())
+    while (iterator != bst.cend())
     {
         std::cout << *iterator << " ";
         ++iterator;

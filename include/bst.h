@@ -60,20 +60,22 @@ public:
     using const_iterator = Iterator<const node>;
 
     /** Begin function to use in a for-range loop. Returns an iterator.*/
-    iterator begin() noexcept // the iterator does not acquire resource, so noexcept (nothing will go wrong)
-    {
-        return iterator{get_minimum_left_node_in_subtree(get_tree_root_node())};
-    }
+    iterator begin() noexcept { return iterator{get_minimum_left_node_in_subtree(get_tree_root_node())}; }
+    // TODO: mantenere? --  the iterator does not acquire resource, so noexcept (nothing will go wrong)
+    /** Cbegin function to use in a for-range loop. Returns a const iterator.*/
+    const_iterator cbegin() const noexcept { return const_iterator{get_minimum_left_node_in_subtree(get_tree_root_node())}; }
+    // TODO: mantenere? -- const-iterator ensure to be protected when invoking a const function
     /** Begin function to use in a for-range loop. Returns a const iterator.*/
-    const_iterator begin() const noexcept // const-iterator ensure to be protected when invoking a const function
-    {
-        return const_iterator{get_minimum_left_node_in_subtree(get_tree_root_node())};
-    }
+    const_iterator begin() const noexcept { return cbegin(); }
+
+    //TODO: riorganization code for cbegin and cend?
 
     /** End function to use in a for-range loop. Returns an iterator.*/
-    auto end() noexcept { return iterator{nullptr}; }
+    iterator end() noexcept { return iterator{nullptr}; }
+    /** Cend function to use in a for-range loop. Returns a const iterator.*/
+    const_iterator cend() const noexcept { return const_iterator{nullptr}; };
     /** End function to use in a for-range loop. Returns a const iterator.*/
-    auto end() const noexcept { return const_iterator{nullptr}; }
+    const_iterator end() const noexcept { return cend(); }
 
     /** Default constructor.*/
     bst() = default;
@@ -189,20 +191,23 @@ public:
     /** Function for finding a given key. If the key is present, it returns an
      * iterator to the proper node, end() otherwise.
      * @param x The key.*/
-    const_iterator find(const key_type &x) const
-    {
-        const node *node{private_find(x)};
-        if (node)
-            return const_iterator{node};
-        return end();
-    }
-
     iterator find(const key_type &x)
     {
         node *node{private_find(x)};
         if (node)
             return iterator{node};
         return end();
+    }
+
+    /** Function for finding a given key. If the key is present, it returns a
+     * costant iterator to the proper node, cend() otherwise.
+     * @param x The key.*/
+    const_iterator find(const key_type &x) const
+    {
+        const node *node{private_find(x)};
+        if (node)
+            return const_iterator{node};
+        return cend();
     }
 
     /** Overloading of the << operator. This function provides a view
