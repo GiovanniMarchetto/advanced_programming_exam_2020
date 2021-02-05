@@ -59,3 +59,6 @@ valgrind:
 
 .PHONY: all_with_valgrind
 all_with_valgrind: clean build valgrind
+
+.PHONY: allv
+allv: all_with_valgrind

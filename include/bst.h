@@ -171,10 +171,13 @@ public:
     /** Unbalance the tree to the worst case. */
     void unbalance()
     {
-        bst tmp{};
-        for (node &el : *this)
-            tmp.emplace(std::move(el.key), std::move(el.value));
-        *this = std::move(tmp);
+        if (get_size())
+        {
+            bst tmp{};
+            for (node &el : *this)
+                tmp.emplace(std::move(el.key), std::move(el.value));
+            *this = std::move(tmp);
+        }
     }
 
     /** Balance recursive function. */
@@ -192,17 +195,20 @@ public:
     /** Balance the tree (recursively). */
     void balance()
     {
-        bst tmp{};
-
-        node *nodes[get_size()];
-        size_t i{0};
-        for (auto &el : *this)
+        if (get_size())
         {
-            nodes[i] = &el;
-            ++i;
+            bst tmp{};
+
+            node *nodes[get_size()];
+            size_t i{0};
+            for (auto &el : *this)
+            {
+                nodes[i] = &el;
+                ++i;
+            }
+            recursive_balance(0, get_size(), tmp, nodes);
+            *this = std::move(tmp);
         }
-        recursive_balance(0, get_size(), tmp, nodes);
-        *this = std::move(tmp);
     }
 
     node *private_find(const key_type &key_to_find) const // TODO : move this in private part
