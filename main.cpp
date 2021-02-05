@@ -168,7 +168,7 @@ int main()
 
     // TEST (BENCHMARK): Insertion time
     std::cout << "\n--------------TEST (BENCHMARK): Insertion time: -------------" << std::endl;
-    std::size_t NUMBER_OF_NODES_INSERTION_BENCHMARK{500};
+    std::size_t NUMBER_OF_NODES_INSERTION_BENCHMARK{10000};
     // Random generation of pairs with distinct keys (temporarily saved in a
     // vector to time only the insertion time)
     auto create_vector_of_nodes = [](const std::size_t &number_of_nodes_to_create, std::vector<std::pair<int, char>> &vec) {
@@ -194,7 +194,7 @@ int main()
     create_vector_of_nodes(NUMBER_OF_NODES_INSERTION_BENCHMARK, vector_of_nodes_to_insert);
 
     bst<char, int> bst_benchmark_insertion{};
-    std::map<char, int> std_map_benchmark_insertion{};
+    std::map<int, char> std_map_benchmark_insertion{};
     long int duration_insertion_in_our_tree{},
         duration_insertion_in_std_map{};
     for (std::size_t i{0}; i < NUMBER_OF_NODES_INSERTION_BENCHMARK; ++i)
@@ -221,7 +221,7 @@ int main()
 
     // TEST (BENCHMARK): Search time
     std::cout << "\n--------------TEST (BENCHMARK): Search time: ----------------" << std::endl;
-    int KEY_TO_FIND{10}; // random
+    int KEY_TO_FIND{0}; // anything
     long int duration_search_in_our_tree{},
         duration_search_in_std_map{};
     {
@@ -237,7 +237,61 @@ int main()
     }
 
     std::cout << "Time for finding a key (" << bst_benchmark_insertion.get_size() << " nodes in the tree): " << duration_search_in_our_tree << " us.\n";
-    std::cout << "Time for finding a key (" << bst_benchmark_insertion.get_size() << " nodes in the std::map): " << duration_search_in_std_map << " us.\n\n"
+    std::cout << "Time for finding a key (" << bst_benchmark_insertion.get_size() << " nodes in the std::map): " << duration_search_in_std_map << " us."
+              << std::endl;
+
+    // TEST (BENCHMARK): Time for balancing the tree
+    std::cout << "\n--------------TEST (BENCHMARK): Balancing the tree: ---------" << std::endl;
+    long int duration_balancing_our_tree{};
+    {
+        auto t1 = std::chrono::high_resolution_clock::now();
+        bst_benchmark_insertion.balance();
+        auto t2 = std::chrono::high_resolution_clock::now();
+        duration_balancing_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    }
+
+    std::cout << "Time for balancing the tree (" << bst_benchmark_insertion.get_size() << " nodes in the tree): " << duration_balancing_our_tree << " us." << std::endl;
+
+    // TEST (BENCHMARK): Search time
+    std::cout << "\n--------------TEST (BENCHMARK): Search time after -----------"
+              << "\n--------------                    balancing the tree: ------- " << std::endl;
+    duration_search_in_our_tree = 0,
+    duration_search_in_std_map = 0;
+    {
+        auto t1 = std::chrono::high_resolution_clock::now();
+        bst_benchmark_insertion.find(KEY_TO_FIND);
+        auto t2 = std::chrono::high_resolution_clock::now();
+        duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+
+        // For std::map should be same as before (nothing changed)
+        t1 = std::chrono::high_resolution_clock::now();
+        std_map_benchmark_insertion.find(KEY_TO_FIND);
+        t2 = std::chrono::high_resolution_clock::now();
+        duration_search_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    }
+
+    std::cout << "Time for finding a key (" << bst_benchmark_insertion.get_size() << " nodes in the tree): " << duration_search_in_our_tree << " us.\n";
+    std::cout << "Time for finding a key (" << bst_benchmark_insertion.get_size() << " nodes in the std::map): " << duration_search_in_std_map << " us."
+              << std::endl;
+
+    // TEST (BENCHMARK): Copy time
+    std::cout << "\n--------------TEST (BENCHMARK): Copy time: ----------------" << std::endl;
+    long int duration_copy_in_our_tree{},
+        duration_copy_in_std_map{};
+    {
+        auto t1 = std::chrono::high_resolution_clock::now();
+        bst<char> bst_copy{bst_benchmark_insertion}; // TODO : copy ctr
+        auto t2 = std::chrono::high_resolution_clock::now();
+        duration_copy_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+
+        t1 = std::chrono::high_resolution_clock::now();
+        std::map<int, char> map_copy{std_map_benchmark_insertion};
+        t2 = std::chrono::high_resolution_clock::now();
+        duration_copy_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    }
+
+    std::cout << "Time for deep copy of our tree (" << bst_benchmark_insertion.get_size() << " nodes in the tree): " << duration_copy_in_our_tree << " us.\n";
+    std::cout << "Time for deep copy of std::map (" << bst_benchmark_insertion.get_size() << " nodes in the std::map): " << duration_copy_in_std_map << " us.\n\n"
               << std::endl;
 
     return 0;
