@@ -211,6 +211,28 @@ public:
         }
     }
 
+    template <typename key_type_>
+    value_type &subscripting(key_type_ &&x)
+    {
+        auto iter = find(std::forward<key_type_>(x));
+        if (iter == end())
+        {
+            auto from_insert = insert({std::forward<key_type_>(x), value_type{}});
+            return from_insert.first->value;
+        }
+        return iter->value;
+    }
+
+    /** Returns a reference to the value that is mapped to a key equivalent to `x`, 
+     *  performing an insertion if such key does not already exist. */
+    value_type &operator[](const key_type &x) { return subscripting(x); }
+
+    /** Returns a reference to the value that is mapped to a key equivalent to `x`, 
+     *  performing an insertion if such key does not already exist. */
+    value_type &operator[](key_type &&x) { return subscripting(std::move(x)); }
+
+    /** Private function for finding a key.
+     *  Returns a pointer to the node */
     node *private_find(const key_type &key_to_find) const // TODO : move this in private part
     {
         node *node{get_tree_root_node()}; // search starts from the root
@@ -226,7 +248,7 @@ public:
         return node;
     }
 
-    /** Function for finding a given key. If the key is present, it returns an
+    /** Function for finding a given key. If the key is present, it returns an 
      * iterator to the proper node, end() otherwise.
      * @param x The key.*/
     iterator find(const key_type &x)
@@ -237,7 +259,7 @@ public:
         return end();
     }
 
-    /** Function for finding a given key. If the key is present, it returns a
+    /** Function for finding a given key. If the key is present, it returns a 
      * costant iterator to the proper node, cend() otherwise.
      * @param x The key.*/
     const_iterator find(const key_type &x) const

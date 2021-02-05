@@ -166,6 +166,27 @@ int main()
     print_tree_from_iterator(it, bst_3);
     print_tree_from_iterator(cit, bst_3);
 
+    // TEST: Subscripting operator
+    std::cout << "--------------TEST: subscripting operator -------------------" << std::endl;
+    int key_to_subscript = 3;
+    int key_to_subscript_noexist = 7;
+    std::cout << "Original bst:                  " << bst_ << std::endl;
+    bst_[key_to_subscript] = 'p';
+    bst_[key_to_subscript_noexist] = 'i';
+    std::cout << "Subscripting bst with l-value: " << bst_ << std::endl;
+    bst_[1] = 'g';
+    bst_[8] = 'o';
+    std::cout << "Subscripting bst with r-value: " << bst_ << std::endl;
+
+    return 0;
+
+
+
+
+
+
+
+
     // TEST (BENCHMARK): Insertion time
     std::cout << "\n--------------TEST (BENCHMARK): Insertion time: -------------" << std::endl;
     std::size_t NUMBER_OF_NODES_INSERTION_BENCHMARK{10000};
