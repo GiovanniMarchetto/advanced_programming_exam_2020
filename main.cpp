@@ -170,13 +170,19 @@ int main()
     std::cout << "--------------TEST: subscripting operator -------------------" << std::endl;
     int key_to_subscript = 3;
     int key_to_subscript_noexist = 7;
-    std::cout << "Original bst:                  " << bst_ << std::endl;
+    std::cout << "Original tree:                  " << bst_ << std::endl;
     bst_[key_to_subscript] = 'p';
     bst_[key_to_subscript_noexist] = 'i';
-    std::cout << "Subscripting bst with l-value: " << bst_ << std::endl;
+    std::cout << "Subscripting tree with l-value: " << bst_ << std::endl;
     bst_[1] = 'g';
     bst_[8] = 'o';
-    std::cout << "Subscripting bst with r-value: " << bst_ << std::endl;
+    std::cout << "Subscripting tree with r-value: " << bst_ << std::endl;
+
+// TEST: Clear
+    std::cout << "--------------TEST: clear -----------------------------------" << std::endl;
+    std::cout << "Original tree: " << bst_ << std::endl;
+    bst_.clear();
+    std::cout << "Clear tree:    " << bst_ << std::endl;
 
     return 0;
 

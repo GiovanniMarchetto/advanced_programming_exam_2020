@@ -168,6 +168,13 @@ public:
         return private_insert(std::forward<Types>(args)...);
     }
 
+    /**Clear the content of the tree.*/
+    void clear()
+    {
+        set_tree_root_node();
+        size = 0;
+    }
+
     /** Unbalance the tree to the worst case. */
     void unbalance()
     {
