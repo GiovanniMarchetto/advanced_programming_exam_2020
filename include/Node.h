@@ -66,7 +66,8 @@ public:
     Node(std::pair<key_type, value_type> &&pair) : Node{std : move(pair.first), std::move(pair.second)} {};
 
     /** Returns a pointer to a (copy of the) representation of this instance as an std::pair.*/
-    std::pair<key_type, value_type> *get_pair() const { return new std::pair(key_type{key}, value_type{value}); }
+    std::pair<key_type, value_type>
+    *get_pair() const { return new std::pair<key_type, value_type>(key_type{key}, value_type{value}); }
 
     // ---END--- Compatibility with std::pair
 

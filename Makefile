@@ -9,12 +9,10 @@ CXX_FLAGS = -Wall -Wextra -g -std=c++17
 BUILD_DIR = bin
 
 # Define source directories where to find source files
-SOURCE_DIRS = ., ./src
-
-
+SRC_DIRS = . ./src ./test
 
 # Find all C++ files we want to compile
-SRCS = $(shell find $(SRC_DIRS) -name *.cpp)
+SRCS = $(shell find $(SRC_DIRS) -maxdepth 1 -path "*.cpp")
 
 # String substitution for every C++ file
 OBJS = $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
