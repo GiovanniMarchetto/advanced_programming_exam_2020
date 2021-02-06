@@ -35,8 +35,26 @@ class bst
     /** Getter for the root node. Returns a raw pointer.*/
     node *get_tree_root_node() const { return tree_root_node.get(); }
 
+    /** Release the root node. Returns a raw pointer and releases the ownership.*/
+    node *release_tree_root_node() { return tree_root_node.release(); }
+
     /** Setter: the root node of this instance will be set with the given raw pointer.*/
     void set_tree_root_node(node *const node = nullptr) { tree_root_node.reset(node); }
+
+    /** Releases the given node from its parent 
+     * or from the tree if it's the root node. 
+     * Warning: it returns an unmanaged raw pointer 
+     * to the released node. */
+    node *release_node(node *node_to_release)
+    {
+        if (node_to_release->get_parent() == nullptr)
+            return this->release_tree_root_node();
+
+        if (node_to_release->get_parent()->get_left() == node_to_release)
+            return node_to_release->get_parent()->release_left();
+
+        return node_to_release->get_parent()->release_right();
+    }
 
     /** Given a pointer to a node, this function return the leftmost
      * (minimum) node in the substree whose root is the specified node.*/
@@ -128,7 +146,7 @@ public:
                 curr = curr->get_right();
             else
             {
-                delete node;
+                delete node; // TODO : corretto delete?
                 return std::make_pair<iterator, bool>(iterator{prev}, false);
             }
         }
@@ -286,6 +304,57 @@ public:
             os << el << " ";
         os << "}";
         return os;
+    }
+
+    // Erases to_remove (and its children if it has any and they are managed smart pointers)
+    void transpose_subtree(node *to_remove, node *to_transplant)
+    {
+        node *parent = to_remove->get_parent();
+
+        if (parent == nullptr) //                       se to_remove non ha parent => to_remove è la root
+            set_tree_root_node(to_transplant);
+
+        else if (to_remove == parent->get_left()) //    se to_remove è il figlio sinistro del parent
+            parent->set_left(to_transplant);
+
+        else if (to_remove == parent->get_right()) //   se to_remove è il figlio destro del parent
+            parent->set_right(to_transplant);
+
+        if (to_transplant) //                            se to_transplant non è nullo
+            to_transplant->set_parent(parent);
+    }
+
+    /** Removes the element (if one exists) with the key equivalent to key.*/
+    void erase(const key_type &x)
+    {
+        node *to_erase = private_find(x);
+
+        if (to_erase == nullptr) // case 0: node to delete does not exist (wrong key provided)
+            return;
+
+        if (to_erase->get_left() == nullptr) // case 1: node to_erase has only the right child
+            transpose_subtree(to_erase, to_erase->release_right());
+
+        else if (to_erase->get_right() == nullptr) // case 2: node to_erase has only the left child
+            transpose_subtree(to_erase, to_erase->release_left());
+
+        else // case 3: node to_erase has both left and right children
+        {
+            node *min = release_node(get_minimum_left_node_in_subtree(to_erase->get_right()));
+
+            if (min->get_parent() != to_erase) // case 3ext: min is in the right subtree of node to_erase but is not its right child
+            {
+                transpose_subtree(min, min->release_right());
+                min->set_right(to_erase->release_right());
+                min->get_right()->set_parent(min);
+            }
+
+            node *left_child_of_to_erase = to_erase->release_left(); // Save the left child because transpose_subtree is going to erase to_erase
+            transpose_subtree(to_erase, min);
+            min->set_left(left_child_of_to_erase);
+            min->get_left()->set_parent(min);
+        }
+        --size;
     }
 
     /** Function for printing the structrure of the tree into a string

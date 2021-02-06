@@ -30,7 +30,7 @@ void print_tree_from_iterator(bst<char>::iterator &iterator, bst<char> &bst)
         ++iterator;
     }
     std::cout << std::endl;
-};
+}
 void print_tree_from_iterator(bst<char>::const_iterator &iterator, const bst<char> &bst)
 {
     while (iterator != bst.cend())
@@ -39,7 +39,7 @@ void print_tree_from_iterator(bst<char>::const_iterator &iterator, const bst<cha
         ++iterator;
     }
     std::cout << std::endl;
-};
+}
 
 // void create_vector_of_nodes (const std::size_t& number_of_nodes_to_create, std::vector<std::pair<int, char>>& vec) {
 
@@ -179,10 +179,16 @@ int main()
     std::cout << "Subscripting tree with r-value: " << bst_ << std::endl;
 
 // TEST: Clear
-    std::cout << "--------------TEST: clear -----------------------------------" << std::endl;
-    std::cout << "Original tree: " << bst_ << std::endl;
-    bst_.clear();
-    std::cout << "Clear tree:    " << bst_ << std::endl;
+    std::cout << "--------------TEST: clear/erase -----------------------------------" << std::endl;
+    bst<char> bst_1000{};
+    bst_1000.emplace(1,'u');
+    std::cout << "Original tree: " << bst_1000 << std::endl;
+    std::string str100{};
+    bst_3.erase(1);
+    std::cout << bst_1000.print_tree(str100) << std::endl;
+    std::cout << "One erase tree: " << bst_1000 << std::endl;
+    bst_3.clear();
+    std::cout << "Clear tree:    " << bst_3 << std::endl;
 
     return 0;
 

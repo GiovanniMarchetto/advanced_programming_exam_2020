@@ -37,6 +37,12 @@ public:
     /** Getter for the right children. Returns a raw pointer to the left child node.*/
     Node *get_right() const { return right.get(); }
 
+    /** Release the left children. Returns a raw pointer to the left child node and releases the ownership.*/
+    Node *release_left() { return left.release(); }
+
+    /** Release the right children. Returns a raw pointer to the right child node and releases the ownership.*/
+    Node *release_right() { return right.release(); }
+
     /** Getter for the parent. Returns a raw pointer to the parent node.*/
     Node *get_parent() const { return parent; }
 
@@ -53,19 +59,11 @@ public:
 
     /** Constructor: creates a new instance of this class starting from an std::pair.
      * Key and value from the given pair are copied.*/
-    Node(const std::pair<key_type, value_type> &pair) : Node{pair.first, pair.second} {
-                                                            // TODO : test
-
-                                                        };
+    Node(const std::pair<key_type, value_type> &pair) : Node{pair.first, pair.second} {};
 
     /** Constructor: creates a new instance of this class starting from an std::pair.
      * Key and value from the given pair are moved.*/
-    Node(std::pair<key_type, value_type> &&pair) : Node{std : move(pair.first), std::move(pair.second)}
-    {
-        // TODO : test
-        std::cout << "move" << std::endl;
-        //Node n{std::pair<std::string, std::node>("a",Node{})};
-    };
+    Node(std::pair<key_type, value_type> &&pair) : Node{std : move(pair.first), std::move(pair.second)} {};
 
     /** Returns a pointer to a (copy of the) representation of this instance as an std::pair.*/
     std::pair<key_type, value_type> *get_pair() const { return new std::pair(key_type{key}, value_type{value}); }
