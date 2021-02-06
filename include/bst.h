@@ -306,24 +306,6 @@ public:
         return os;
     }
 
-    // Erases to_remove (and its children if it has any and they are managed smart pointers)
-    void transpose_subtree(node *to_remove, node *to_transplant)
-    {
-        node *parent = to_remove->get_parent();
-
-        if (parent == nullptr) //                       se to_remove non ha parent => to_remove è la root
-            set_tree_root_node(to_transplant);
-
-        else if (to_remove == parent->get_left()) //    se to_remove è il figlio sinistro del parent
-            parent->set_left(to_transplant);
-
-        else if (to_remove == parent->get_right()) //   se to_remove è il figlio destro del parent
-            parent->set_right(to_transplant);
-
-        if (to_transplant) //                            se to_transplant non è nullo
-            to_transplant->set_parent(parent);
-    }
-
     /** Removes the element (if one exists) with the key equivalent to key.*/
     void erase(const key_type &x)
     {
@@ -331,6 +313,23 @@ public:
 
         if (to_erase == nullptr) // case 0: node to delete does not exist (wrong key provided)
             return;
+
+        // Erases to_remove (and its children if it has any and they are managed smart pointers)
+        auto transpose_subtree = [this](node *to_remove, node *to_transplant) {
+            node *parent = to_remove->get_parent();
+
+            if (parent == nullptr) //                       if to_remove hasn't parent node => to_remove is the root
+                set_tree_root_node(to_transplant);
+
+            else if (to_remove == parent->get_left()) //    if to_remove is the left child of its parent
+                parent->set_left(to_transplant);
+
+            else if (to_remove == parent->get_right()) //   if to_remove is the right child of its parent
+                parent->set_right(to_transplant);
+
+            if (to_transplant)
+                to_transplant->set_parent(parent);
+        };
 
         if (to_erase->get_left() == nullptr) // case 1: node to_erase has only the right child
             transpose_subtree(to_erase, to_erase->release_right());
