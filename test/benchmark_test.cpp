@@ -147,6 +147,16 @@ void iterate(F &lambda_fun)
         lambda_fun();
 }
 
+
+/** Generates and returns an std::pair<int, char> with random generated
+ * key and value.*/
+std::pair<int, char> generate_pair_random()
+{
+    int random_key{rand()};
+    char random_val{static_cast<char>(rand() % 26 + static_cast<int>('a'))}; // between 'a' and 'z'
+    return std::pair<int, char>(random_key, random_val);
+}
+
 template <typename value_type,
           typename key_type,
           typename OP>
@@ -177,10 +187,9 @@ insertion_test(std::ostream &os,
         while (vec.size() < number_of_nodes_to_create)
         {
             // Random generation of a pair
-            int random_key{rand()};
-            char random_val{static_cast<char>(rand() % 26 + static_cast<int>('a'))}; // between 'a' and 'z'
-            if (!find_pair_by_key_in_vector(random_key, vec))                        // if not already present
-                vec.push_back(std::pair<int, char>(random_key, random_val));         // move insert
+            std::pair<int,char> pair{generate_pair_random()};
+            if (!find_pair_by_key_in_vector(pair.first, vec)) // if not already present
+                vec.push_back(std::pair<int, char>(pair.first, pair.second));// move insert
         }
     };
     std::vector<std::pair<int, char>> vector_of_nodes_to_insert{};
@@ -227,28 +236,55 @@ insertion_test(std::ostream &os,
     return os;
 }
 
+
 template <typename value_type,
           typename key_type,
           typename OP>
-std::ostream &Benchmark_test<value_type, key_type, OP>::find_test(std::ostream &os, const key_t key_to_find)
+std::ostream &Benchmark_test<value_type, key_type, OP>::
+find_test(std::ostream &os)
 {
 
     os << HEADER_FOR_RESULTS;
 
-    auto actual_test = [this, &key_to_find, &os]() {
+    auto actual_test = [&os]() {
+
+        // bst and map that will be used in the test
+        bst<char, int> bst_{};
+        std::map<int, char> map_{};
+
+        /** Function to clear the given bst and map and then repopulate
+         * with the given number of nodes, randomly generated.
+         * Note: very expensive function.*/
+        auto create_random_bst_and_map = [&bst_, &map_](auto N) {
+            bst_.clear();
+            map_.clear();
+
+            while( bst_.get_size() < N )    // enforce the size (duplicates won't be inserted)
+            {
+                std::pair<int,char> pair{generate_pair_random()};
+                bst_.insert(pair);
+                map_.insert(pair);
+            }
+        };
 
         long int duration_search_in_our_tree{},
-        duration_search_in_std_map{};
+                 duration_search_in_std_map{};
+        for (std::size_t i{0}; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
         {
+            create_random_bst_and_map(i);
+            int random_key{rand()}; // key to find
+
             auto t1 = std::chrono::high_resolution_clock::now();
-            bst_.find(key_to_find);
+            bst_.find(random_key);
             auto t2 = std::chrono::high_resolution_clock::now();
             duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
             t1 = std::chrono::high_resolution_clock::now();
-            bst_.find(key_to_find);
+            bst_.find(random_key);
             t2 = std::chrono::high_resolution_clock::now();
             duration_search_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+
+            os << "\n" << i+1 << "," << duration_search_in_our_tree << "," << duration_search_in_std_map;
         }
     };
 

@@ -29,8 +29,6 @@ constexpr static unsigned int NUMBER_OF_ITERATIONS{5};  // TODO : set a reasonab
 /** Default value for the number of nodes of the BST to be used in a test.*/
 constexpr static size_t DEFAULT_NUMBER_OF_NODES_FOR_TEST{5};// TODO : set a reasonable big value
 
-/** Default value for a key to find in the BST.*/
-constexpr static size_t DEFAULT_KEY_FOR_TEST{10};
 
 /** Path of the directory where to save files with the test results.*/
 const static std::string OUTPUT_RESULTS_DIR{"./benchmark_results"};
@@ -50,7 +48,7 @@ template <typename value_type,
 class Benchmark_test
 {
     /** Header used in printed results*/
-    std::string HEADER_FOR_RESULTS{"n,bst [µs],std::map [µs]"};
+    const std::string HEADER_FOR_RESULTS{"size,bst [µs],std::map [µs]"};
     
     /** Instance of BST for tests.*/
     bst<value_type, key_type, OP> bst_;
@@ -75,11 +73,10 @@ public:
     std::ostream &insertion_test(std::ostream &os,
                                  const size_t NUMBER_OF_NODES_INSERTION_BENCHMARK = DEFAULT_NUMBER_OF_NODES_FOR_TEST);
 
-    /** Benchmark test for the time of finding a node in the BST, given the key.
+    /** Benchmark test for the time of finding a node by key in the BST.
      * @param os Output stream where to print test results.
-     * @param key_to_find The key of the node to find.
      */
-    std::ostream &find_test(std::ostream &os, const key_t key_to_find = DEFAULT_KEY_FOR_TEST);
+    std::ostream &find_test(std::ostream &os);
 
     /** Benchmark test for the time of balancing the BST.
      * @param os Output stream where to print test results.
