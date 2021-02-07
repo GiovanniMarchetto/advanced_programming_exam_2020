@@ -67,7 +67,7 @@ public:
 
     /** Returns a pointer to a (copy of the) representation of this instance as an std::pair.*/
     std::pair<key_type, value_type>
-    *get_pair() const { return new std::pair<key_type, value_type>(key_type{key}, value_type{value}); }
+        *get_pair() const { return new std::pair<key_type, value_type>(key_type{key}, value_type{value}); }
 
     // ---END--- Compatibility with std::pair
 

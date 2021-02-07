@@ -43,7 +43,6 @@ void print_tree_from_iterator(bst<char>::const_iterator &iterator, const bst<cha
     std::cout << std::endl;
 }
 
-
 int main()
 {
     std::cout << "--------------------------------" << std::endl;
@@ -166,13 +165,11 @@ int main()
 
     // TEST: Clear
     std::cout << "--------------TEST: clear/erase -----------------------------------" << std::endl;
-    bst<char> bst_1000{};
-    bst_1000.emplace(1,'u');
-    std::cout << "Original tree: " << bst_1000 << std::endl;
+    std::cout << "Original tree: " << bst_3 << std::endl;
     std::string str100{};
     bst_3.erase(1);
-    std::cout << bst_1000.print_tree(str100) << std::endl;
-    std::cout << "One erase tree: " << bst_1000 << std::endl;
+    std::cout << bst_3.print_tree(str100) << std::endl;
+    std::cout << "One erase tree: " << bst_3 << std::endl;
     bst_3.clear();
     std::cout << "Clear tree:    " << bst_3 << std::endl;
 
