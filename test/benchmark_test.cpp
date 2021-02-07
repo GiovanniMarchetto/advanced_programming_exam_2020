@@ -1,110 +1,36 @@
+#include "print_and_format.h"
 #include "benchmark_test.h"
-
-/** Simple utitilty function to properly format the titles of tests in an
- * uniform way.*/
-std::string formatting_title(std::string title = "", bool center = false)
-{
-    // TODO : to be optimized (use std::move?)
-
-    // Eventually segment the given title onto more lines
-    constexpr int MAX_CHARS_OF_TITLE_IN_A_LINE{60};                     // param
-    constexpr int INDENTATION_OF_FOLLOWING_LINES_IF_TITLE_TOO_LONG{15}; // param
-    constexpr int MAX_CHARS_OF_TITLE_IN_FOLLOWING_LINES{
-        MAX_CHARS_OF_TITLE_IN_A_LINE - INDENTATION_OF_FOLLOWING_LINES_IF_TITLE_TOO_LONG};
-
-    if (title == "")
-        title = std::string(MAX_CHARS_OF_TITLE_IN_A_LINE, '-');
-
-    if (center) // title must be centered
-    {
-        int remaining_padding{MAX_CHARS_OF_TITLE_IN_A_LINE -
-                              static_cast<int>(title.length())};
-        if (remaining_padding)
-        {
-            // Add spaces to center the title
-            std::string padding_for_centering(remaining_padding / 2, ' ');
-            title = padding_for_centering + title + padding_for_centering;
-        }
-    }
-
-    const std::string title_delimiter{"--------------"};
-    int number_of_chars_to_insert{static_cast<int>(title.length())};
-
-    bool entire_title_in_one_line{true};
-
-    if (title.length() > MAX_CHARS_OF_TITLE_IN_A_LINE)
-    {
-        entire_title_in_one_line = false;
-
-        const std::string indentation(INDENTATION_OF_FOLLOWING_LINES_IF_TITLE_TOO_LONG, ' ');
-        std::string str_buff{title.substr(MAX_CHARS_OF_TITLE_IN_A_LINE)};
-        title = title.substr(0, MAX_CHARS_OF_TITLE_IN_A_LINE);
-
-        while (str_buff.length() > 0)
-        {
-            number_of_chars_to_insert =
-                static_cast<int>(MAX_CHARS_OF_TITLE_IN_FOLLOWING_LINES >= str_buff.length()
-                                     ? str_buff.length()
-                                     : MAX_CHARS_OF_TITLE_IN_FOLLOWING_LINES);
-
-            if (number_of_chars_to_insert > 0)
-                title.append("\n" + indentation + str_buff.substr(0, number_of_chars_to_insert)); // TODO : substring with move?
-            str_buff = str_buff.substr(number_of_chars_to_insert);
-        }
-    }
-
-    title = std::regex_replace(title, std::regex("\n"), title_delimiter + "\n" + title_delimiter);
-
-    {
-        // add spaces between and of the string and start of title
-        // delimiter in order to have alignment over different lines
-        int number_of_spaces_to_add{MAX_CHARS_OF_TITLE_IN_A_LINE - number_of_chars_to_insert};
-        if (!entire_title_in_one_line)
-            number_of_spaces_to_add -= INDENTATION_OF_FOLLOWING_LINES_IF_TITLE_TOO_LONG; // subtract the indentation for lines following the first
-
-        if (number_of_spaces_to_add > 0)
-        {
-            std::string spaces_to_add = std::string(number_of_spaces_to_add, ' ');
-            title.append(spaces_to_add);
-        }
-    }
-
-    return title_delimiter + title + title_delimiter;
-}
 
 void benchmark_test(bool to_file)
 {
 
-    if( to_file )   // results will be print to a file
+    if (to_file) // results will be print to a file
     {
         // Remove the directory containing old results (if it exists)
         std::filesystem::remove_all(OUTPUT_RESULTS_DIR);
 
         // Create dir for results
-        std::filesystem::create_directory(OUTPUT_RESULTS_DIR);    // TODO : permission of the directory??
+        std::filesystem::create_directory(OUTPUT_RESULTS_DIR); // TODO : permission of the directory??
     }
-    
-    
+
     std::ofstream f; // fstream just declared in this scope
 
-    /** Returns the output stream: if to_file is true, then the output stream 
+    /** Returns the output stream: if to_file is true, then the output stream
      * to the file with the name given as argument will be set. If the file
      * does not exist, it will be created, otherwise it will be replaced.
      * @param filename The string with the name of the file wher to save the
      *                  results, withou neither the full path nor the file
      *                  extension.*/
-    auto get_ostream = [to_file, &f] (const std::string &filename) -> std::ostream& {
-        
-        if(!to_file)
+    auto get_ostream = [to_file, &f](const std::string &filename) -> std::ostream & {
+        if (!to_file)
             return std::cout;
 
         // Otherwis, write to file
-        std::ofstream tmp{OUTPUT_RESULTS_DIR + "/" + filename + ".csv"};    //previous content will be overwritten
+        std::ofstream tmp{OUTPUT_RESULTS_DIR + "/" + filename + ".csv"}; //previous content will be overwritten
         f = std::move(tmp);
         // Note: fstream will be closed by the dctor
         return f;
     };
-
 
     Benchmark_test<char> benchmark_test_{};
     std::cout << std::endl;
@@ -113,9 +39,9 @@ void benchmark_test(bool to_file)
     std::cout << formatting_title("##### BENCHMARK TESTS ####", true) << "\n";
     std::cout << formatting_title() << "\n";
     std::cout << NUMBER_OF_ITERATIONS << " iterations will be executed for each test.\n";
-    if( to_file )
+    if (to_file)
         std::cout << "Results will be written to files in the directory " +
-                     OUTPUT_RESULTS_DIR + "\n";
+                         OUTPUT_RESULTS_DIR + "\n";
 
     std::cout << formatting_title("## Insertion  ") << "\n";
     benchmark_test_.insertion_test(get_ostream("insertion"));
@@ -140,13 +66,12 @@ void benchmark_test(bool to_file)
 
 /** Receives a lambda function as argument and executes it iteratively
  * for NUMBER_OF_ITERATIONS times.*/
-template<typename F>
+template <typename F>
 void iterate(F &lambda_fun)
 {
-    for(size_t i{0}; i<NUMBER_OF_ITERATIONS; ++i)
+    for (size_t i{0}; i < NUMBER_OF_ITERATIONS; ++i)
         lambda_fun();
 }
-
 
 /** Generates and returns an std::pair<int, char> with random generated
  * key and value.*/
@@ -157,7 +82,6 @@ std::pair<int, char> generate_pair_random()
     return std::pair<int, char>(random_key, random_val);
 }
 
-
 /** Function to clear the given bst and map and then repopulate
  * with the given number of nodes, randomly generated.
  * Note: very expensive function.
@@ -166,30 +90,30 @@ std::pair<int, char> generate_pair_random()
 template <typename value_type,
           typename key_type,
           typename OP>
-void create_random_bst_and_map (bst<value_type, key_type, OP> &bst_,
-                                std::map<key_type, value_type> &map_,
-                                size_t N,
-                                bool only_bst=false) {
+void create_random_bst_and_map(bst<value_type, key_type, OP> &bst_,
+                               std::map<key_type, value_type> &map_,
+                               size_t N,
+                               bool only_bst = false)
+{
     bst_.clear();
-    if(!only_bst)
+    if (!only_bst)
         map_.clear();
 
-    while( bst_.get_size() < N )    // enforce the size (duplicates won't be inserted)
+    while (bst_.get_size() < N) // enforce the size (duplicates won't be inserted)
     {
-        std::pair<int,char> pair{generate_pair_random()};
+        std::pair<int, char> pair{generate_pair_random()};
         bst_.insert(pair);
-        if(!only_bst)
+        if (!only_bst)
             map_.insert(pair);
     }
 };
-
 
 template <typename value_type,
           typename key_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::
-insertion_test(std::ostream &os,
-               const size_t NUMBER_OF_NODES_INSERTION_BENCHMARK)
+    insertion_test(std::ostream &os,
+                   const size_t NUMBER_OF_NODES_INSERTION_BENCHMARK)
 {
 
     if (!(std::is_same<key_type, int>::value &&
@@ -214,9 +138,9 @@ insertion_test(std::ostream &os,
         while (vec.size() < number_of_nodes_to_create)
         {
             // Random generation of a pair
-            std::pair<int,char> pair{generate_pair_random()};
-            if (!find_pair_by_key_in_vector(pair.first, vec)) // if not already present
-                vec.push_back(std::pair<int, char>(pair.first, pair.second));// move insert
+            std::pair<int, char> pair{generate_pair_random()};
+            if (!find_pair_by_key_in_vector(pair.first, vec))                 // if not already present
+                vec.push_back(std::pair<int, char>(pair.first, pair.second)); // move insert
         }
     };
     std::vector<std::pair<int, char>> vector_of_nodes_to_insert{};
@@ -225,11 +149,10 @@ insertion_test(std::ostream &os,
     os << HEADER_FOR_RESULTS;
 
     auto actual_test = [this, NUMBER_OF_NODES_INSERTION_BENCHMARK, &vector_of_nodes_to_insert, &os]() {
-        
-        bst_.clear();   // Clear the bst before inserting
+        bst_.clear(); // Clear the bst before inserting
 
         long int duration_insertion_in_our_tree{},
-        duration_insertion_in_std_map{};
+            duration_insertion_in_std_map{};
         for (std::size_t i{0}; i < NUMBER_OF_NODES_INSERTION_BENCHMARK; ++i)
         {
             std::pair<int, char> pair_to_insert{vector_of_nodes_to_insert.at(i)}; // the pair is temporarely saved here just before being inserted
@@ -247,8 +170,8 @@ insertion_test(std::ostream &os,
             duration_insertion_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
             // Printing results for this iteration
-            os << "\n" << i+1 << "," << duration_insertion_in_our_tree << "," << duration_insertion_in_std_map;
-
+            os << "\n"
+               << i + 1 << "," << duration_insertion_in_our_tree << "," << duration_insertion_in_std_map;
         }
     };
 
@@ -263,7 +186,6 @@ insertion_test(std::ostream &os,
     return os;
 }
 
-
 /** Finding test support function. This function performs the finding test
  * allowing to specify if balancing the tree before running the test: it can
  * be specified thanks to the parameter.*/
@@ -271,25 +193,24 @@ template <typename value_type,
           typename key_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::
-private_find_test(std::ostream &os, bool balance_before_test)   // TODO : make static
+    private_find_test(std::ostream &os, bool balance_before_test) // TODO : make static
 {
 
     os << HEADER_FOR_RESULTS;
 
     auto actual_test = [&os, balance_before_test]() {
-
         // bst and map that will be used in the test
         bst<char, int> bst_{};
         std::map<int, char> map_{};
 
         long int duration_search_in_our_tree{},
-                 duration_search_in_std_map{};
+            duration_search_in_std_map{};
         for (std::size_t i{0}; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
         {
             create_random_bst_and_map(bst_, map_, i);
             int random_key{rand()}; // key to find
 
-            if( balance_before_test )
+            if (balance_before_test)
                 bst_.balance();
 
             auto t1 = std::chrono::high_resolution_clock::now();
@@ -302,7 +223,8 @@ private_find_test(std::ostream &os, bool balance_before_test)   // TODO : make s
             t2 = std::chrono::high_resolution_clock::now();
             duration_search_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
-            os << "\n" << i+1 << "," << duration_search_in_our_tree << "," << duration_search_in_std_map;
+            os << "\n"
+               << i + 1 << "," << duration_search_in_our_tree << "," << duration_search_in_std_map;
         }
     };
 
@@ -315,7 +237,7 @@ template <typename value_type,
           typename key_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::
-find_test(std::ostream &os)
+    find_test(std::ostream &os)
 {
     return private_find_test(os);
 }
@@ -324,7 +246,7 @@ template <typename value_type,
           typename key_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::
-balance_and_find_test(std::ostream &os)
+    balance_and_find_test(std::ostream &os)
 {
     return private_find_test(os, false);
 }
@@ -333,12 +255,11 @@ template <typename value_type,
           typename key_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::
-balancing_test(std::ostream &os) // TODO: make static
+    balancing_test(std::ostream &os) // TODO: make static
 {
     os << HEADER_FOR_RESULTS;
 
     auto actual_test = [&os]() {
-
         bst<char, int> bst_{};
         std::map<int, char> map_{};
 
@@ -353,7 +274,8 @@ balancing_test(std::ostream &os) // TODO: make static
             duration_balancing_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
             // os << "Time for balancing the tree (" << bst_.get_size() << " nodes in the tree): " << duration_balancing_our_tree << " us." << std::endl;
 
-            os << "\n" << i+1 << "," << duration_balancing_our_tree;
+            os << "\n"
+               << i + 1 << "," << duration_balancing_our_tree;
         }
     };
 
@@ -367,22 +289,21 @@ template <typename value_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::copy_bst_test(std::ostream &os)
 {
-    
+
     os << HEADER_FOR_RESULTS;
 
     auto actual_test = [&os]() {
-
         // bst and map that will be used in the test
         bst<char, int> bst_{};
         std::map<int, char> map_{};
 
         long int duration_copy_in_our_tree{},
-                 duration_copy_in_std_map{};
-        
+            duration_copy_in_std_map{};
+
         for (std::size_t i{0}; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
         {
             create_random_bst_and_map(bst_, map_, i);
-            
+
             auto t1 = std::chrono::high_resolution_clock::now();
             bst<value_type, key_type, OP> bst_copy{bst_};
             auto t2 = std::chrono::high_resolution_clock::now();
@@ -393,10 +314,10 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::copy_bst_test(std::ostre
             t2 = std::chrono::high_resolution_clock::now();
             duration_copy_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
-            os << "\n" << i+1 << "," << duration_copy_in_our_tree << "," << duration_copy_in_std_map;
+            os << "\n"
+               << i + 1 << "," << duration_copy_in_our_tree << "," << duration_copy_in_std_map;
         }
     };
-
 
     iterate(actual_test);
 

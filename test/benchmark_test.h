@@ -1,10 +1,8 @@
 // TODO: check which of the following includes are really required
 #include <iostream>
-#include <fstream>     // for writing to file
-#include <filesystem>  // create_directory
+#include <fstream>    // for writing to file
+#include <filesystem> // create_directory
 #include <utility>
-#include <string>
-#include <regex> // regex used for substring replacement
 // #include "Node.h"
 #include "../include/bst.h"
 #include <vector>
@@ -19,29 +17,20 @@
 #include <map>
 #include <chrono>
 
-
-
-
 // --------  CONFIGURABLE PARAMETERS FOR TESTS         --------
 
 /** Number of iterations to run a code fragment when
  * statistical information are required.*/
-constexpr static unsigned int NUMBER_OF_ITERATIONS{5};  // TODO : set a reasonable big value
+constexpr static unsigned int NUMBER_OF_ITERATIONS{5}; // TODO : set a reasonable big value
 
 /** Default value for the number of nodes of the BST to be used in a test.*/
-constexpr static size_t DEFAULT_NUMBER_OF_NODES_FOR_TEST{100};// TODO : set a reasonable big value
-
+constexpr static size_t DEFAULT_NUMBER_OF_NODES_FOR_TEST{100}; // TODO : set a reasonable big value
 
 /** Path of the directory where to save files with the test results.*/
 const static std::string OUTPUT_RESULTS_DIR{"./benchmark_results"};
 
 // --------  END OF CONFIGURABLE PARAMETERS FOR TESTS  --------
 // --------  DO NOT MODIFY UNDER THIS LINE             --------
-
-
-
-
-
 
 /** Struct containing all benchmark tests. Note: each test is
  * run separately from others and new instances are used for
@@ -53,13 +42,12 @@ class Benchmark_test
 {
     /** Header used in printed results*/
     const std::string HEADER_FOR_RESULTS{"size,bst [ns],std::map [ns]"};
-    
+
     /** Instance of BST for tests.*/
     bst<value_type, key_type, OP> bst_;
 
     /** Instance of std::map used for comparisons.*/
     std::map<key_type, value_type> map_;
-
 
     /** Finding test support function. This function performs the finding test
      * allowing to specify if balancing the tree before running the test: it can
@@ -67,7 +55,6 @@ class Benchmark_test
     std::ostream &private_find_test(std::ostream &, bool balance_before_test = false);
 
 public:
-
     /** Constructor. Sets up the environment for a test.*/
     Benchmark_test() : bst_{} {};
 
@@ -99,7 +86,6 @@ public:
      */
     std::ostream &balance_and_find_test(std::ostream &os);
 
-
     /** Benchmark test for the time of copying the BST.
      * @param os Output stream where to print test results.
      */
@@ -110,4 +96,4 @@ public:
  * according to the boolean flag given as argument: if the flag is true, then
  * a file with results is created, otherwise the std:.out will be used.
  * The flag is set to true as default.*/
-void benchmark_test(bool to_file=true);
+void benchmark_test(bool to_file = true);
