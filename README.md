@@ -16,6 +16,10 @@ executable files;
   with *Valgrind*;
 - `make allv` is a shortcut for `make all_with_valgrind`.
 
+Benchmark tests are available: parameters can be configured from the source file
+*test/benchmark_test.h*. Benchmark results are available as CSV files in
+the directory specified as parameter in the source file *test/benchmark_test.h* . 
+
 ## Short report
 ### What we did
 We used the 'Pair Programming' technique: one at a time was coding and the others

@@ -130,7 +130,7 @@ void benchmark_test(bool to_file)
     std::cout << "\n";
 
     std::cout << formatting_title("## Finding a node by key, after balancing the BST  ") << "\n";
-    benchmark_test_.find_test(get_ostream("find_by_key_after_balancing"));
+    benchmark_test_.balance_and_find_test(get_ostream("find_by_key_after_balancing"));
     std::cout << std::endl;
 
     std::cout << formatting_title("## Copying the BST  ") << "\n";
@@ -156,6 +156,33 @@ std::pair<int, char> generate_pair_random()
     char random_val{static_cast<char>(rand() % 26 + static_cast<int>('a'))}; // between 'a' and 'z'
     return std::pair<int, char>(random_key, random_val);
 }
+
+
+/** Function to clear the given bst and map and then repopulate
+ * with the given number of nodes, randomly generated.
+ * Note: very expensive function.
+ * If the flag only_bst is set to true, operations will affect only
+ * the given BST.*/
+template <typename value_type,
+          typename key_type,
+          typename OP>
+void create_random_bst_and_map (bst<value_type, key_type, OP> &bst_,
+                                std::map<key_type, value_type> &map_,
+                                size_t N,
+                                bool only_bst=false) {
+    bst_.clear();
+    if(!only_bst)
+        map_.clear();
+
+    while( bst_.get_size() < N )    // enforce the size (duplicates won't be inserted)
+    {
+        std::pair<int,char> pair{generate_pair_random()};
+        bst_.insert(pair);
+        if(!only_bst)
+            map_.insert(pair);
+    }
+};
+
 
 template <typename value_type,
           typename key_type,
@@ -211,13 +238,13 @@ insertion_test(std::ostream &os,
             auto t1 = std::chrono::high_resolution_clock::now();
             bst_.insert(pair_to_insert); // pair is copied
             auto t2 = std::chrono::high_resolution_clock::now();
-            duration_insertion_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            duration_insertion_in_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
             // Insertion in std::map
             t1 = std::chrono::high_resolution_clock::now();
             map_.insert(pair_to_insert); // pair is copied
             t2 = std::chrono::high_resolution_clock::now();
-            duration_insertion_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            duration_insertion_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
             // Printing results for this iteration
             os << "\n" << i+1 << "," << duration_insertion_in_our_tree << "," << duration_insertion_in_std_map;
@@ -237,52 +264,43 @@ insertion_test(std::ostream &os,
 }
 
 
+/** Finding test support function. This function performs the finding test
+ * allowing to specify if balancing the tree before running the test: it can
+ * be specified thanks to the parameter.*/
 template <typename value_type,
           typename key_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::
-find_test(std::ostream &os)
+private_find_test(std::ostream &os, bool balance_before_test)   // TODO : make static
 {
 
     os << HEADER_FOR_RESULTS;
 
-    auto actual_test = [&os]() {
+    auto actual_test = [&os, balance_before_test]() {
 
         // bst and map that will be used in the test
         bst<char, int> bst_{};
         std::map<int, char> map_{};
 
-        /** Function to clear the given bst and map and then repopulate
-         * with the given number of nodes, randomly generated.
-         * Note: very expensive function.*/
-        auto create_random_bst_and_map = [&bst_, &map_](auto N) {
-            bst_.clear();
-            map_.clear();
-
-            while( bst_.get_size() < N )    // enforce the size (duplicates won't be inserted)
-            {
-                std::pair<int,char> pair{generate_pair_random()};
-                bst_.insert(pair);
-                map_.insert(pair);
-            }
-        };
-
         long int duration_search_in_our_tree{},
                  duration_search_in_std_map{};
         for (std::size_t i{0}; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
         {
-            create_random_bst_and_map(i);
+            create_random_bst_and_map(bst_, map_, i);
             int random_key{rand()}; // key to find
+
+            if( balance_before_test )
+                bst_.balance();
 
             auto t1 = std::chrono::high_resolution_clock::now();
             bst_.find(random_key);
             auto t2 = std::chrono::high_resolution_clock::now();
-            duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
             t1 = std::chrono::high_resolution_clock::now();
             bst_.find(random_key);
             t2 = std::chrono::high_resolution_clock::now();
-            duration_search_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            duration_search_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
             os << "\n" << i+1 << "," << duration_search_in_our_tree << "," << duration_search_in_std_map;
         }
@@ -290,28 +308,56 @@ find_test(std::ostream &os)
 
     iterate(actual_test);
 
-
-
-    // os << "Time for finding a key (" << bst_.get_size() << " nodes in the tree): " << duration_search_in_our_tree << " us.\n";
-    // os << "Time for finding a key (" << bst_.get_size() << " nodes in the std::map): " << duration_search_in_std_map << " us."
-    //    << std::endl;
-
     return os;
 }
 
 template <typename value_type,
           typename key_type,
           typename OP>
-std::ostream &Benchmark_test<value_type, key_type, OP>::balancing_test(std::ostream &os)
+std::ostream &Benchmark_test<value_type, key_type, OP>::
+find_test(std::ostream &os)
 {
-    long int duration_balancing_our_tree{};
+    return private_find_test(os);
+}
 
-    auto t1 = std::chrono::high_resolution_clock::now();
-    bst_.balance();
-    auto t2 = std::chrono::high_resolution_clock::now();
+template <typename value_type,
+          typename key_type,
+          typename OP>
+std::ostream &Benchmark_test<value_type, key_type, OP>::
+balance_and_find_test(std::ostream &os)
+{
+    return private_find_test(os, false);
+}
 
-    duration_balancing_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-    os << "Time for balancing the tree (" << bst_.get_size() << " nodes in the tree): " << duration_balancing_our_tree << " us." << std::endl;
+template <typename value_type,
+          typename key_type,
+          typename OP>
+std::ostream &Benchmark_test<value_type, key_type, OP>::
+balancing_test(std::ostream &os) // TODO: make static
+{
+    os << HEADER_FOR_RESULTS;
+
+    auto actual_test = [&os]() {
+
+        bst<char, int> bst_{};
+        std::map<int, char> map_{};
+
+        long int duration_balancing_our_tree{};
+        for (std::size_t i{0}; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
+        {
+            create_random_bst_and_map(bst_, map_, i, true);
+            auto t1 = std::chrono::high_resolution_clock::now();
+            bst_.balance();
+            auto t2 = std::chrono::high_resolution_clock::now();
+
+            duration_balancing_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+            // os << "Time for balancing the tree (" << bst_.get_size() << " nodes in the tree): " << duration_balancing_our_tree << " us." << std::endl;
+
+            os << "\n" << i+1 << "," << duration_balancing_our_tree;
+        }
+    };
+
+    iterate(actual_test);
 
     return os;
 }
@@ -321,22 +367,38 @@ template <typename value_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::copy_bst_test(std::ostream &os)
 {
-    long int duration_copy_in_our_tree{},
-        duration_copy_in_std_map{};
+    
+    os << HEADER_FOR_RESULTS;
 
-    auto t1 = std::chrono::high_resolution_clock::now();
-    bst<value_type, key_type, OP> bst_copy{bst_};
-    auto t2 = std::chrono::high_resolution_clock::now();
-    duration_copy_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+    auto actual_test = [&os]() {
 
-    t1 = std::chrono::high_resolution_clock::now();
-    std::map<key_type, value_type> map_copy{map_};
-    t2 = std::chrono::high_resolution_clock::now();
-    duration_copy_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+        // bst and map that will be used in the test
+        bst<char, int> bst_{};
+        std::map<int, char> map_{};
 
-    os << "Time for deep copy of our tree (" << bst_copy.get_size() << " nodes in the tree): " << duration_copy_in_our_tree << " us.\n";
-    os << "Time for deep copy of std::map (" << bst_copy.get_size() << " nodes in the std::map): " << duration_copy_in_std_map << " us.\n\n"
-       << std::endl;
+        long int duration_copy_in_our_tree{},
+                 duration_copy_in_std_map{};
+        
+        for (std::size_t i{0}; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
+        {
+            create_random_bst_and_map(bst_, map_, i);
+            
+            auto t1 = std::chrono::high_resolution_clock::now();
+            bst<value_type, key_type, OP> bst_copy{bst_};
+            auto t2 = std::chrono::high_resolution_clock::now();
+            duration_copy_in_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+
+            t1 = std::chrono::high_resolution_clock::now();
+            std::map<key_type, value_type> map_copy{map_};
+            t2 = std::chrono::high_resolution_clock::now();
+            duration_copy_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+
+            os << "\n" << i+1 << "," << duration_copy_in_our_tree << "," << duration_copy_in_std_map;
+        }
+    };
+
+
+    iterate(actual_test);
 
     return os;
 }
