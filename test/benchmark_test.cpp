@@ -72,41 +72,87 @@ std::string formatting_title(std::string title = "", bool center = false)
     return title_delimiter + title + title_delimiter;
 }
 
-void benchmark_test()
+void benchmark_test(bool to_file)
 {
-    constexpr size_t NUMBER_OF_NODES{1000};
+
+    if( to_file )   // results will be print to a file
+    {
+        // Remove the directory containing old results (if it exists)
+        std::filesystem::remove_all(OUTPUT_RESULTS_DIR);
+
+        // Create dir for results
+        std::filesystem::create_directory(OUTPUT_RESULTS_DIR);    // TODO : permission of the directory??
+    }
+    
+    
+    std::ofstream f; // fstream just declared in this scope
+
+    /** Returns the output stream: if to_file is true, then the output stream 
+     * to the file with the name given as argument will be set. If the file
+     * does not exist, it will be created, otherwise it will be replaced.
+     * @param filename The string with the name of the file wher to save the
+     *                  results, withou neither the full path nor the file
+     *                  extension.*/
+    auto get_ostream = [to_file, &f] (const std::string &filename) -> std::ostream& {
+        
+        if(!to_file)
+            return std::cout;
+
+        // Otherwis, write to file
+        std::ofstream tmp{OUTPUT_RESULTS_DIR + "/" + filename + ".csv"};    //previous content will be overwritten
+        f = std::move(tmp);
+        // Note: fstream will be closed by the dctor
+        return f;
+    };
+
+
     Benchmark_test<char> benchmark_test_{};
     std::cout << std::endl;
 
-    std::cout << formatting_title() << std::endl;
-    std::cout << formatting_title("##### BENCHMARK TESTS ####", true) << std::endl;
-    std::cout << formatting_title() << std::endl;
+    std::cout << formatting_title() << "\n";
+    std::cout << formatting_title("##### BENCHMARK TESTS ####", true) << "\n";
+    std::cout << formatting_title() << "\n";
+    std::cout << NUMBER_OF_ITERATIONS << " iterations will be executed for each test.\n";
+    if( to_file )
+        std::cout << "Results will be written to files in the directory " +
+                     OUTPUT_RESULTS_DIR + "\n";
 
-    std::cout << formatting_title("## Insertion  ") << std::endl;
-    benchmark_test_.insertion_test(std::cout, NUMBER_OF_NODES) << std::endl;
+    std::cout << formatting_title("## Insertion  ") << "\n";
+    benchmark_test_.insertion_test(get_ostream("insertion"));
+    std::cout << "\n";
+
+    std::cout << formatting_title("## Finding a node by key  ") << "\n";
+    benchmark_test_.find_test(get_ostream("find_by_key"));
+    std::cout << "\n";
+
+    std::cout << formatting_title("## Balancing the tree  ") << "\n";
+    benchmark_test_.balancing_test(get_ostream("balancing"));
+    std::cout << "\n";
+
+    std::cout << formatting_title("## Finding a node by key, after balancing the BST  ") << "\n";
+    benchmark_test_.find_test(get_ostream("find_by_key_after_balancing"));
     std::cout << std::endl;
 
-    std::cout << formatting_title("## Finding a node by key  ") << std::endl;
-    benchmark_test_.find_test(std::cout) << std::endl;
+    std::cout << formatting_title("## Copying the BST  ") << "\n";
+    benchmark_test_.copy_bst_test(get_ostream("copy"));
     std::cout << std::endl;
+}
 
-    std::cout << formatting_title("## Balancing the tree  ") << std::endl;
-    benchmark_test_.balancing_test(std::cout) << std::endl;
-    std::cout << std::endl;
-
-    std::cout << formatting_title("## Finding a node by key, after balancing the BST  ") << std::endl;
-    benchmark_test_.find_test(std::cout) << std::endl;
-    std::cout << std::endl;
-
-    std::cout << formatting_title("## Copying the BST  ") << std::endl;
-    benchmark_test_.copy_bst_test(std::cout) << std::endl;
-    std::cout << std::endl;
+/** Receives a lambda function as argument and executes it iteratively
+ * for NUMBER_OF_ITERATIONS times.*/
+template<typename F>
+void iterate(F &lambda_fun)
+{
+    for(size_t i{0}; i<NUMBER_OF_ITERATIONS; ++i)
+        lambda_fun();
 }
 
 template <typename value_type,
           typename key_type,
           typename OP>
-std::ostream &Benchmark_test<value_type, key_type, OP>::insertion_test(std::ostream &os, const size_t NUMBER_OF_NODES_INSERTION_BENCHMARK)
+std::ostream &Benchmark_test<value_type, key_type, OP>::
+insertion_test(std::ostream &os,
+               const size_t NUMBER_OF_NODES_INSERTION_BENCHMARK)
 {
 
     if (!(std::is_same<key_type, int>::value &&
@@ -140,29 +186,43 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::insertion_test(std::ostr
     std::vector<std::pair<int, char>> vector_of_nodes_to_insert{};
     create_vector_of_nodes(NUMBER_OF_NODES_INSERTION_BENCHMARK, vector_of_nodes_to_insert);
 
-    long int duration_insertion_in_our_tree{},
+    os << HEADER_FOR_RESULTS;
+
+    auto actual_test = [this, NUMBER_OF_NODES_INSERTION_BENCHMARK, &vector_of_nodes_to_insert, &os]() {
+        
+        bst_.clear();   // Clear the bst before inserting
+
+        long int duration_insertion_in_our_tree{},
         duration_insertion_in_std_map{};
-    for (std::size_t i{0}; i < NUMBER_OF_NODES_INSERTION_BENCHMARK; ++i)
-    {
-        std::pair<int, char> pair_to_insert{vector_of_nodes_to_insert.at(i)}; // the pair is temporarely saved here just before being inserted
+        for (std::size_t i{0}; i < NUMBER_OF_NODES_INSERTION_BENCHMARK; ++i)
+        {
+            std::pair<int, char> pair_to_insert{vector_of_nodes_to_insert.at(i)}; // the pair is temporarely saved here just before being inserted
 
-        // Insertion in our tree
-        auto t1 = std::chrono::high_resolution_clock::now();
-        bst_.insert(pair_to_insert); // pair is copied
-        auto t2 = std::chrono::high_resolution_clock::now();
-        duration_insertion_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            // Insertion in our tree
+            auto t1 = std::chrono::high_resolution_clock::now();
+            bst_.insert(pair_to_insert); // pair is copied
+            auto t2 = std::chrono::high_resolution_clock::now();
+            duration_insertion_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
-        // Insertion in std::map
-        t1 = std::chrono::high_resolution_clock::now();
-        map_.insert(pair_to_insert); // pair is copied
-        t2 = std::chrono::high_resolution_clock::now();
-        duration_insertion_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-    }
+            // Insertion in std::map
+            t1 = std::chrono::high_resolution_clock::now();
+            map_.insert(pair_to_insert); // pair is copied
+            t2 = std::chrono::high_resolution_clock::now();
+            duration_insertion_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
-    os << NUMBER_OF_NODES_INSERTION_BENCHMARK << " nodes have been inserted into the tree in " << duration_insertion_in_our_tree << " us. ";
-    os << " Average insertion time: " << (duration_insertion_in_our_tree / (0.0 + NUMBER_OF_NODES_INSERTION_BENCHMARK)) << " us.\n";
-    os << NUMBER_OF_NODES_INSERTION_BENCHMARK << " nodes have been inserted into an std::map in " << duration_insertion_in_std_map << " us. ";
-    os << " Average insertion time: " << (duration_insertion_in_std_map / (0.0 + NUMBER_OF_NODES_INSERTION_BENCHMARK)) << " us.";
+            // Printing results for this iteration
+            os << "\n" << i+1 << "," << duration_insertion_in_our_tree << "," << duration_insertion_in_std_map;
+
+        }
+    };
+
+    iterate(actual_test);
+
+    // os << "\n";
+    // os << NUMBER_OF_NODES_INSERTION_BENCHMARK << " nodes have been inserted into the tree in " << duration_insertion_in_our_tree << " us. ";
+    // os << " Average insertion time: " << (duration_insertion_in_our_tree / (0.0 + NUMBER_OF_NODES_INSERTION_BENCHMARK)) << " us.\n";
+    // os << NUMBER_OF_NODES_INSERTION_BENCHMARK << " nodes have been inserted into an std::map in " << duration_insertion_in_std_map << " us. ";
+    // os << " Average insertion time: " << (duration_insertion_in_std_map / (0.0 + NUMBER_OF_NODES_INSERTION_BENCHMARK)) << " us.";
 
     return os;
 }
@@ -172,23 +232,33 @@ template <typename value_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::find_test(std::ostream &os, const key_t key_to_find)
 {
-    long int duration_search_in_our_tree{},
+
+    os << HEADER_FOR_RESULTS;
+
+    auto actual_test = [this, &key_to_find, &os]() {
+
+        long int duration_search_in_our_tree{},
         duration_search_in_std_map{};
-    {
-        auto t1 = std::chrono::high_resolution_clock::now();
-        bst_.find(key_to_find);
-        auto t2 = std::chrono::high_resolution_clock::now();
-        duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+        {
+            auto t1 = std::chrono::high_resolution_clock::now();
+            bst_.find(key_to_find);
+            auto t2 = std::chrono::high_resolution_clock::now();
+            duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
-        t1 = std::chrono::high_resolution_clock::now();
-        bst_.find(key_to_find);
-        t2 = std::chrono::high_resolution_clock::now();
-        duration_search_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
-    }
+            t1 = std::chrono::high_resolution_clock::now();
+            bst_.find(key_to_find);
+            t2 = std::chrono::high_resolution_clock::now();
+            duration_search_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+        }
+    };
 
-    os << "Time for finding a key (" << bst_.get_size() << " nodes in the tree): " << duration_search_in_our_tree << " us.\n";
-    os << "Time for finding a key (" << bst_.get_size() << " nodes in the std::map): " << duration_search_in_std_map << " us."
-       << std::endl;
+    iterate(actual_test);
+
+
+
+    // os << "Time for finding a key (" << bst_.get_size() << " nodes in the tree): " << duration_search_in_our_tree << " us.\n";
+    // os << "Time for finding a key (" << bst_.get_size() << " nodes in the std::map): " << duration_search_in_std_map << " us."
+    //    << std::endl;
 
     return os;
 }
