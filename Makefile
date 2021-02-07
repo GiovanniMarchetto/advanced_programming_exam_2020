@@ -9,7 +9,7 @@ CXX_FLAGS = -Wall -Wextra -g -std=c++17
 BUILD_DIR = bin
 
 # Define source directories where to find source files
-SRC_DIRS = . ./src ./test
+SRC_DIRS = ./src ./test ./include
 
 # Find all C++ files we want to compile
 SRCS = $(shell find $(SRC_DIRS) -maxdepth 1 -path "*.cpp")
@@ -21,10 +21,10 @@ OBJS = $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
 EXECS = $(OBJS:.o=.x)
 
 # Every folder containing source files will need to be passed to GCC so that it can find header files
-INC_DIRS = $(shell find $(SRC_DIRS) -type d -not -path "./.git/*" -not -path "./.git")
-# Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
-INC_FLAGS = $(addprefix -I,$(INC_DIRS))
-
+    # Now include all required files, without searching in excluded dirs
+    INC_DIRS = $(shell find $(SRC_DIRS) -type d)
+    # Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
+    INC_FLAGS = $(addprefix -I,$(INC_DIRS))
 
 # Final build step
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
