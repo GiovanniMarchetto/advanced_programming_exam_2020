@@ -9,16 +9,17 @@ of the project:
 - `make clean` allows to remove (if present) the directory with all the
 executable files;
 - `make build` allows to build the executable files for the program;
-- `make run` allows to run the program (if executable files are already built).
-- `all_with_valgrind` is the same as `make all`, but the program is executed
-with *Valgrind*.
-
-In order to detect memory errors, the command `make valgrind` can be used to
-run the program with *Valgrind*.
+- `make run` allows to run the program (if executable files are already built);
+- `make valgrind` allows to run the program with *Valgrind*, in order to detect
+  memory errors;
+- `make all_with_valgrind` is the same as `make all`, but the program is executed
+  with *Valgrind*;
+- `make allv` is a shortcut for `make all_with_valgrind`.
 
 ## Short report
 ### What we did
-We used the 'Pair Programming' technique: one at a time was coding and the others were checking. All together discussed about design choices.
+We used the 'Pair Programming' technique: one at a time was coding and the others
+were checking. All together discussed about design choices.
 We started creating the header files and deciding the structure of the project.
 We thought a lot about best choices for the project.
 ### What we understood
