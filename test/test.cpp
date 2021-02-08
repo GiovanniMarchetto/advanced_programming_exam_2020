@@ -10,19 +10,19 @@
 
 //TODO: REFACTORING NEEDED
 
-constexpr int NUMBER_OF_NODES{50};
-constexpr int MAX_NUMBER_OF_KEY{15};
+constexpr int NUMBER_OF_NODES{ 50 };
+constexpr int MAX_NUMBER_OF_KEY{ 15 };
 // if (MAX_NUMBER_OF_KEY < NUMBER_OF_NODES) --> test behaviour with duplicated keys
-constexpr int NUMBER_OF_PRINT{2};
+constexpr int NUMBER_OF_PRINT{ 2 };
 
 bst<char> bst_{};
 
 template <typename F>
-void iteration_func(const F &function)
+void iteration_func(const F& function)
 {
     //std::srand(std::time(NULL)); // random seed initialization
     std::srand(123); // fixed seed for reproducible tests
-    for (int i{0}; i < NUMBER_OF_NODES; ++i)
+    for (int i{ 0 }; i < NUMBER_OF_NODES; ++i)
         function(i);
 }
 
@@ -42,24 +42,24 @@ void tests()
     std::cout << formatting_title() << std::endl;
     std::cout << formatting_title("##### NODE TESTS #####", true) << std::endl;
     std::cout << formatting_title() << std::endl
-              << std::endl;
+        << std::endl;
 
     std::cout << formatting_title("## Nodes operations ##", true) << std::endl;
     iteration_func(node_operations_test);
     std::cout << formatting_title("# Results #", true) << std::endl;
     std::cout << NUMBER_OF_NODES << " repetitions of nodes operations - done" << std::endl;
     std::cout << std::endl
-              << std::endl;
+        << std::endl;
 
     std::cout << formatting_title("## Copy and move semantic of the value of a node during its construction") << std::endl;
     node_other_type_test();
     std::cout << std::endl
-              << std::endl;
+        << std::endl;
 
     std::cout << formatting_title() << std::endl;
     std::cout << formatting_title("##### BST TESTS #####", true) << std::endl;
     std::cout << formatting_title() << std::endl
-              << std::endl;
+        << std::endl;
 
     std::cout << formatting_title("## BST construction ##", true) << std::endl;
     iteration_func(bst_insertion_test);
@@ -69,33 +69,33 @@ void tests()
     std::string str{};
     std::cout << bst_.tree_structure_to_string(str) << std::endl;
     std::cout << std::endl
-              << std::endl;
+        << std::endl;
 
     std::cout << formatting_title("## BST copy semantics") << std::endl;
-    bst<char> bst_2{bst_};
+    bst<char> bst_2{ bst_ };
     std::cout << bst_2 << std::endl;
     std::cout << std::endl
-              << std::endl;
+        << std::endl;
 
     std::cout << formatting_title("## Balance") << std::endl;
     //bst_.unbalance();
     bst_.balance();
     std::cout << "Traversal: " << bst_ << std::endl
-              << std::endl;
+        << std::endl;
     str = "";
     std::cout << bst_.tree_structure_to_string(str) << std::endl;
     std::cout << std::endl
-              << std::endl;
+        << std::endl;
 
     std::cout << formatting_title("## Finding a node") << std::endl;
     iteration_func(find_node_test);
     std::cout << std::endl
-              << std::endl;
+        << std::endl;
 
     std::cout << formatting_title("## Subscripting operator") << std::endl;
     iteration_func(subscripting_node_test);
     std::cout << std::endl
-              << std::endl;
+        << std::endl;
 
     std::cout << formatting_title("## Erase") << std::endl;
     std::cout << "Original tree:  " << bst_ << std::endl;
@@ -105,36 +105,36 @@ void tests()
     std::string str2{};
     std::cout << bst_.tree_structure_to_string(str2) << std::endl;
     std::cout << std::endl
-              << std::endl;
+        << std::endl;
 
     std::cout << formatting_title("## Clear") << std::endl;
     std::cout << "Original tree: " << bst_2 << std::endl;
     bst_2.clear();
     std::cout << "Clear tree:    " << bst_2 << std::endl;
     std::cout << std::endl
-              << std::endl;
+        << std::endl;
 }
 
 void node_operations_test(const int i)
 {
     Node<char> first_node(random_int(), random_char());
-    Node<char> cpy_node{first_node};
+    Node<char> cpy_node{ first_node };
     Node<char> second_node(random_int(), random_char());
     if (i < NUMBER_OF_PRINT)
     {
         std::cout << "---[Index " << i << " ]" << std::endl;
         std::cout << "Address " << &first_node
-                  << " - Node ctr:                       " << first_node << std::endl;
+            << " - Node ctr:                       " << first_node << std::endl;
         std::cout << "Address " << &cpy_node
-                  << " - Node copy ctr:                  " << cpy_node << std::endl;
+            << " - Node copy ctr:                  " << cpy_node << std::endl;
         std::cout << "Address " << &second_node
-                  << " - Node copy assignment - before: " << second_node << std::endl;
+            << " - Node copy assignment - before: " << second_node << std::endl;
     }
 
     second_node = first_node;
     if (i < NUMBER_OF_PRINT)
         std::cout << "Address " << &second_node
-                  << " - Node copy assignment - after:  " << second_node << std::endl;
+        << " - Node copy assignment - after:  " << second_node << std::endl;
 
     std::string not_a_word;
     const char a = random_char();
@@ -149,13 +149,13 @@ void node_operations_test(const int i)
     if (i < NUMBER_OF_PRINT)
     {
         std::cout << "Address " << &third_node
-                  << " - Node move ctr:                  " << third_node << std::endl;
+            << " - Node move ctr:                  " << third_node << std::endl;
         std::cout << "Address " << &first_node
-                  << " - Node move assignment:           " << first_node << std::endl;
+            << " - Node move assignment:           " << first_node << std::endl;
         std::cout << "Comparison:         " << first_node << " < " << second_node
-                  << " ----> result " << (first_node < second_node) << std::endl;
+            << " ----> result " << (first_node < second_node) << std::endl;
         std::cout << "Inverse comparison: " << second_node << " < " << first_node
-                  << " ----> result " << (second_node < first_node) << std::endl;
+            << " ----> result " << (second_node < first_node) << std::endl;
     }
 }
 
@@ -172,11 +172,11 @@ void node_other_type_test()
     Node<int, int> sn3(random_int(), random_int());
     std::cout << "Move (but built-in types are copied anyway): " << sn3 << std::endl;
 
-    std::vector<int> vec = {random_int(), random_int(), random_int(), random_int()};
+    std::vector<int> vec = { random_int(), random_int(), random_int(), random_int() };
     Node<std::vector<int>> vnode(12, vec);
     std::cout << "Copy - node of vector<int>:                  " << vnode << std::endl;
 
-    std::vector<int> vec2 = {random_int(), random_int(), random_int(), random_int()};
+    std::vector<int> vec2 = { random_int(), random_int(), random_int(), random_int() };
     Node<std::vector<int>> vnode2(random_int(), std::move(vec2));
     std::cout << "Move - node of vector<int>:                  " << vnode2 << std::endl;
 
@@ -212,7 +212,7 @@ void bst_insertion_test(const int i)
         std::cout << bst_.tree_structure_to_string(str) << std::endl;
     }
 
-    bst_.insert({random_int(), random_char()}); //expected: )
+    bst_.insert({ random_int(), random_char() }); //expected: )
     if (i == 0)
     {
         std::cout << formatting_title("## Move insert") << std::endl;
@@ -227,13 +227,13 @@ void find_node_test(const int i)
     if (i < NUMBER_OF_PRINT)
     {
         std::cout << "---[Index " << i << " ]" << std::endl;
-        int key_to_find{random_int()};
+        int key_to_find{ random_int() };
         std::cout << "Key to find: " << key_to_find << std::endl;
-        bst<char>::iterator it{bst_.find(key_to_find)};
+        bst<char>::iterator it{ bst_.find(key_to_find) };
         std::cout << "Print tree by using the iterator starting from the node marked with the key to find: " << std::endl;
         print_tree_from_iterator(it, bst_);
-        const bst<char> bst_4{bst_};
-        bst<char>::const_iterator cit{bst_4.find(key_to_find)};
+        const bst<char> bst_4{ bst_ };
+        bst<char>::const_iterator cit{ bst_4.find(key_to_find) };
         std::cout << "Second try to find the key (start from a copy of the original tree): " << std::endl;
         print_tree_from_iterator(cit, bst_);
     }
@@ -241,7 +241,7 @@ void find_node_test(const int i)
     {
         std::cout << "---[Index " << i << " ]" << std::endl;
         std::cout << "Key to find: " << MAX_NUMBER_OF_KEY + 1 << std::endl;
-        bst<char>::iterator it2{bst_.find(MAX_NUMBER_OF_KEY + 1)};
+        bst<char>::iterator it2{ bst_.find(MAX_NUMBER_OF_KEY + 1) };
         print_tree_from_iterator(it2, bst_);
     }
 }
@@ -256,22 +256,22 @@ void subscripting_node_test(const int i)
         int key_to_subscript_2 = random_int();
         char value_to_subscript_2 = random_char();
         std::cout << "Subscripting node (l-value) - "
-                  << "[" << key_to_subscript << " => "
-                  << value_to_subscript << "], "
-                  << "Subscripting node (r-value) - "
-                  << "[" << key_to_subscript_2 << " => "
-                  << value_to_subscript_2 << "]" << std::endl;
+            << "[" << key_to_subscript << " => "
+            << value_to_subscript << "], "
+            << "Subscripting node (r-value) - "
+            << "[" << key_to_subscript_2 << " => "
+            << value_to_subscript_2 << "]" << std::endl;
 
         std::cout << "Original tree:                  " << bst_ << std::endl;
 
         bst_[key_to_subscript] = value_to_subscript;
         std::cout << "Resulting tree (after l-value): " << bst_
-                  << std::endl;
+            << std::endl;
 
         bst_[key_to_subscript_2] = std::move(value_to_subscript_2); //std::move not needed with char type but here we force it for testing
 
         std::cout << "Resulting tree (after r-value): " << bst_
-                  << std::endl;
+            << std::endl;
     }
     if (i == NUMBER_OF_PRINT)
     {
@@ -281,21 +281,21 @@ void subscripting_node_test(const int i)
         int key_to_subscript_noexist_2 = random_int();
         char value_to_subscript_2 = random_char();
         std::cout << "Subscripting node (l-value) - "
-                  << "[" << key_to_subscript_noexist << " => "
-                  << value_to_subscript << "], "
-                  << "Subscripting node (r-value) - "
-                  << "[" << key_to_subscript_noexist_2 << " => "
-                  << value_to_subscript_2 << "]" << std::endl;
+            << "[" << key_to_subscript_noexist << " => "
+            << value_to_subscript << "], "
+            << "Subscripting node (r-value) - "
+            << "[" << key_to_subscript_noexist_2 << " => "
+            << value_to_subscript_2 << "]" << std::endl;
 
         std::cout << "Original tree:                  " << bst_ << std::endl;
 
         bst_[key_to_subscript_noexist] = value_to_subscript;
         std::cout << "Resulting tree (after l-value): " << bst_
-                  << std::endl;
+            << std::endl;
 
         bst_[key_to_subscript_noexist_2] = std::move(value_to_subscript_2);
         std::cout << "Resulting tree (after l-value): " << bst_
-                  << std::endl;
+            << std::endl;
     }
 }
 
@@ -308,9 +308,9 @@ void erase_test(const int i)
     {
         std::cout << "---[Index " << i << " ]" << std::endl;
         std::cout << "Erase node - "
-                  << "[" << key_erase_node << "]" << std::endl;
+            << "[" << key_erase_node << "]" << std::endl;
         std::cout << "Resulting tree: " << bst_
-                  << std::endl;
+            << std::endl;
         std::string str2{};
         std::cout << bst_.tree_structure_to_string(str2) << std::endl;
     }

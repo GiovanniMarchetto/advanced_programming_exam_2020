@@ -36,12 +36,12 @@ void benchmark_test(const bool to_file)
      * @param filename The string with the name of the file where to save the
      *                  results, without neither the full path nor the file
      *                  extension.*/
-    auto get_ostream = [to_file, &f](const std::string &filename) -> std::ostream & {
+    auto get_ostream = [to_file, &f](const std::string& filename) -> std::ostream& {
         if (!to_file)
             return std::cout;
 
         // Otherwise, write to file
-        std::ofstream tmp{OUTPUT_RESULTS_DIR + "/" + filename + ".csv"}; //previous content will be overwritten
+        std::ofstream tmp{ OUTPUT_RESULTS_DIR + "/" + filename + ".csv" }; //previous content will be overwritten
         f = std::move(tmp);
         // Note: fstream will be closed by the destructor
         return f;
@@ -56,7 +56,7 @@ void benchmark_test(const bool to_file)
     std::cout << NUMBER_OF_ITERATIONS << " iterations will be executed for each test.\n";
     if (to_file)
         std::cout << "Results will be written to files in the directory " +
-                         OUTPUT_RESULTS_DIR + "\n";
+        OUTPUT_RESULTS_DIR + "\n";
 
     std::cout << formatting_title("## Insertion  ") << "\n";
     benchmark_test_.insertion_test(get_ostream("insertion"));
@@ -82,9 +82,9 @@ void benchmark_test(const bool to_file)
 /** Receives a lambda function as argument and executes it iteratively
  * for NUMBER_OF_ITERATIONS times.*/
 template <typename F>
-void iterate(const F &lambda_fun)
+void iterate(const F& lambda_fun)
 {
-    for (size_t i{0}; i < NUMBER_OF_ITERATIONS; ++i)
+    for (size_t i{ 0 }; i < NUMBER_OF_ITERATIONS; ++i)
         lambda_fun();
 }
 
@@ -92,8 +92,8 @@ void iterate(const F &lambda_fun)
  * key and value.*/
 std::pair<int, char> generate_pair_random()
 {
-    int random_key{rand()};
-    char random_val{static_cast<char>(rand() % 26 + static_cast<int>('a'))}; // between 'a' and 'z'
+    int random_key{ rand() };
+    char random_val{ static_cast<char>(rand() % 26 + static_cast<int>('a')) }; // between 'a' and 'z'
     return std::pair<int, char>(random_key, random_val);
 }
 
@@ -103,12 +103,12 @@ std::pair<int, char> generate_pair_random()
  * If the flag only_bst is set to true, operations will affect only
  * the given BST.*/
 template <typename value_type,
-          typename key_type,
-          typename OP>
-void create_random_bst_and_map(bst<value_type, key_type, OP> &bst_,
-                               std::map<key_type, value_type> &map_,
-                               const size_t N,
-                               const bool only_bst = false)
+    typename key_type,
+    typename OP>
+    void create_random_bst_and_map(bst<value_type, key_type, OP>& bst_,
+        std::map<key_type, value_type>& map_,
+        const size_t N,
+        const bool only_bst = false)
 {
     bst_.clear();
     if (!only_bst)
@@ -116,7 +116,7 @@ void create_random_bst_and_map(bst<value_type, key_type, OP> &bst_,
 
     while (bst_.get_size() < N) // enforce the size (duplicates won't be inserted)
     {
-        std::pair<int, char> pair{generate_pair_random()};
+        std::pair<int, char> pair{ generate_pair_random() };
         bst_.insert(pair);
         if (!only_bst)
             map_.insert(pair);
@@ -124,15 +124,15 @@ void create_random_bst_and_map(bst<value_type, key_type, OP> &bst_,
 };
 
 template <typename value_type,
-          typename key_type,
-          typename OP>
-std::ostream &Benchmark_test<value_type, key_type, OP>::
-    insertion_test(std::ostream &os,
-                   const size_t NUMBER_OF_NODES_INSERTION_BENCHMARK)
+    typename key_type,
+    typename OP>
+    std::ostream& Benchmark_test<value_type, key_type, OP>::
+    insertion_test(std::ostream& os,
+        const size_t NUMBER_OF_NODES_INSERTION_BENCHMARK)
 {
 
     if (!(std::is_same<key_type, int>::value &&
-          std::is_same<value_type, char>::value)) // Check if right template types
+        std::is_same<value_type, char>::value)) // Check if right template types
     {
         os << "This test is currently available only for integer key type and char value type";
         return os;
@@ -140,11 +140,11 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
 
     // Random generation of pairs with distinct keys (temporarily saved in a
     // vector to time only the insertion time)
-    auto create_vector_of_nodes = [](const std::size_t &number_of_nodes_to_create, std::vector<std::pair<int, char>> &vec) {
+    auto create_vector_of_nodes = [](const std::size_t& number_of_nodes_to_create, std::vector<std::pair<int, char>>& vec) {
         std::srand(std::time(NULL)); // random seed initialization
 
-        auto find_pair_by_key_in_vector = [](const auto &key, const auto &vector) {
-            for (const auto &el : vector)
+        auto find_pair_by_key_in_vector = [](const auto& key, const auto& vector) {
+            for (const auto& el : vector)
                 if (el.first == key)
                     return true;
             return false;
@@ -153,7 +153,7 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
         while (vec.size() < number_of_nodes_to_create)
         {
             // Random generation of a pair
-            std::pair<int, char> pair{generate_pair_random()};
+            std::pair<int, char> pair{ generate_pair_random() };
             if (!find_pair_by_key_in_vector(pair.first, vec))                 // if not already present
                 vec.push_back(std::pair<int, char>(pair.first, pair.second)); // move insert
         }
@@ -168,9 +168,9 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
 
         long int duration_insertion_in_our_tree{},
             duration_insertion_in_std_map{};
-        for (std::size_t i{0}; i < NUMBER_OF_NODES_INSERTION_BENCHMARK; ++i)
+        for (std::size_t i{ 0 }; i < NUMBER_OF_NODES_INSERTION_BENCHMARK; ++i)
         {
-            std::pair<int, char> pair_to_insert{vector_of_nodes_to_insert.at(i)}; // the pair is temporarily saved here just before being inserted
+            std::pair<int, char> pair_to_insert{ vector_of_nodes_to_insert.at(i) }; // the pair is temporarily saved here just before being inserted
 
             // Insertion in our tree
             auto t1 = std::chrono::high_resolution_clock::now();
@@ -186,7 +186,7 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
 
             // Printing results for this iteration
             os << "\n"
-               << i + 1 << "," << duration_insertion_in_our_tree << "," << duration_insertion_in_std_map;
+                << i + 1 << "," << duration_insertion_in_our_tree << "," << duration_insertion_in_std_map;
         }
     };
 
@@ -199,10 +199,10 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
  * allowing to specify if balancing the tree before running the test: it can
  * be specified thanks to the parameter.*/
 template <typename value_type,
-          typename key_type,
-          typename OP>
-std::ostream &Benchmark_test<value_type, key_type, OP>::
-    private_find_test(std::ostream &os, const bool balance_before_test)
+    typename key_type,
+    typename OP>
+    std::ostream& Benchmark_test<value_type, key_type, OP>::
+    private_find_test(std::ostream& os, const bool balance_before_test)
 {
 
     os << HEADER_FOR_RESULTS;
@@ -214,10 +214,10 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
 
         long int duration_search_in_our_tree{},
             duration_search_in_std_map{};
-        for (std::size_t i{0}; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
+        for (std::size_t i{ 0 }; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
         {
             create_random_bst_and_map(bst_, map_, i);
-            int random_key{rand()}; // key to find
+            int random_key{ rand() }; // key to find
 
             if (balance_before_test)
                 bst_.balance();
@@ -233,7 +233,7 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
             duration_search_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
             os << "\n"
-               << i + 1 << "," << duration_search_in_our_tree << "," << duration_search_in_std_map;
+                << i + 1 << "," << duration_search_in_our_tree << "," << duration_search_in_std_map;
         }
     };
 
@@ -243,28 +243,28 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
 }
 
 template <typename value_type,
-          typename key_type,
-          typename OP>
-std::ostream &Benchmark_test<value_type, key_type, OP>::
-    find_test(std::ostream &os)
+    typename key_type,
+    typename OP>
+    std::ostream& Benchmark_test<value_type, key_type, OP>::
+    find_test(std::ostream& os)
 {
     return private_find_test(os);
 }
 
 template <typename value_type,
-          typename key_type,
-          typename OP>
-std::ostream &Benchmark_test<value_type, key_type, OP>::
-    balance_and_find_test(std::ostream &os)
+    typename key_type,
+    typename OP>
+    std::ostream& Benchmark_test<value_type, key_type, OP>::
+    balance_and_find_test(std::ostream& os)
 {
     return private_find_test(os, false);
 }
 
 template <typename value_type,
-          typename key_type,
-          typename OP>
-std::ostream &Benchmark_test<value_type, key_type, OP>::
-    balancing_test(std::ostream &os)
+    typename key_type,
+    typename OP>
+    std::ostream& Benchmark_test<value_type, key_type, OP>::
+    balancing_test(std::ostream& os)
 {
     os << HEADER_FOR_RESULTS;
 
@@ -273,7 +273,7 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
         std::map<int, char> map_{};
 
         long int duration_balancing_our_tree{};
-        for (std::size_t i{0}; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
+        for (std::size_t i{ 0 }; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
         {
             create_random_bst_and_map(bst_, map_, i, true);
             auto t1 = std::chrono::high_resolution_clock::now();
@@ -284,7 +284,7 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
             // os << "Time for balancing the tree (" << bst_.get_size() << " nodes in the tree): " << duration_balancing_our_tree << " us." << std::endl;
 
             os << "\n"
-               << i + 1 << "," << duration_balancing_our_tree;
+                << i + 1 << "," << duration_balancing_our_tree;
         }
     };
 
@@ -294,9 +294,9 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
 }
 
 template <typename value_type,
-          typename key_type,
-          typename OP>
-std::ostream &Benchmark_test<value_type, key_type, OP>::copy_bst_test(std::ostream &os)
+    typename key_type,
+    typename OP>
+    std::ostream& Benchmark_test<value_type, key_type, OP>::copy_bst_test(std::ostream& os)
 {
 
     os << HEADER_FOR_RESULTS;
@@ -309,22 +309,22 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::copy_bst_test(std::ostre
         long int duration_copy_in_our_tree{},
             duration_copy_in_std_map{};
 
-        for (std::size_t i{0}; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
+        for (std::size_t i{ 0 }; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
         {
             create_random_bst_and_map(bst_, map_, i);
 
             auto t1 = std::chrono::high_resolution_clock::now();
-            bst<value_type, key_type, OP> bst_copy{bst_};
+            bst<value_type, key_type, OP> bst_copy{ bst_ };
             auto t2 = std::chrono::high_resolution_clock::now();
             duration_copy_in_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
             t1 = std::chrono::high_resolution_clock::now();
-            std::map<key_type, value_type> map_copy{map_};
+            std::map<key_type, value_type> map_copy{ map_ };
             t2 = std::chrono::high_resolution_clock::now();
             duration_copy_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
             os << "\n"
-               << i + 1 << "," << duration_copy_in_our_tree << "," << duration_copy_in_std_map;
+                << i + 1 << "," << duration_copy_in_our_tree << "," << duration_copy_in_std_map;
         }
     };
 
