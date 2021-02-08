@@ -1,21 +1,9 @@
-// TODO: check which of the following includes are really required
 #include <iostream>
-#include <fstream>    // for writing to file
-#include <filesystem> // create_directory
 #include <utility>
-// #include "Node.h"
-#include "../include/bst.h"
-#include <vector>
-
-#include <type_traits> // For std::is_same<T,U>
-
-// For random generation
-#include <cstdlib> // srand, rand
-#include <ctime>   // time
+#include "bst.h"
 
 // For benchmark timing test and comparison
 #include <map>
-#include <chrono>
 
 // --------  CONFIGURABLE PARAMETERS FOR TESTS         --------
 
@@ -57,8 +45,6 @@ class Benchmark_test
 public:
     /** Constructor. Sets up the environment for a test.*/
     Benchmark_test() : bst_{} {};
-
-    // TODO : set random seed? Not required? Let the user to set before initializing the test?
 
     /** Benchmark test for the time of inserting a node in the BST.
      * @param os Output stream where to print test results.

@@ -1,11 +1,3 @@
-#include <iostream>
-#include <utility>
-#include <string>
-#include "Node.h"
-#include "bst.h"
-#include <vector>
-#include <regex> // regex used for substring replacement
-
 template <typename F>
 void iteration_func(F &function);
 

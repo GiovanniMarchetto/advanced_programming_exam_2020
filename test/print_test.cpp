@@ -1,6 +1,11 @@
-#include "test.h"
+#include <iostream>
+#include <string>
+#include <vector>
+#include <regex> // regex used for substring replacement
 
-std::ostream &operator<<(std::ostream &os, const std::vector<int> &vec) // TODO : to be deleted (was used just for testing copy/move ctr in Node.h (the ones which take key and value))
+#include "bst.h"
+
+std::ostream &operator<<(std::ostream &os, const std::vector<int> &vec)
 {
     os << "\n";
     for (size_t i = 0; i < vec.size(); ++i)
@@ -29,8 +34,6 @@ void print_tree_from_iterator(bst<char>::const_iterator &iterator, const bst<cha
 
 std::string formatting_title(std::string title, bool center)
 {
-    // TODO : to be optimized (use std::move?)
-
     // Eventually segment the given title onto more lines
     constexpr int MAX_CHARS_OF_TITLE_IN_A_LINE{60};                     // param
     constexpr int INDENTATION_OF_FOLLOWING_LINES_IF_TITLE_TOO_LONG{15}; // param
@@ -73,7 +76,7 @@ std::string formatting_title(std::string title, bool center)
                                      : MAX_CHARS_OF_TITLE_IN_FOLLOWING_LINES);
 
             if (number_of_chars_to_insert > 0)
-                title.append("\n" + indentation + str_buff.substr(0, number_of_chars_to_insert)); // TODO : substring with move?
+                title.append("\n" + indentation + str_buff.substr(0, number_of_chars_to_insert));
             str_buff = str_buff.substr(number_of_chars_to_insert);
         }
     }

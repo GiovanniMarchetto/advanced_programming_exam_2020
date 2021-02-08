@@ -108,15 +108,12 @@ public:
      *          of this instance (as first argument) and the key of the given
      *          instance (as second argument).*/
     template <typename Comparator>
-    bool compare(const Node &other, const Comparator comparator = std::less<key_type>()) const
+    bool compare(const Node &other, const Comparator comparator) const
     {
         //if (!(&other))
         return comparator(key, other.key);
         //return false; // TODO : to handle with exceptions
     }
-    /** See the same overloaded function for details. This comparison
-     * function always uses the default.*/
-    bool compare(const Node &other) const { return *this < other; }
 
     /** Overload of the < operator to define an order relation
      * between two instances according to their key.

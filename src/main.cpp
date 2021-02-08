@@ -1,23 +1,8 @@
 #include <iostream>
-#include <utility>
-#include <string>
-#include <iostream> // TODO : remove useless includes
-#include "Node.h"
-#include "bst.h"
-#include <vector>
 
 #include "test.h"
 #include "print_and_format.h"
 #include "benchmark_test.h"
-
-
-// For random generation
-#include <cstdlib> // srand, rand
-#include <ctime>   // time
-
-// For benchmark timing test and comparison
-#include <map>
-#include <chrono>
 
 int main()
 {

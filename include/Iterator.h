@@ -23,7 +23,7 @@ class bst<value_t, key_type, OP>::Iterator
     O *current_node;
 
     /** Given the pointer to a node this function returns its successor. */
-    static O *get_successor(O *node) // TODO : const??
+    static O *get_successor(O *node)
     {
         if (node->get_right())
             return get_minimum_left_node_in_subtree(node->get_right());

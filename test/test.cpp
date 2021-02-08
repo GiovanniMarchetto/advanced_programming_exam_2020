@@ -1,7 +1,12 @@
-#include "test.h"
-#include "print_and_format.h"
-
+#include <iostream>
+#include <utility>
 #include <string>
+#include <vector>
+
+#include "test.h"
+#include "Node.h"
+#include "bst.h"
+#include "print_and_format.h"
 
 constexpr int NUMBER_OF_NODES{50};
 constexpr int MAX_NUMBER_OF_KEY{15};
@@ -60,7 +65,7 @@ void tests()
     std::cout << bst_ << std::endl;
     std::cout << formatting_title("# Final tree (tree shape) #", true) << std::endl;
     std::string str{};
-    std::cout << bst_.print_tree(str) << std::endl;
+    std::cout << bst_.tree_structure_to_string(str) << std::endl;
     std::cout << std::endl
               << std::endl;
 
@@ -76,7 +81,7 @@ void tests()
     std::cout << "Traversal: " << bst_ << std::endl
               << std::endl;
     str = "";
-    std::cout << bst_.print_tree(str) << std::endl;
+    std::cout << bst_.tree_structure_to_string(str) << std::endl;
     std::cout << std::endl
               << std::endl;
 
@@ -96,7 +101,7 @@ void tests()
     std::cout << formatting_title("# Final tree (after all erase repetitions) #", true) << std::endl;
     std::cout << bst_ << std::endl;
     std::string str2{};
-    std::cout << bst_.print_tree(str2) << std::endl;
+    std::cout << bst_.tree_structure_to_string(str2) << std::endl;
     std::cout << std::endl
               << std::endl;
 
@@ -191,7 +196,7 @@ void bst_insertion_test(int i)
     {
         std::cout << formatting_title("## Copy insert ") << std::endl;
         std::string str{};
-        std::cout << bst_.print_tree(str) << std::endl;
+        std::cout << bst_.tree_structure_to_string(str) << std::endl;
     }
 
     bst_.insert(std::pair<int, char>(random_int(), random_char()));
@@ -199,7 +204,7 @@ void bst_insertion_test(int i)
     {
         std::cout << formatting_title("## Move insert ") << std::endl;
         std::string str{};
-        std::cout << bst_.print_tree(str) << std::endl;
+        std::cout << bst_.tree_structure_to_string(str) << std::endl;
     }
 
     bst_.emplace(random_int(), random_char()); //expected:
@@ -207,7 +212,7 @@ void bst_insertion_test(int i)
     {
         std::cout << formatting_title("## Variadic emplace ") << std::endl;
         std::string str{};
-        std::cout << bst_.print_tree(str) << std::endl;
+        std::cout << bst_.tree_structure_to_string(str) << std::endl;
     }
 
     bst_.insert({random_int(), random_char()}); //expected: )
@@ -216,7 +221,7 @@ void bst_insertion_test(int i)
         std::cout << formatting_title("## Move insert") << std::endl;
         std::cout << formatting_title("(implicit conversion from initializer list to std::pair) ") << std::endl;
         std::string str{};
-        std::cout << bst_.print_tree(str) << std::endl;
+        std::cout << bst_.tree_structure_to_string(str) << std::endl;
     }
 }
 
@@ -310,6 +315,6 @@ void erase_test(int i)
         std::cout << "Resulting tree: " << bst_
                   << std::endl;
         std::string str2{};
-        std::cout << bst_.print_tree(str2) << std::endl;
+        std::cout << bst_.tree_structure_to_string(str2) << std::endl;
     }
 }

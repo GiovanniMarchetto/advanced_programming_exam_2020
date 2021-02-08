@@ -58,7 +58,7 @@ class bst
 
     /** Given a pointer to a node, this function return the leftmost
      * (minimum) node in the substree whose root is the specified node.*/
-    static node *get_minimum_left_node_in_subtree(node *node) // TODO : const??
+    static node *get_minimum_left_node_in_subtree(node *node)
     {
         while (node && node->get_left())
             node = node->get_left();
@@ -88,8 +88,6 @@ public:
     // TODO: mantenere? -- const-iterator ensure to be protected when invoking a const function
     /** Begin function to use in a for-range loop. Returns a const iterator.*/
     const_iterator begin() const noexcept { return cbegin(); }
-
-    //TODO: riorganization code for cbegin and cend?
 
     /** End function to use in a for-range loop. Returns an iterator.*/
     iterator end() noexcept { return iterator{nullptr}; }
@@ -159,7 +157,7 @@ public:
             prev->set_right(node);
 
         ++size;
-        return std::make_pair<iterator, bool>(iterator{node}, true); // TODO : r-value? move assignment??
+        return std::make_pair<iterator, bool>(iterator{node}, true);
     }
 
     /** Inserts a new element into the container given a pair with key and value
@@ -356,31 +354,30 @@ public:
 
     /** Function for printing the structrure of the tree into a string
      * which is returned by reference.*/
-    const std::string &print_tree(std::string &str_buffer) const
+    const std::string &tree_structure_to_string(std::string &str_buffer) const
     {
-        return print_subtree(tree_root_node.get(), str_buffer); // TODO : this should use getter instead of std::unique_ptr<??>::get
+        return subtree_structure_to_string(get_tree_root_node(), str_buffer);
     }
 
     /** Given a pointer to the root of a subtree, this function returns
      * a std::string containing a view of the subtree.*/
     template <typename value_type_, typename key_type_, typename OP_>
     static std::string &
-    print_subtree(const Node<value_type_, key_type_, OP_> *subtree_root_node,
-                  std::string &str_buffer)
+    subtree_structure_to_string(const Node<value_type_, key_type_, OP_> *subtree_root_node,
+                                std::string &str_buffer)
     {
 
         str_buffer.append("   "); // each level of the tree implies an indentation
 
-        // TODO : to be optimized (does std::string use move-ctr? Better to use char*? Should use string initialization std::string{} instead of literal "")
         if (!subtree_root_node) // empty subtree
             return str_buffer.append("|--[]");
 
         std::string str_left_buff{str_buffer},
             str_right_buff{str_buffer};
-        print_subtree(subtree_root_node->get_left(), str_left_buff);
-        print_subtree(subtree_root_node->get_right(), str_right_buff);
+        subtree_structure_to_string(subtree_root_node->get_left(), str_left_buff);
+        subtree_structure_to_string(subtree_root_node->get_right(), str_right_buff);
 
-        std::stringstream os{};            // TODO : improve efficiency (this is used here only for using the overloading of << in Node)
+        std::stringstream os{};
         os << "|--" << *subtree_root_node; //save info of current node into the stream
 
         // Buffer to return

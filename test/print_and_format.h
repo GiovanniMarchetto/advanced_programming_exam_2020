@@ -1,12 +1,9 @@
 #include <iostream>
-#include <utility>
 #include <string>
-#include "Node.h"
-#include "bst.h"
 #include <vector>
-#include <regex> // regex used for substring replacement
+#include "bst.h"
 
-std::ostream &operator<<(std::ostream &os, const std::vector<int> &vec); // TODO : to be deleted ...
+std::ostream &operator<<(std::ostream &os, const std::vector<int> &vec);
 void print_tree_from_iterator(bst<char>::iterator &iterator, bst<char> &bst);
 void print_tree_from_iterator(bst<char>::const_iterator &iterator, const bst<char> &bst);
 

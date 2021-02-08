@@ -1,3 +1,17 @@
+#include <iostream>
+#include <fstream>    // for writing to file
+#include <filesystem> // create_directory
+
+#include <map>
+#include <vector>
+
+#include <type_traits> // std::is_same<T,U>
+#include <chrono>
+
+// For random generation
+#include <cstdlib> // srand, rand
+#include <ctime>   // time
+
 #include "print_and_format.h"
 #include "benchmark_test.h"
 
@@ -10,7 +24,7 @@ void benchmark_test(bool to_file)
         std::filesystem::remove_all(OUTPUT_RESULTS_DIR);
 
         // Create dir for results
-        std::filesystem::create_directory(OUTPUT_RESULTS_DIR); // TODO : permission of the directory??
+        std::filesystem::create_directory(OUTPUT_RESULTS_DIR);
     }
 
     std::ofstream f; // fstream just declared in this scope
@@ -193,7 +207,7 @@ template <typename value_type,
           typename key_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::
-    private_find_test(std::ostream &os, bool balance_before_test) // TODO : make static
+    private_find_test(std::ostream &os, bool balance_before_test)
 {
 
     os << HEADER_FOR_RESULTS;
@@ -255,7 +269,7 @@ template <typename value_type,
           typename key_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::
-    balancing_test(std::ostream &os) // TODO: make static
+    balancing_test(std::ostream &os)
 {
     os << HEADER_FOR_RESULTS;
 
