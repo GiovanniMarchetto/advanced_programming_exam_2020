@@ -60,3 +60,8 @@ all_with_valgrind: clean build valgrind
 
 .PHONY: allv
 allv: all_with_valgrind
+
+documentation: Doxygen/doxy.in
+	doxygen $^
+
+.PHONY: documentation

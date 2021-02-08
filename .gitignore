@@ -3,3 +3,4 @@ benchmark_results/
 .idea/
 .vscode/
 ubuntu_setup_env.sh
+Doxygen/docs
