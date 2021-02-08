@@ -37,14 +37,14 @@ public:
     /** Getter for the right children. Returns a raw pointer to the left child node.*/
     Node *get_right() const { return right.get(); }
 
+    /** Getter for the parent. Returns a raw pointer to the parent node.*/
+    Node *get_parent() const { return parent; }
+
     /** Release the left children. Returns a raw pointer to the left child node and releases the ownership.*/
     Node *release_left() { return left.release(); }
 
     /** Release the right children. Returns a raw pointer to the right child node and releases the ownership.*/
     Node *release_right() { return right.release(); }
-
-    /** Getter for the parent. Returns a raw pointer to the parent node.*/
-    Node *get_parent() const { return parent; }
 
     /** Setter: the left child of this instance will be set with the given pointer.*/
     void set_left(Node *const node = nullptr) { left.reset(node); }

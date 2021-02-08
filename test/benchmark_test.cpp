@@ -16,7 +16,7 @@
 #include "print_and_format.h"
 #include "benchmark_test.h"
 
-void benchmark_test(bool to_file)
+void benchmark_test(const bool to_file)
 {
 
     if (to_file) // results will be print to a file
@@ -82,7 +82,7 @@ void benchmark_test(bool to_file)
 /** Receives a lambda function as argument and executes it iteratively
  * for NUMBER_OF_ITERATIONS times.*/
 template <typename F>
-void iterate(F &lambda_fun)
+void iterate(const F &lambda_fun)
 {
     for (size_t i{0}; i < NUMBER_OF_ITERATIONS; ++i)
         lambda_fun();
@@ -107,8 +107,8 @@ template <typename value_type,
           typename OP>
 void create_random_bst_and_map(bst<value_type, key_type, OP> &bst_,
                                std::map<key_type, value_type> &map_,
-                               size_t N,
-                               bool only_bst = false)
+                               const size_t N,
+                               const bool only_bst = false)
 {
     bst_.clear();
     if (!only_bst)
@@ -202,7 +202,7 @@ template <typename value_type,
           typename key_type,
           typename OP>
 std::ostream &Benchmark_test<value_type, key_type, OP>::
-    private_find_test(std::ostream &os, bool balance_before_test)
+    private_find_test(std::ostream &os, const bool balance_before_test)
 {
 
     os << HEADER_FOR_RESULTS;

@@ -32,7 +32,7 @@ void print_tree_from_iterator(bst<char>::const_iterator &iterator, const bst<cha
     std::cout << std::endl;
 }
 
-std::string formatting_title(std::string title, bool center)
+std::string formatting_title(std::string title,const bool center)
 {
     // Eventually segment the given title onto more lines
     constexpr int MAX_CHARS_OF_TITLE_IN_A_LINE{60};                     // param

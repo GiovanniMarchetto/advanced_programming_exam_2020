@@ -41,11 +41,9 @@ class bst
     /** Setter: the root node of this instance will be set with the given raw pointer.*/
     void set_tree_root_node(node *const node = nullptr) { tree_root_node.reset(node); }
 
-    /** Releases the given node from its parent 
-     * or from the tree if it's the root node. 
-     * Warning: it returns an unmanaged raw pointer 
-     * to the released node. */
-    node *release_node(node *node_to_release)
+    /** Releases the given node from its parent or from the tree if it's the root node. 
+     * Warning: it returns an unmanaged raw pointer to the released node. */
+    node *release_node(const node *const node_to_release)
     {
         if (node_to_release->get_parent() == nullptr)
             return this->release_tree_root_node();
@@ -202,9 +200,9 @@ public:
     }
 
     /** Balance recursive function. 
-     * start included, stop excluded
+     * TODO start included, stop excluded
     */
-    void recursive_balance(size_t start, size_t stop, bst &balanced, node *arr[]) //TODO: DOVREBBE ESSERE PRIVATO
+    void recursive_balance(const size_t start, const size_t stop, bst &balanced, node *const arr[]) //TODO: DOVREBBE ESSERE PRIVATO
     {
         if (start != stop)
         {

@@ -18,7 +18,7 @@ constexpr int NUMBER_OF_PRINT{2};
 bst<char> bst_{};
 
 template <typename F>
-void iteration_func(F &function)
+void iteration_func(const F &function)
 {
     //std::srand(std::time(NULL)); // random seed initialization
     std::srand(123); // fixed seed for reproducible tests
@@ -115,11 +115,11 @@ void tests()
               << std::endl;
 }
 
-void node_operations_test(int i)
+void node_operations_test(const int i)
 {
     Node<char> first_node(random_int(), random_char());
     Node<char> cpy_node{first_node};
-
+    Node<char> second_node(random_int(), random_char());
     if (i < NUMBER_OF_PRINT)
     {
         std::cout << "---[Index " << i << " ]" << std::endl;
@@ -127,12 +127,10 @@ void node_operations_test(int i)
                   << " - Node ctr:                       " << first_node << std::endl;
         std::cout << "Address " << &cpy_node
                   << " - Node copy ctr:                  " << cpy_node << std::endl;
-    }
-
-    Node<char> second_node(random_int(), random_char());
-    if (i < NUMBER_OF_PRINT)
         std::cout << "Address " << &second_node
                   << " - Node copy assignment - before: " << second_node << std::endl;
+    }
+
     second_node = first_node;
     if (i < NUMBER_OF_PRINT)
         std::cout << "Address " << &second_node
@@ -154,7 +152,6 @@ void node_operations_test(int i)
                   << " - Node move ctr:                  " << third_node << std::endl;
         std::cout << "Address " << &first_node
                   << " - Node move assignment:           " << first_node << std::endl;
-
         std::cout << "Comparison:         " << first_node << " < " << second_node
                   << " ----> result " << (first_node < second_node) << std::endl;
         std::cout << "Inverse comparison: " << second_node << " < " << first_node
@@ -187,7 +184,7 @@ void node_other_type_test()
     std::cout << "Copy - node of bst<char>:                     " << n_bst << std::endl;
 }
 
-void bst_insertion_test(int i)
+void bst_insertion_test(const int i)
 {
 
     std::pair<int, char> paio = std::pair<int, char>(random_int(), random_char());
@@ -225,7 +222,7 @@ void bst_insertion_test(int i)
     }
 }
 
-void find_node_test(int i)
+void find_node_test(const int i)
 {
     if (i < NUMBER_OF_PRINT)
     {
@@ -249,7 +246,7 @@ void find_node_test(int i)
     }
 }
 
-void subscripting_node_test(int i)
+void subscripting_node_test(const int i)
 {
     if (i < NUMBER_OF_PRINT)
     {
@@ -302,7 +299,7 @@ void subscripting_node_test(int i)
     }
 }
 
-void erase_test(int i)
+void erase_test(const int i)
 {
     int key_erase_node = random_int();
     bst_.erase(key_erase_node);

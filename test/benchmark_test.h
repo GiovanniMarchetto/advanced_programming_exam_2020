@@ -39,7 +39,7 @@ class Benchmark_test
     /** Finding test support function. This function performs the finding test
      * allowing to specify if balancing the tree before running the test: it can
      * be specified thanks to the parameter.*/
-    std::ostream &private_find_test(std::ostream &, bool balance_before_test = false);
+    std::ostream &private_find_test(std::ostream &, const bool balance_before_test = false);
 
 public:
     /** Constructor. Sets up the environment for a test.*/
@@ -81,4 +81,4 @@ public:
  * according to the boolean flag given as argument: if the flag is true, then
  * a file with results is created, otherwise the std:.out will be used.
  * The flag is set to true as default.*/
-void benchmark_test(bool to_file = true);
+void benchmark_test(const bool to_file = true);
