@@ -2,4 +2,5 @@ bin/
 benchmark_results/
 .idea/
 .vscode/
+Documentation/out/
 ubuntu_setup_env.sh

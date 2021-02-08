@@ -1,15 +1,36 @@
-# Name for final executable file
-TARGET_EXEC = final_program.x
+# Compile and link
+	# Name for final executable file
+	TARGET_EXEC = final_program.x
 
-# Compile options
-CXX = c++
-CXX_FLAGS = -Wall -Wextra -g -std=c++17
+	# Compile options
+	CXX = c++
+	CXX_FLAGS = -Wall -Wextra -g -std=c++17
 
-# Define target directory
-BUILD_DIR = bin
+	# Define target directory
+	BUILD_DIR = bin
 
-# Define source directories where to find source files
-SRC_DIRS = ./src ./test ./include
+	# Define source directories where to find source files
+	SRC_DIRS = ./src ./test ./include
+
+
+# Documentation
+	# Folder with everything about documentation
+	DOC_DIR = Documentation
+	# Init file with parameters for documentation
+	DOC_INIT_FILE = $(DOC_DIR)/doxy.in
+	# Output folder with generated documentation
+	DOC_OUT_DIR = $(DOC_DIR)/out
+	# Desired name for the output PDF file containing the documentation
+	DOC_OUT_FILE_NAME = BST_documentation.pdf
+
+
+###############################################################################
+## END of configurable parameters											 ##
+## --------------------- DO NOT MODIFY UNDER THIS LINE --------------------- ##
+###############################################################################
+
+
+
 
 # Find all C++ files we want to compile
 SRCS = $(shell find $(SRC_DIRS) -maxdepth 1 -path "*.cpp")
@@ -44,6 +65,8 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 .PHONY: build
+build: build_tmp documentation
+.PHONY: build_tmp
 build:
 	make
 
@@ -60,3 +83,29 @@ all_with_valgrind: clean build valgrind
 
 .PHONY: allv
 allv: all_with_valgrind
+
+
+.PHONY: documentation
+documentation:
+	# Remove old doxygen folder if it exists
+	rm -rf $(DOC_DIR)
+	# Create new doxygen folder if it does not exist
+	mkdir $(DOC_DIR)
+	# Generate init file for Doxygen
+	doxygen -g $(DOC_INIT_FILE)
+	# Append configuration options to doxygen init file
+	@echo 'PROJECT_NAME = "Binary Search Tree"' >> $(DOC_INIT_FILE)
+	@echo 'OUTPUT_DIRECTORY = "$(DOC_OUT_DIR)"' >> $(DOC_INIT_FILE)
+	@echo 'INPUT = "."' >> $(DOC_INIT_FILE)
+	@echo 'RECURSIVE = YES' >> $(DOC_INIT_FILE)
+	# Create folder where to save the genereated documentation
+	mkdir $(DOC_OUT_DIR)
+	# Generate documentation
+	doxygen $(DOC_INIT_FILE)
+	# Invoke doxygen makefile to create the PDF file with the documentation
+	make --directory=$(DOC_OUT_DIR)/latex
+	# Rename the file containing the documentation
+	mv $(DOC_OUT_DIR)/latex/refman.pdf $(DOC_OUT_DIR)/latex/$(DOC_OUT_FILE_NAME)
+	# Copy the pdf file with the documentation in the proper directories
+	cp -i $(DOC_OUT_DIR)/latex/$(DOC_OUT_FILE_NAME) $(DOC_OUT_DIR)
+	cp -i $(DOC_OUT_DIR)/latex/$(DOC_OUT_FILE_NAME) $(DOC_DIR)

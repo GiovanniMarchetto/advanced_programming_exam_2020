@@ -20,6 +20,15 @@ Benchmark tests are available: parameters can be configured from the source file
 *test/benchmark_test.h*. Benchmark results are available as CSV files in
 the directory specified as parameter in the source file *test/benchmark_test.h* . 
 
+## Documentation
+Documentation was created with *Doxygen* and can be re-generated with the
+command `make documentation`.
+The output directory for the documentation can be specified from the *Makefile*
+of this project.
+
+**Important**: *Doxygen* must be installed before be used. Generating a *PDF*
+file requires to have installed *pdflatex*, too.
+
 ## Short report
 ### What we did
 We used the 'Pair Programming' technique: one at a time was coding and the others
