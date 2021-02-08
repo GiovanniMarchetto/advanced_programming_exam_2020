@@ -132,7 +132,6 @@ public:
     std::pair<iterator, bool> private_insert(K &&k, V &&v) //TODO: DOVREBBE ESSERE PRIVATO, insert o emplace?
     {
         using Node = bst<value_type, key_type, OP>::node; // TODO: inutile per ora, se si sposta implementazione su altro file diventa utile
-        Node *node = new Node{std::forward<K>(k), std::forward<V>(v)};
 
         Node *prev{nullptr};
         Node *curr = get_tree_root_node();
@@ -140,17 +139,17 @@ public:
         while (curr)
         {
             prev = curr;
-            if (*node < *curr)
+            if (k < curr->key)
                 curr = curr->get_left();
-            else if (*curr < *node)
+            else if (k > curr->key)
                 curr = curr->get_right();
             else
             {
-                delete node; // TODO : corretto delete?
                 return std::make_pair<iterator, bool>(iterator{prev}, false);
             }
         }
 
+        Node *node = new Node{std::forward<K>(k), std::forward<V>(v)};
         node->set_parent(prev);
 
         if (!prev) // if the tree was empty
