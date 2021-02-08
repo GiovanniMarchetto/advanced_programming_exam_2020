@@ -108,15 +108,14 @@ public:
     bst(const bst &other) : size{other.size}
     {
         if (other.get_tree_root_node())
-            set_tree_root_node(new node{*other.get_tree_root_node()});
+            set_tree_root_node(new node{*(other.get_tree_root_node())});
     }
 
     /** Copy assignment.*/
     bst &operator=(const bst &other)
     {
-        set_tree_root_node();
-        auto tmp{bst(other)};
-        *this = std::move(tmp);
+        auto tmp{bst(other)};   // invoke the copy ctor
+        *this = std::move(tmp); // move assignment
         return *this;
     }
 

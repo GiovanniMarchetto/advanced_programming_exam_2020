@@ -55,39 +55,8 @@ public:
     /** Setter: the parent of this instance will be set with the given node.*/
     void set_parent(Node *const node = nullptr) { parent = node; }
 
-    // ---START--- Compatibility with std::pair
-
-    /** Constructor: creates a new instance of this class starting from an std::pair.
-     * Key and value from the given pair are copied.*/
-    Node(const std::pair<key_type, value_type> &pair) : Node{pair.first, pair.second} {};
-
-    /** Constructor: creates a new instance of this class starting from an std::pair.
-     * Key and value from the given pair are moved.*/
-    Node(std::pair<key_type, value_type> &&pair) : Node{std : move(pair.first), std::move(pair.second)} {};
-
-    /** Returns a pointer to a (copy of the) representation of this instance as an std::pair.*/
-    std::pair<key_type, value_type>
-        *get_pair() const { return new std::pair<key_type, value_type>(key_type{key}, value_type{value}); }
-
-    // ---END--- Compatibility with std::pair
-
-    /** Constructor. Given arguments are copied into the members of the
-     * constructing instance.
-     * @param key Key of this node.
-     * @param value Value of this node.*/
-    Node(const key_type &key, const value_type &value) : left{}, right{}, key{key}, value{value} {}
-
-    /** Constructor. Given arguments are moved into the members of the
-     * constructing instance.
-     * @param key Key of this node.
-     * @param value Value of this node.*/
-    Node(key_type &&key, value_type &&value) : left{}, right{}, key{std::move(key)}, value{std::move(value)} {}
-
     /** Default constructor.*/
     Node() = default;
-
-    /** Default destructor.*/
-    ~Node() = default;
 
     /** Copy constructor (deep copy). The given node and all the children
      * linked by it are copied.*/
@@ -107,12 +76,8 @@ public:
     /** Copy assignment. Deep copy is performed.*/
     Node &operator=(const Node &node)
     {
-        set_left();
-        set_right();
-
-        auto tmp{Node(node)};
-        *this = std::move(tmp);
-
+        auto tmp{Node(node)};   // invoke the copy ctor
+        *this = std::move(tmp); // move assignment
         return *this;
     }
 
@@ -121,6 +86,21 @@ public:
 
     /** Move assignment.*/
     Node &operator=(Node &&) = default;
+
+    /** Constructor. Given arguments are copied into the members of the
+     * constructing instance.
+     * @param key Key of this node.
+     * @param value Value of this node.*/
+    Node(const key_type &key, const value_type &value) : left{}, right{}, key{key}, value{value} {}
+
+    /** Constructor. Given arguments are moved into the members of the
+     * constructing instance.
+     * @param key Key of this node.
+     * @param value Value of this node.*/
+    Node(key_type &&key, value_type &&value) : left{}, right{}, key{std::move(key)}, value{std::move(value)} {}
+
+    /** Default destructor.*/
+    ~Node() = default;
 
     /** Comparison function according to the given Comparator
      * applied to the keys.

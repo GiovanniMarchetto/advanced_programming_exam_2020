@@ -46,7 +46,6 @@ public:
     using iterator_category = std::forward_iterator_tag;
 
     explicit Iterator(O *p) : current_node{p} {}
-    explicit Iterator(Iterator&&) = default;
 
     reference operator*() const { return *current_node; }
     pointer operator->() const { return &**this; }
