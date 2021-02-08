@@ -1,4 +1,4 @@
-# Compile and link
+# Compile and link options
 	# Name for final executable file
 	TARGET_EXEC = final_program.x
 
@@ -13,7 +13,7 @@
 	SRC_DIRS = ./src ./test ./include
 
 
-# Documentation
+# Documentation options
 	# Folder with everything about documentation
 	DOC_DIR = Documentation
 	# Init file with parameters for documentation

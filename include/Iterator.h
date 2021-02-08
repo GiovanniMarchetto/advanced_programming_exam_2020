@@ -11,19 +11,19 @@
  * @tparam value_type
  * @tparam key_type
  * @tparam OP
- * @tparam O Type of the object pointed by an instance 
+ * @tparam O Type of the object pointed by an instance
  *              of this class.
  */
 template <typename value_t,
-          typename key_type,
-          typename OP>
-template <typename O>
+    typename key_type,
+    typename OP>
+    template <typename O>
 class bst<value_t, key_type, OP>::Iterator
 {
-    O *current_node;
+    O* current_node;
 
     /** Given the pointer to a node this function returns its successor. */
-    static O *get_successor(O *node)
+    static O* get_successor(O* node)
     {
         if (node->get_right())
             return get_minimum_left_node_in_subtree(node->get_right());
@@ -40,18 +40,18 @@ class bst<value_t, key_type, OP>::Iterator
 
 public:
     using value_type = O;
-    using reference = value_type &;
-    using pointer = value_type *;
+    using reference = value_type&;
+    using pointer = value_type*;
     using difference_type = std::ptrdiff_t;
     using iterator_category = std::forward_iterator_tag;
 
-    explicit Iterator(O *p) : current_node{p} {}
+    explicit Iterator(O* p) : current_node{ p } {}
 
     reference operator*() const { return *current_node; }
     pointer operator->() const { return &**this; }
 
     // pre-increment
-    Iterator &operator++()
+    Iterator& operator++()
     {
         current_node = get_successor(current_node);
         return *this;
@@ -60,17 +60,17 @@ public:
     // post-increment
     Iterator operator++(int)
     {
-        auto tmp{*this};
+        auto tmp{ *this };
         ++(*this);
         return tmp;
     }
 
-    friend bool operator==(const Iterator &a, const Iterator &b)
+    friend bool operator==(const Iterator& a, const Iterator& b)
     {
         return a.current_node == b.current_node;
     }
 
-    friend bool operator!=(const Iterator &a, const Iterator &b)
+    friend bool operator!=(const Iterator& a, const Iterator& b)
     {
         return !(a == b);
     }
