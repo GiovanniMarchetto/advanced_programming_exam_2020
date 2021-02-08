@@ -57,7 +57,7 @@ class bst
     }
 
     /** Given a pointer to a node, this function return the leftmost
-     * (minimum) node in the substree whose root is the specified node.*/
+     * (minimum) node in the subtree whose root is the specified node.*/
     static node *get_minimum_left_node_in_subtree(node *node)
     {
         while (node && node->get_left())
@@ -283,7 +283,7 @@ public:
     }
 
     /** Function for finding a given key. If the key is present, it returns a 
-     * costant iterator to the proper node, cend() otherwise.
+     * constant iterator to the proper node, cend() otherwise.
      * @param x The key.*/
     const_iterator find(const key_type &x) const
     {
@@ -354,7 +354,7 @@ public:
         --size;
     }
 
-    /** Function for printing the structrure of the tree into a string
+    /** Function for printing the structure of the tree into a string
      * which is returned by reference.*/
     const std::string &tree_structure_to_string(std::string &str_buffer) const
     {

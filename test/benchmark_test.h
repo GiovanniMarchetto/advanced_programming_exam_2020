@@ -49,7 +49,7 @@ public:
      * @param os Output stream where to print test results.
      * @param NUMBER_OF_NODES_INSERTION_BENCHMARK Number of nodes to be inserted in
      *                                            this test. If not specified, the
-     *                                            value specifed as member of this
+     *                                            value specified as member of this
      *                                            class will be used.
      */
     std::ostream &insertion_test(std::ostream &os,

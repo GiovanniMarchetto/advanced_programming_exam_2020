@@ -132,11 +132,11 @@ void node_operations_test(int i)
     Node<char> second_node(random_int(), random_char());
     if (i < NUMBER_OF_PRINT)
         std::cout << "Address " << &second_node
-                  << " - Node copy assignement - before: " << second_node << std::endl;
+                  << " - Node copy assignment - before: " << second_node << std::endl;
     second_node = first_node;
     if (i < NUMBER_OF_PRINT)
         std::cout << "Address " << &second_node
-                  << " - Node copy assignement - after:  " << second_node << std::endl;
+                  << " - Node copy assignment - after:  " << second_node << std::endl;
 
     std::string not_a_word;
     const char a = random_char();

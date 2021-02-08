@@ -33,8 +33,8 @@ void benchmark_test(bool to_file)
     /** Returns the output stream: if to_file is true, then the output stream
      * to the file with the name given as argument will be set. If the file
      * does not exist, it will be created, otherwise it will be replaced.
-     * @param filename The string with the name of the file wher to save the
-     *                  results, withou neither the full path nor the file
+     * @param filename The string with the name of the file where to save the
+     *                  results, without neither the full path nor the file
      *                  extension.*/
     auto get_ostream = [to_file, &f](const std::string &filename) -> std::ostream & {
         if (!to_file)
@@ -43,7 +43,7 @@ void benchmark_test(bool to_file)
         // Otherwise, write to file
         std::ofstream tmp{OUTPUT_RESULTS_DIR + "/" + filename + ".csv"}; //previous content will be overwritten
         f = std::move(tmp);
-        // Note: fstream will be closed by the dctor
+        // Note: fstream will be closed by the destructor
         return f;
     };
 
@@ -134,7 +134,7 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
     if (!(std::is_same<key_type, int>::value &&
           std::is_same<value_type, char>::value)) // Check if right template types
     {
-        os << "This test is currenty available only for integer key type and char value type";
+        os << "This test is currently available only for integer key type and char value type";
         return os;
     }
 
@@ -170,7 +170,7 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
             duration_insertion_in_std_map{};
         for (std::size_t i{0}; i < NUMBER_OF_NODES_INSERTION_BENCHMARK; ++i)
         {
-            std::pair<int, char> pair_to_insert{vector_of_nodes_to_insert.at(i)}; // the pair is temporarely saved here just before being inserted
+            std::pair<int, char> pair_to_insert{vector_of_nodes_to_insert.at(i)}; // the pair is temporarily saved here just before being inserted
 
             // Insertion in our tree
             auto t1 = std::chrono::high_resolution_clock::now();
@@ -191,12 +191,6 @@ std::ostream &Benchmark_test<value_type, key_type, OP>::
     };
 
     iterate(actual_test);
-
-    // os << "\n";
-    // os << NUMBER_OF_NODES_INSERTION_BENCHMARK << " nodes have been inserted into the tree in " << duration_insertion_in_our_tree << " us. ";
-    // os << " Average insertion time: " << (duration_insertion_in_our_tree / (0.0 + NUMBER_OF_NODES_INSERTION_BENCHMARK)) << " us.\n";
-    // os << NUMBER_OF_NODES_INSERTION_BENCHMARK << " nodes have been inserted into an std::map in " << duration_insertion_in_std_map << " us. ";
-    // os << " Average insertion time: " << (duration_insertion_in_std_map / (0.0 + NUMBER_OF_NODES_INSERTION_BENCHMARK)) << " us.";
 
     return os;
 }
