@@ -304,6 +304,7 @@ void erase_test(int i)
 
     if (i < NUMBER_OF_PRINT)
     {
+        std::cout << "---[Index " << i << " ]" << std::endl;
         std::cout << "Erase node - "
                   << "[" << key_erase_node << "]" << std::endl;
         std::cout << "Resulting tree: " << bst_
