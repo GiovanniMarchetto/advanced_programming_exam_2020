@@ -7,6 +7,7 @@
 
 #include <type_traits> // std::is_same<T,U>
 #include <chrono>
+#include <utility>
 
 // For random generation
 #include <cstdlib> // srand, rand
@@ -39,7 +40,7 @@ void benchmark_test(bool to_file)
         if (!to_file)
             return std::cout;
 
-        // Otherwis, write to file
+        // Otherwise, write to file
         std::ofstream tmp{OUTPUT_RESULTS_DIR + "/" + filename + ".csv"}; //previous content will be overwritten
         f = std::move(tmp);
         // Note: fstream will be closed by the dctor

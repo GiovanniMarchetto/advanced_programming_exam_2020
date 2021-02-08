@@ -201,7 +201,9 @@ public:
         }
     }
 
-    /** Balance recursive function. */
+    /** Balance recursive function. 
+     * start included, stop excluded
+    */
     void recursive_balance(size_t start, size_t stop, bst &balanced, node *arr[]) //TODO: DOVREBBE ESSERE PRIVATO
     {
         if (start != stop)

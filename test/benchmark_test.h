@@ -1,5 +1,4 @@
 #include <iostream>
-#include <utility>
 #include "bst.h"
 
 // For benchmark timing test and comparison

@@ -8,6 +8,8 @@
 #include "bst.h"
 #include "print_and_format.h"
 
+//TODO: REFACTORING NEEDED
+
 constexpr int NUMBER_OF_NODES{50};
 constexpr int MAX_NUMBER_OF_KEY{15};
 // if (MAX_NUMBER_OF_KEY < NUMBER_OF_NODES) --> test behaviour with duplicated keys
@@ -181,8 +183,6 @@ void node_other_type_test()
     Node<std::vector<int>> vnode2(random_int(), std::move(vec2));
     std::cout << "Move - node of vector<int>:                  " << vnode2 << std::endl;
 
-    //Node<std::vector<int>> vnode3(12, std::move(*(new std::vector<int>{1, 2, 3}))); // value is moved -> memory leak due to the user
-
     Node<bst<char>, int> n_bst(1, bst_);
     std::cout << "Copy - node of bst<char>:                     " << n_bst << std::endl;
 }
@@ -271,7 +271,7 @@ void subscripting_node_test(int i)
         std::cout << "Resulting tree (after l-value): " << bst_
                   << std::endl;
 
-        bst_[key_to_subscript_2] = std::move(value_to_subscript_2);
+        bst_[key_to_subscript_2] = std::move(value_to_subscript_2); //std::move not needed with char type but here we force it for testing
 
         std::cout << "Resulting tree (after r-value): " << bst_
                   << std::endl;
