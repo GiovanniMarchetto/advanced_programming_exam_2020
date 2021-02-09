@@ -14,13 +14,26 @@
 #ifndef ADVANCED_PROGRAMMING_EXAM_2020_AP_ERROR_H
 #define ADVANCED_PROGRAMMING_EXAM_2020_AP_ERROR_H
 
- /** Returns true it the template type is a pointer.*/
+ /** Templated struct for checking if a templated pointer is nullptr.*/
 template<typename T>
-inline bool is_pointer(const T&)
+struct is_null_pointer_helper
 {
-    return std::is_pointer<T>::value;
-}
+    static bool is_null_pointer(const T) noexcept { return false; }
+};
 
+/** Templated struct for checking if a templated pointer is nullptr.*/
+template<typename T>
+struct is_null_pointer_helper<T*>
+{
+    static bool is_null_pointer(const T* const t) noexcept { return t == nullptr; }
+};
+
+/** Returns true if the template type is a null pointer.*/
+template<typename T>
+inline bool is_null_pointer(const T& t)
+{
+    return is_null_pointer_helper<T>::is_null_pointer(t);
+}
 
 /**
  * \def AP_ERROR_ARGS(var_type, var)
@@ -28,7 +41,7 @@ inline bool is_pointer(const T&)
  * the macro AP_ERROR(...) and AP_ASSERT(...).
  */
 #define AP_ERROR_ARGS(var)                                                    \
-    (!(is_pointer(var) && ! var )), std::invalid_argument /*check if it is not nullptr*/
+    (!is_null_pointer(var)), std::invalid_argument /*check if it is not nullptr*/
 
  /**
   * \def AP_ASSERT_IF_NULLPTR(var_type, var, msg, is_error )
