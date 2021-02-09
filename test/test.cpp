@@ -10,19 +10,16 @@
 
 //TODO: REFACTORING NEEDED
 
-constexpr int NUMBER_OF_NODES{ 50 };
-constexpr int MAX_NUMBER_OF_KEY{ 15 };
-// if (MAX_NUMBER_OF_KEY < NUMBER_OF_NODES) --> test behaviour with duplicated keys
-constexpr int NUMBER_OF_PRINT{ 2 };
-
 bst<char> bst_{};
 
+/** Receives a function as argument and executes it iteratively
+ * for sup_limit times, that is the second argument.*/
 template <typename F>
-void iteration_func(const F& function)
+void iteration_func(const F& function, const int sup_limit=1)
 {
     //std::srand(std::time(NULL)); // random seed initialization
     std::srand(123); // fixed seed for reproducible tests
-    for (int i{ 0 }; i < NUMBER_OF_NODES; ++i)
+    for (int i{ 0 }; i < sup_limit; ++i)
         function(i);
 }
 
@@ -45,7 +42,7 @@ void tests()
         << std::endl;
 
     std::cout << formatting_title("## Nodes operations ##", true) << std::endl;
-    iteration_func(node_operations_test);
+    iteration_func(node_operations_test, NUMBER_OF_NODES);
     std::cout << formatting_title("# Results #", true) << std::endl;
     std::cout << NUMBER_OF_NODES << " repetitions of nodes operations - done" << std::endl;
     std::cout << std::endl
@@ -62,7 +59,7 @@ void tests()
         << std::endl;
 
     std::cout << formatting_title("## BST construction ##", true) << std::endl;
-    iteration_func(bst_insertion_test);
+    iteration_func(bst_insertion_test, NUMBER_OF_NODES_BST);
     std::cout << formatting_title("# Final tree (traversal) #", true) << std::endl;
     std::cout << bst_ << std::endl;
     std::cout << formatting_title("# Final tree (tree shape) #", true) << std::endl;
@@ -88,18 +85,18 @@ void tests()
         << std::endl;
 
     std::cout << formatting_title("## Finding a node") << std::endl;
-    iteration_func(find_node_test);
+    iteration_func(find_node_test, NUMBER_OF_NODES);
     std::cout << std::endl
         << std::endl;
 
     std::cout << formatting_title("## Subscripting operator") << std::endl;
-    iteration_func(subscripting_node_test);
+    iteration_func(subscripting_node_test, NUMBER_OF_NODES);
     std::cout << std::endl
         << std::endl;
 
     std::cout << formatting_title("## Erase") << std::endl;
     std::cout << "Original tree:  " << bst_ << std::endl;
-    iteration_func(erase_test);
+    iteration_func(erase_test, NUMBER_OF_NODES);
     std::cout << formatting_title("# Final tree (after all erase repetitions) #", true) << std::endl;
     std::cout << bst_ << std::endl;
     std::string str2{};
@@ -108,7 +105,7 @@ void tests()
         << std::endl;
 
     std::cout << formatting_title("## Clear") << std::endl;
-    std::cout << "Original tree: " << bst_2 << std::endl;
+    std::cout << "Original tree (the copy): " << bst_2 << std::endl;
     bst_2.clear();
     std::cout << "Clear tree:    " << bst_2 << std::endl;
     std::cout << std::endl
@@ -204,7 +201,7 @@ void bst_insertion_test(const int i)
         std::cout << bst_.tree_structure_to_string(str) << std::endl;
     }
 
-    bst_.emplace(random_int(), random_char()); //expected:
+    bst_.emplace(random_int(), random_char());
     if (i == 0)
     {
         std::cout << formatting_title("## Variadic emplace ") << std::endl;
@@ -212,7 +209,7 @@ void bst_insertion_test(const int i)
         std::cout << bst_.tree_structure_to_string(str) << std::endl;
     }
 
-    bst_.insert({ random_int(), random_char() }); //expected: )
+    bst_.insert({ random_int(), random_char() });
     if (i == 0)
     {
         std::cout << formatting_title("## Move insert") << std::endl;
@@ -248,13 +245,20 @@ void find_node_test(const int i)
 
 void subscripting_node_test(const int i)
 {
-    if (i < NUMBER_OF_PRINT)
+    int key_to_subscript = random_int();
+    char value_to_subscript = random_char();
+    int key_to_subscript_2 = random_int();
+    char value_to_subscript_2 = random_char();
+
+    if (i == NUMBER_OF_PRINT) {
+        key_to_subscript = key_to_subscript + MAX_NUMBER_OF_KEY;
+        key_to_subscript_2 = key_to_subscript_2 + MAX_NUMBER_OF_KEY;
+    }
+
+    if (i <= NUMBER_OF_PRINT)
     {
         std::cout << "---[Index " << i << " ]" << std::endl;
-        int key_to_subscript = random_int();
-        char value_to_subscript = random_char();
-        int key_to_subscript_2 = random_int();
-        char value_to_subscript_2 = random_char();
+
         std::cout << "Subscripting node (l-value) - "
             << "[" << key_to_subscript << " => "
             << value_to_subscript << "], "
@@ -263,40 +267,18 @@ void subscripting_node_test(const int i)
             << value_to_subscript_2 << "]" << std::endl;
 
         std::cout << "Original tree:                  " << bst_ << std::endl;
+    }
 
-        bst_[key_to_subscript] = value_to_subscript;
+    bst_[key_to_subscript] = value_to_subscript;
+    if (i <= NUMBER_OF_PRINT)
         std::cout << "Resulting tree (after l-value): " << bst_
-            << std::endl;
+        << std::endl;
 
-        bst_[key_to_subscript_2] = std::move(value_to_subscript_2); //std::move not needed with char type but here we force it for testing
-
+    bst_[key_to_subscript_2] = std::move(value_to_subscript_2); //std::move not needed with char type but here we force it for testing
+    if (i <= NUMBER_OF_PRINT)
         std::cout << "Resulting tree (after r-value): " << bst_
-            << std::endl;
-    }
-    if (i == NUMBER_OF_PRINT)
-    {
-        std::cout << "---[Index " << i << " ]" << std::endl;
-        int key_to_subscript_noexist = MAX_NUMBER_OF_KEY + random_int();
-        char value_to_subscript = random_char();
-        int key_to_subscript_noexist_2 = random_int();
-        char value_to_subscript_2 = random_char();
-        std::cout << "Subscripting node (l-value) - "
-            << "[" << key_to_subscript_noexist << " => "
-            << value_to_subscript << "], "
-            << "Subscripting node (r-value) - "
-            << "[" << key_to_subscript_noexist_2 << " => "
-            << value_to_subscript_2 << "]" << std::endl;
+        << std::endl;
 
-        std::cout << "Original tree:                  " << bst_ << std::endl;
-
-        bst_[key_to_subscript_noexist] = value_to_subscript;
-        std::cout << "Resulting tree (after l-value): " << bst_
-            << std::endl;
-
-        bst_[key_to_subscript_noexist_2] = std::move(value_to_subscript_2);
-        std::cout << "Resulting tree (after l-value): " << bst_
-            << std::endl;
-    }
 }
 
 void erase_test(const int i)
