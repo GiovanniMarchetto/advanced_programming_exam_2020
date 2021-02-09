@@ -33,85 +33,6 @@ char random_char()
     return static_cast<char>(rand() % 26 + static_cast<int>('a')); // between 'a' and 'z'
 }
 
-void tests()
-{
-
-    std::cout << formatting_title() << std::endl;
-    std::cout << formatting_title("##### NODE TESTS #####", true) << std::endl;
-    std::cout << formatting_title() << std::endl
-        << std::endl;
-
-    std::cout << formatting_title("## Nodes operations ##", true) << std::endl;
-    iteration_func(node_operations_test, NUMBER_OF_NODES);
-    std::cout << formatting_title("# Results #", true) << std::endl;
-    std::cout << NUMBER_OF_NODES << " repetitions of nodes operations - done" << std::endl;
-    std::cout << std::endl
-        << std::endl;
-
-    std::cout << formatting_title("## Copy and move semantic of the value of a node during its construction") << std::endl;
-    node_other_type_test();
-    std::cout << std::endl
-        << std::endl;
-
-    std::cout << formatting_title() << std::endl;
-    std::cout << formatting_title("##### BST TESTS #####", true) << std::endl;
-    std::cout << formatting_title() << std::endl
-        << std::endl;
-
-    std::cout << formatting_title("## BST construction ##", true) << std::endl;
-    iteration_func(bst_insertion_test, NUMBER_OF_NODES_BST);
-    std::cout << formatting_title("# Final tree (traversal) #", true) << std::endl;
-    std::cout << bst_ << std::endl;
-    std::cout << formatting_title("# Final tree (tree shape) #", true) << std::endl;
-    std::string str{};
-    std::cout << bst_.tree_structure_to_string(str) << std::endl;
-    std::cout << std::endl
-        << std::endl;
-
-    std::cout << formatting_title("## BST copy semantics") << std::endl;
-    bst<char> bst_2{ bst_ };
-    std::cout << bst_2 << std::endl;
-    std::cout << std::endl
-        << std::endl;
-
-    std::cout << formatting_title("## Balance") << std::endl;
-    //bst_.unbalance();
-    bst_.balance();
-    std::cout << "Traversal: " << bst_ << std::endl
-        << std::endl;
-    str = "";
-    std::cout << bst_.tree_structure_to_string(str) << std::endl;
-    std::cout << std::endl
-        << std::endl;
-
-    std::cout << formatting_title("## Finding a node") << std::endl;
-    iteration_func(find_node_test, NUMBER_OF_NODES);
-    std::cout << std::endl
-        << std::endl;
-
-    std::cout << formatting_title("## Subscripting operator") << std::endl;
-    iteration_func(subscripting_node_test, NUMBER_OF_NODES);
-    std::cout << std::endl
-        << std::endl;
-
-    std::cout << formatting_title("## Erase") << std::endl;
-    std::cout << "Original tree:  " << bst_ << std::endl;
-    iteration_func(erase_test, NUMBER_OF_NODES);
-    std::cout << formatting_title("# Final tree (after all erase repetitions) #", true) << std::endl;
-    std::cout << bst_ << std::endl;
-    std::string str2{};
-    std::cout << bst_.tree_structure_to_string(str2) << std::endl;
-    std::cout << std::endl
-        << std::endl;
-
-    std::cout << formatting_title("## Clear") << std::endl;
-    std::cout << "Original tree (the copy): " << bst_2 << std::endl;
-    bst_2.clear();
-    std::cout << "Clear tree:    " << bst_2 << std::endl;
-    std::cout << std::endl
-        << std::endl;
-}
-
 void node_operations_test(const int i)
 {
     Node<char> first_node(random_int(), random_char());
@@ -296,4 +217,83 @@ void erase_test(const int i)
         std::string str2{};
         std::cout << bst_.tree_structure_to_string(str2) << std::endl;
     }
+}
+
+void tests()
+{
+
+    std::cout << formatting_title() << std::endl;
+    std::cout << formatting_title("##### NODE TESTS #####", true) << std::endl;
+    std::cout << formatting_title() << std::endl
+        << std::endl;
+
+    std::cout << formatting_title("## Nodes operations ##", true) << std::endl;
+    iteration_func(node_operations_test, NUMBER_OF_NODES);
+    std::cout << formatting_title("# Results #", true) << std::endl;
+    std::cout << NUMBER_OF_NODES << " repetitions of nodes operations - done" << std::endl;
+    std::cout << std::endl
+        << std::endl;
+
+    std::cout << formatting_title("## Copy and move semantic of the value of a node during its construction") << std::endl;
+    node_other_type_test();
+    std::cout << std::endl
+        << std::endl;
+
+    std::cout << formatting_title() << std::endl;
+    std::cout << formatting_title("##### BST TESTS #####", true) << std::endl;
+    std::cout << formatting_title() << std::endl
+        << std::endl;
+
+    std::cout << formatting_title("## BST construction ##", true) << std::endl;
+    iteration_func(bst_insertion_test, NUMBER_OF_NODES_BST);
+    std::cout << formatting_title("# Final tree (traversal) #", true) << std::endl;
+    std::cout << bst_ << std::endl;
+    std::cout << formatting_title("# Final tree (tree shape) #", true) << std::endl;
+    std::string str{};
+    std::cout << bst_.tree_structure_to_string(str) << std::endl;
+    std::cout << std::endl
+        << std::endl;
+
+    std::cout << formatting_title("## BST copy semantics") << std::endl;
+    bst<char> bst_2{ bst_ };
+    std::cout << bst_2 << std::endl;
+    std::cout << std::endl
+        << std::endl;
+
+    std::cout << formatting_title("## Balance") << std::endl;
+    //bst_.unbalance();
+    bst_.balance();
+    std::cout << "Traversal: " << bst_ << std::endl
+        << std::endl;
+    str = "";
+    std::cout << bst_.tree_structure_to_string(str) << std::endl;
+    std::cout << std::endl
+        << std::endl;
+
+    std::cout << formatting_title("## Finding a node") << std::endl;
+    iteration_func(find_node_test, NUMBER_OF_NODES);
+    std::cout << std::endl
+        << std::endl;
+
+    std::cout << formatting_title("## Subscripting operator") << std::endl;
+    iteration_func(subscripting_node_test, NUMBER_OF_NODES);
+    std::cout << std::endl
+        << std::endl;
+
+    std::cout << formatting_title("## Erase") << std::endl;
+    std::cout << "Original tree:  " << bst_ << std::endl;
+    iteration_func(erase_test, NUMBER_OF_NODES);
+    std::cout << formatting_title("# Final tree (after all erase repetitions) #", true) << std::endl;
+    std::cout << bst_ << std::endl;
+    std::string str2{};
+    std::cout << bst_.tree_structure_to_string(str2) << std::endl;
+    std::cout << std::endl
+        << std::endl;
+
+    std::cout << formatting_title("## Clear") << std::endl;
+    std::cout << "Original tree (the copy): " << bst_2 << std::endl;
+    bst_2.clear();
+    std::cout << "Clear tree:    " << bst_2 << std::endl;
+    std::cout << std::endl
+        << std::endl;
 }
