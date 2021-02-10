@@ -43,6 +43,24 @@ inline bool is_null_pointer(const T& t)
 #define AP_ERROR_ARGS(var)                                                    \
     (!is_null_pointer(var)), std::invalid_argument /*check if it is not nullptr*/
 
+/**
+ *  \def AP_ERROR_IF_NULLPTR_WITH_MSG(var, msg, is_error)
+ * This macro checks if a variable is a nullptr, by using AP_ERROR or AP_ASSERT,
+ * and prints the given message.
+ * @param var      The variable to check.
+ * @param msg      The message to show.
+ * @param is_error Flag: if true, AP_ERROR is used, otherwise AP_ASSERT.
+ */ 
+#define AP_ERROR_IF_NULLPTR_WITH_MSG(var, msg, is_error)                      \
+    if(is_error)                                                              \
+    {                                                                         \
+        AP_ERROR(AP_ERROR_ARGS(var)) << msg << std::endl;                     \
+    }                                                                         \
+    else                                                                      \
+    {                                                                         \
+        AP_ASSERT(AP_ERROR_ARGS(var)) << msg << std::endl;                    \
+    }
+
  /**
   * \def AP_ASSERT_IF_NULLPTR(var_type, var, msg, is_error )
   * This macro checks if a variable is a nullptr, by using AP_ERROR or AP_ASSERT.
@@ -52,14 +70,7 @@ inline bool is_null_pointer(const T& t)
   */
 #define AP_ERROR_IF_NULLPTR(var, var_name, is_error )                         \
     std::string msg {"The variable " #var_name " cannot be nullptr."};        \
-    if(is_error)                                                              \
-    {                                                                         \
-        AP_ERROR(AP_ERROR_ARGS(var)) << msg << std::endl;                     \
-    }                                                                         \
-    else                                                                      \
-    {                                                                         \
-        AP_ASSERT(AP_ERROR_ARGS(var)) << msg << std::endl;                    \
-    }
+    AP_ERROR_IF_NULLPTR_WITH_MSG(var, msg, is_error)
 
 
 # endif // ADVANCED_PROGRAMMING_EXAM_2020_AP_ERROR_H
