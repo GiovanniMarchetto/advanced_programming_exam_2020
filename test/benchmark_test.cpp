@@ -194,9 +194,6 @@ template <typename value_type,
     return os;
 }
 
-/** Finding test support function. This function performs the finding test
- * allowing to specify if balancing the tree before running the test: it can
- * be specified thanks to the parameter.*/
 template <typename value_type,
     typename key_type,
     typename OP>

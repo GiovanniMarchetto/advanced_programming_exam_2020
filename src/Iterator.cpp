@@ -33,7 +33,6 @@ typename bst<value_t, key_type, OP>::template Iterator<O>::reference
 bst<value_t, key_type, OP>::Iterator<O>::
 operator*() const
 {
-    //TODO: stringa literal costly?
     AP_ERROR_IF_NULLPTR_WITH_MSG(current_node, "Nullptr cannot be de-reference", false);
     return *current_node;
 }

@@ -37,8 +37,16 @@ get_minimum_left_node_in_subtree(Node<value_type, key_type, OP>* node) noexcept
 }
 
 template <typename value_type, typename key_type, typename OP>
+bst<value_type, key_type, OP>::
+bst(const bst& other) : size{ other.size }
+{
+    if (other.get_tree_root_node())
+        set_tree_root_node(new node{ *(other.get_tree_root_node()) });
+}
+
+template <typename value_type, typename key_type, typename OP>
 bst<value_type, key_type, OP>& bst<value_type, key_type, OP>::
-operator=(const bst<value_type, key_type, OP>& other)
+operator=(const bst& other)
 {
     auto tmp{ bst(other) };   // invoke the copy ctor
     *this = std::move(tmp); // move assignment
