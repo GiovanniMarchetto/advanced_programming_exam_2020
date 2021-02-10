@@ -93,12 +93,18 @@ documentation:
 	mkdir $(DOC_DIR)
 	# Generate init file for Doxygen
 	doxygen -g $(DOC_INIT_FILE)
-	# Append configuration options to doxygen init file
+	# Append configuration options to doxygen init file (see Doxygen manual)
 	@echo 'PROJECT_NAME = "Binary Search Tree"' >> $(DOC_INIT_FILE)
 	@echo 'OUTPUT_DIRECTORY = "$(DOC_OUT_DIR)"' >> $(DOC_INIT_FILE)
 	@echo 'INPUT = "."' >> $(DOC_INIT_FILE)
 	@echo 'RECURSIVE = YES' >> $(DOC_INIT_FILE)
-	# Create folder where to save the genereated documentation
+	@echo 'EXTRACT_ALL = YES' >> $(DOC_INIT_FILE)
+	@echo 'EXTRACT_PRIVATE = YES' >> $(DOC_INIT_FILE)
+	@echo 'EXTRACT_PACKAGE = YES' >> $(DOC_INIT_FILE)
+	@echo 'EXTRACT_STATIC = YES' >> $(DOC_INIT_FILE)
+	@echo 'EXTRACT_LOCAL_CLASSES = YES' >> $(DOC_INIT_FILE)
+	@echo 'EXTRACT_LOCAL_METHODS = YES' >> $(DOC_INIT_FILE)
+	# Create folder where to save the generated documentation
 	mkdir $(DOC_OUT_DIR)
 	# Generate documentation
 	doxygen $(DOC_INIT_FILE)
