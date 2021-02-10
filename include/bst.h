@@ -1,13 +1,11 @@
 #include <functional> // std::less
 #include <stdint.h>   // int32_t
 #include <memory>     // unique_ptr
-#include <utility>    //std::forward, move
+#include <utility>    // std::pair
+#include <string>
+
 #include "Node.h"
 
-#include <string>
-#include <sstream>
-
-#include "ap_error_ext.h"
 
 #ifndef ADVANCED_PROGRAMMING_EXAM_2020_BST_H
 #define ADVANCED_PROGRAMMING_EXAM_2020_BST_H
@@ -45,28 +43,11 @@ template <typename value_type,
 
     /** Releases the given node from its parent or from the tree if it's the root node.
      * Warning: it returns an unmanaged raw pointer to the released node. */
-    node* release_node(const node* const node_to_release)
-    {
-        AP_ERROR_IF_NULLPTR(node_to_release, "node_to_release", false);
-
-        if (node_to_release->get_parent() == nullptr)
-            return this->release_tree_root_node();
-
-        if (node_to_release->get_parent()->get_left() == node_to_release)
-            return node_to_release->get_parent()->release_left();
-
-        return node_to_release->get_parent()->release_right();
-    }
+    node* release_node(const node* const node_to_release);
 
     /** Given a pointer to a node, this function return the leftmost
      * (minimum) node in the subtree whose root is the specified node.*/
-    static node* get_minimum_left_node_in_subtree(node* node) noexcept
-    {
-        while (node && node->get_left())
-            node = node->get_left();
-
-        return node;
-    }
+    static node* get_minimum_left_node_in_subtree(node* node) noexcept;
 
 public:
     /** Function object that compares nodes by comparing of the
@@ -110,12 +91,7 @@ public:
     }
 
     /** Copy assignment.*/
-    bst& operator=(const bst& other)
-    {
-        auto tmp{ bst(other) };   // invoke the copy ctor
-        *this = std::move(tmp); // move assignment
-        return *this;
-    }
+    bst& operator=(const bst& other);
 
     /** Move constructor.*/
     bst(bst&&) noexcept = default;
@@ -123,308 +99,90 @@ public:
     /** Move assignment.*/
     bst& operator=(bst&&) noexcept = default;
 
-
-    /** Inserts a new element into the container given key and value (which
-     * are forwarded) if there is no element with the key in the container.
-     * @tparam K The type of the key.
-     * @tparam V The type of the value.*/
-    template <typename K, typename V>
-    std::pair<iterator, bool> private_insert(K&& k, V&& v) //TODO: DOVREBBE ESSERE PRIVATO, insert o emplace?
-    {
-        AP_ERROR_IF_NULLPTR(k, "k", false);
-
-        using Node = bst<value_type, key_type, OP>::node; // TODO: inutile per ora, se si sposta implementazione su altro file diventa utile
-
-        Node* prev{ nullptr };
-        Node* curr = get_tree_root_node();
-
-        while (curr)
-        {
-            prev = curr;
-            if (k < curr->key)
-                curr = curr->get_left();
-            else if (k > curr->key)
-                curr = curr->get_right();
-            else
-            {
-                return std::make_pair<iterator, bool>(iterator{ prev }, false);
-            }
-        }
-
-        Node* node = new Node{ std::forward<K>(k), std::forward<V>(v) };
-        node->set_parent(prev);
-
-        if (!prev) // if the tree was empty
-            set_tree_root_node(node);
-        else if (*node < *prev)
-            prev->set_left(node);
-        else
-            prev->set_right(node);
-
-        ++size;
-        return std::make_pair<iterator, bool>(iterator{ node }, true);
-    }
-
     /** Inserts a new element into the container given a pair with key and value
      * (which are copied) if there is no element with the key in the container. */
-    std::pair<iterator, bool> insert(const std::pair<key_type, value_type>& x)
-    {
-        AP_ERROR_IF_NULLPTR(x.first, "x.first", true);  // TODO : add compile flag to avoid this check also in production (could be costly?)
-        return private_insert(x.first, x.second);
-    }
+    std::pair<iterator, bool> insert(const std::pair<key_type, value_type>& x);
 
     /** Inserts a new element into the container given a pair with key and value
      * (which are moved) if there is no element with the key in the container. */
-    std::pair<iterator, bool> insert(std::pair<key_type, value_type>&& x)
-    {
-        AP_ERROR_IF_NULLPTR(x.first, "x.first", true);
-        return private_insert(std::move(x.first), std::move(x.second));
-    }
+    std::pair<iterator, bool> insert(std::pair<key_type, value_type>&& x);
 
     /** Inserts a new element into the container constructed in-place with
      * the given args if there is no element with the key in the container.*/
     template <class... Types>
-    std::pair<iterator, bool> emplace(Types &&...args)
-    {
-        return private_insert(std::forward<Types>(args)...);
-    }
+    std::pair<iterator, bool> emplace(Types &&...args);
 
     /**Clear the content of the tree.*/
-    void clear() noexcept
-    {
-        set_tree_root_node();
-        size = 0;
-    }
+    void clear() noexcept;
 
     /** Unbalance the tree to the worst case. */
-    void unbalance()
-    {
-        if (get_size())
-        {
-            bst tmp{};
-            for (node& el : *this)
-                tmp.emplace(std::move(el.key), std::move(el.value));
-            *this = std::move(tmp);
-        }
-    }
+    void unbalance();
 
-    /** Balance recursive function.
-     * TODO start included, stop excluded (documentazione)
-    */
-    void recursive_balance(const size_t start, const size_t stop, bst& balanced, node* const arr[]) //TODO: DOVREBBE ESSERE PRIVATO
-    {
-        if (start != stop)
-        {
-            size_t mid{ (start + stop) / 2 };
-            balanced.emplace(std::move(arr[mid]->key), std::move(arr[mid]->value));
-            recursive_balance(start, mid, balanced, arr);
-            recursive_balance(mid + 1, stop, balanced, arr);
-        }
-    }
 
     /** Balance the tree (recursively). */
-    void balance()
-    {
-        if (get_size())
-        {
-            bst tmp{};
+    void balance();
 
-            node* nodes[get_size()];
-            size_t i{ 0 };
-            for (auto& el : *this)
-            {
-                nodes[i] = &el;
-                ++i;
-            }
-            recursive_balance(0, get_size(), tmp, nodes);
-            *this = std::move(tmp);
-        }
-    }
-
-    template <typename key_type_>
-    value_type& subscripting(key_type_&& x) // TODO : move this in private part
-    {
-        AP_ERROR_IF_NULLPTR(x, "x", false);
-
-        auto iter = find(std::forward<key_type_>(x));
-        if (iter == end())
-        {
-            auto from_insert = emplace(std::forward<key_type_>(x), value_type{});
-            return from_insert.first->value;
-        }
-        return iter->value;
-    }
 
     /** Returns a reference to the value that is mapped to a key equivalent to `x`,
      *  performing an insertion if such key does not already exist. */
-    value_type& operator[](const key_type& x)
-    {
-        AP_ERROR_IF_NULLPTR(x, "x", true);
-        return subscripting(x);
-    }
+    value_type& operator[](const key_type& x);
 
     /** Returns a reference to the value that is mapped to a key equivalent to `x`,
      *  performing an insertion if such key does not already exist. */
-    value_type& operator[](key_type&& x)
-    {
-        AP_ERROR_IF_NULLPTR(x, "x", true);
-        return subscripting(std::move(x));
-    }
-
-    /** Private function for finding a key.
-     *  Returns a pointer to the node */
-    node* private_find(const key_type& key_to_find) const// TODO : move this in private part
-    {
-        AP_ERROR_IF_NULLPTR(key_to_find, "key_to_find", false);
-
-        node* node{ get_tree_root_node() }; // search starts from the root
-
-        while (node && key_to_find != node->key)
-        {
-            if (node_key_compare(key_to_find, node->key))
-                node = node->get_left();
-            else
-                node = node->get_right();
-        }
-
-        return node;
-    }
+    value_type& operator[](key_type&& x);
 
     /** Function for finding a given key. If the key is present, it returns an
      * iterator to the proper node, end() otherwise.
      * @param x The key.*/
-    iterator find(const key_type& x)
-    {
-        AP_ERROR_IF_NULLPTR(x, "x", true);
-
-        node* node{ private_find(x) };
-
-        if (node)
-            return iterator{ node };
-
-        return end();
-    }
+    iterator find(const key_type& x);
 
     /** Function for finding a given key. If the key is present, it returns a
      * constant iterator to the proper node, cend() otherwise.
      * @param x The key.*/
-    const_iterator find(const key_type& x) const
-    {
-        AP_ERROR_IF_NULLPTR(x, "x", true);
-
-        const node* node{ private_find(x) };
-        if (node)
-            return const_iterator{ node };
-        return cend();
-    }
+    const_iterator find(const key_type& x) const;
 
     /** Overloading of the << operator. This function provides a view
      * of the tree, iterating over its nodes.*/
-    friend std::ostream& operator<<(std::ostream& os, const bst& _bst) noexcept
-    {
-        os << "[size=" << _bst.size << "] { ";
-        for (const auto& el : _bst)
-            os << el << " ";
-        os << "}";
-        return os;
-    }
+    template <typename value_type_, typename key_type_, typename OP_>
+    friend std::ostream& operator<<(std::ostream&, const bst<value_type_, key_type_, OP_>& _bst) noexcept;
 
     /** Removes the element (if one exists) with the key equivalent to key.*/
-    void erase(const key_type& x)
-    {
-        AP_ERROR_IF_NULLPTR(x, "x", true);
-
-        node* to_erase = private_find(x);
-
-        if (to_erase == nullptr) // case 0: node to delete does not exist (wrong key provided)
-            return;
-
-        // Erases to_remove (and its children if it has any and they are managed smart pointers)
-        auto transpose_subtree = [this](node* to_remove, node* to_transplant) {
-            node* parent = to_remove->get_parent();
-
-            if (parent == nullptr) //                       if to_remove hasn't parent node => to_remove is the root
-                set_tree_root_node(to_transplant);
-
-            else if (to_remove == parent->get_left()) //    if to_remove is the left child of its parent
-                parent->set_left(to_transplant);
-
-            else if (to_remove == parent->get_right()) //   if to_remove is the right child of its parent
-                parent->set_right(to_transplant);
-
-            if (to_transplant)
-                to_transplant->set_parent(parent);
-        };
-
-        if (to_erase->get_left() == nullptr) // case 1: node to_erase has only the right child
-            transpose_subtree(to_erase, to_erase->release_right());
-
-        else if (to_erase->get_right() == nullptr) // case 2: node to_erase has only the left child
-            transpose_subtree(to_erase, to_erase->release_left());
-
-        else // case 3: node to_erase has both left and right children
-        {
-            node* min = release_node(get_minimum_left_node_in_subtree(to_erase->get_right()));
-
-            if (min->get_parent() != to_erase) // case 3ext: min is in the right subtree of node to_erase but is not its right child
-            {
-                transpose_subtree(min, min->release_right());
-                min->set_right(to_erase->release_right());
-                min->get_right()->set_parent(min);
-            }
-
-            node* left_child_of_to_erase = to_erase->release_left(); // Save the left child because transpose_subtree is going to erase to_erase
-            transpose_subtree(to_erase, min);
-            min->set_left(left_child_of_to_erase);
-            min->get_left()->set_parent(min);
-        }
-        --size;
-    }
+    void erase(const key_type& x);
 
     /** Function for printing the structure of the tree into a string
      * which is returned by reference.*/
-    const std::string& tree_structure_to_string(std::string& str_buffer) const
-    {
-        return subtree_structure_to_string(get_tree_root_node(), str_buffer);
-    }
+    const std::string& tree_structure_to_string(std::string& str_buffer) const;
 
     /** Given a pointer to the root of a subtree, this function returns
      * a std::string containing a view of the subtree.*/
-    template <typename value_type_, typename key_type_, typename OP_>
-    static std::string&
-        subtree_structure_to_string(const Node<value_type_, key_type_, OP_>* subtree_root_node,
-            std::string& str_buffer)   // TODO: should be private?
-    {
+    static std::string& subtree_structure_to_string(const node* subtree_root_node,
+        std::string& str_buffer);
 
-        str_buffer.append("   "); // each level of the tree implies an indentation
 
-        if (!subtree_root_node) // empty subtree
-            return str_buffer.append("|--[]");
+private:
 
-        std::string str_left_buff{ str_buffer },
-            str_right_buff{ str_buffer };
-        subtree_structure_to_string(subtree_root_node->get_left(), str_left_buff);
-        subtree_structure_to_string(subtree_root_node->get_right(), str_right_buff);
+    /** Inserts a new element into the container given key and value (which
+         * are forwarded) if there is no element with the key in the container.
+         * @tparam K The type of the key.
+         * @tparam V The type of the value.*/
+    template <typename K, typename V>
+    std::pair<iterator, bool> private_insert(K&& k, V&& v);
 
-        std::stringstream os{};
-        os << "|--" << *subtree_root_node; //save info of current node into the stream
+    /** Private function for finding a key.
+     *  Returns a pointer to the node */
+    node* private_find(const key_type& key_to_find) const;
 
-        // Buffer to return
-        str_buffer.append(os.str()); // append info of current node
-        if (subtree_root_node->get_left() ||
-            subtree_root_node->get_right()) // if at least one child is defined, then print
-        {
-            str_buffer.append("\n")
-                .append(str_left_buff) // append info of left child node
-                .append("\n")
-                .append(str_right_buff); // append info of right child node
-        }
+    /** Balance recursive function.
+     * TODO start included, stop excluded (documentazione)
+    */
+    void recursive_balance(const size_t start, const size_t stop, bst& balanced, node* const arr[]);
 
-        return str_buffer;
-    }
+    template <typename key_type_>
+    value_type& subscripting(key_type_&& x);
 };
 
 #include "Iterator.h"
-#include "bst.cpp" // TODO : https://stackoverflow.com/q/495021
+#include "bst.cpp"
 
 #endif //ADVANCED_PROGRAMMING_EXAM_2020_BST_H
+

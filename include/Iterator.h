@@ -1,5 +1,5 @@
 #include "Node.h"
-#include "bst.h" //TODO: needed?
+#include "bst.h"
 
 #ifndef ADVANCED_PROGRAMMING_EXAM_2020_ITERATOR_H
 #define ADVANCED_PROGRAMMING_EXAM_2020_ITERATOR_H
@@ -25,23 +25,7 @@ class bst<value_t, key_type, OP>::Iterator
     /** Given the pointer to a node this function returns its successor.
      *  If the given node is null, nullptr is returned.
     */
-    static O* get_successor(O* node) noexcept
-    {
-        if (!node)
-            return nullptr;
-
-        if (node->get_right())
-            return get_minimum_left_node_in_subtree(node->get_right());
-
-        auto parent = node->get_parent();
-        while (parent && node == parent->get_right())
-        {
-            node = parent;
-            parent = node->get_parent();
-        }
-
-        return parent;
-    }
+    static O* get_successor(O* node) noexcept;
 
 public:
     using value_type = O;
@@ -52,48 +36,27 @@ public:
 
     explicit Iterator(O* p) : current_node{ p } {}
 
-    reference operator*() const
-    {
-        //TODO: stringa literal costly?
-        AP_ERROR_IF_NULLPTR_WITH_MSG(current_node, "Nullptr cannot be de-reference", false);
-        return *current_node;
-    }
-    pointer operator->() const
-    {
-        AP_ERROR_IF_NULLPTR_WITH_MSG(current_node, "Nullptr cannot access any member", false);
-        return &**this;
-    }
+    reference operator*() const;
+
+    pointer operator->() const;
 
     /** Pre-increment operator. When the end of the container is
      * reached (hence, when the current node is nullptr), this
      * method can still be invoked and it returns nullptr.
      */
-    Iterator& operator++() noexcept
-    {
-        current_node = get_successor(current_node);
-        return *this;
-    }
+    Iterator& operator++() noexcept;
 
     /** Post-increment operator. When the end of the container is
      * reached (hence, when the current node is nullptr), this
      * method can still be invoked and it returns nullptr.
      */
-    Iterator operator++(int) noexcept
-    {
-        auto tmp{ *this };
-        ++(*this);
-        return tmp;
-    }
+    Iterator operator++(int) noexcept;
 
-    friend bool operator==(const Iterator& a, const Iterator& b) noexcept
-    {
-        return a.current_node == b.current_node;
-    }
+    friend bool operator==(const Iterator& a, const Iterator& b) noexcept { return a.current_node == b.current_node; }
 
-    friend bool operator!=(const Iterator& a, const Iterator& b) noexcept
-    {
-        return !(a == b);
-    }
+    friend bool operator!=(const Iterator& a, const Iterator& b) noexcept { return !(a == b); }
 };
+
+#include "Iterator.cpp"
 
 #endif //ADVANCED_PROGRAMMING_EXAM_2020_ITERATOR_H

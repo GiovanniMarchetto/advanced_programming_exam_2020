@@ -1,7 +1,8 @@
-#include <functional> // less
-#include <stdint.h>   // int32_t
-#include <memory>     // unique_ptr
-#include <utility>    // pair
+#include <functional> // std::less
+#include <stdint.h>   // std::int32_t
+#include <memory>     // std::unique_ptr
+#include <utility>    // std::pair
+#include <iostream>
 
 #ifndef ADVANCED_PROGRAMMING_EXAM_2020_NODE_H
 #define ADVANCED_PROGRAMMING_EXAM_2020_NODE_H
@@ -60,26 +61,10 @@ public:
 
     /** Copy constructor (deep copy). The given node and all the children
      * linked by it are copied.*/
-    Node(const Node& node, Node* parent = nullptr) : key{ node.key }, value{ node.value }
-    {
-        auto tmp_left = node.get_left();
-        auto tmp_right = node.get_right();
-
-        set_parent(parent);
-
-        if (tmp_left)
-            set_left(new Node(*tmp_left, this));
-        if (tmp_right)
-            set_right(new Node(*tmp_right, this));
-    }
+    Node(const Node& node, Node* parent = nullptr);
 
     /** Copy assignment. Deep copy is performed.*/
-    Node& operator=(const Node& node)
-    {
-        auto tmp{ Node(node) };   // invoke the copy ctor
-        *this = std::move(tmp); // move assignment
-        return *this;
-    }
+    Node& operator=(const Node& node);
 
     /** Move constructor.*/
     Node(Node&&) noexcept = default;
@@ -118,11 +103,10 @@ public:
 
     /** Overloading of the << operator. This function provides a view
      * of the node.*/
-    friend std::ostream& operator<<(std::ostream& os, const Node& node) noexcept 
-    {
-        os << "[" << node.key << " => " << node.value << "]";
-        return os;
-    }
+    template <typename value_type_, typename key_type_, typename OP_>
+    friend std::ostream& operator<<(std::ostream& os, const Node& node) noexcept;
 };
+
+#include "Node.cpp"
 
 #endif //ADVANCED_PROGRAMMING_EXAM_2020_NODE_H
