@@ -9,10 +9,9 @@
 #include <chrono>
 #include <utility>
 
-// For random generation
 #include <cstdlib> // srand, rand
-#include <ctime>   // time
 
+#include "random_generator.h"
 #include "print_and_format.h"
 #include "benchmark_test.h"
 
@@ -82,19 +81,10 @@ void benchmark_test(const bool to_file)
 /** Receives a lambda function as argument and executes it iteratively
  * for NUMBER_OF_ITERATIONS times.*/
 template <typename F>
-void iterate(const F& lambda_fun)
+inline void iterate(const F& lambda_fun)
 {
     for (size_t i{ 0 }; i < NUMBER_OF_ITERATIONS; ++i)
         lambda_fun();
-}
-
-/** Generates and returns an std::pair<int, char> with random generated
- * key and value.*/
-std::pair<int, char> generate_pair_random()
-{
-    int random_key{ rand() };
-    char random_val{ static_cast<char>(rand() % 26 + static_cast<int>('a')) }; // between 'a' and 'z'
-    return std::pair<int, char>(random_key, random_val);
 }
 
 /** Function to clear the given bst and map and then repopulate
@@ -141,7 +131,6 @@ template <typename value_type,
     // Random generation of pairs with distinct keys (temporarily saved in a
     // vector to time only the insertion time)
     auto create_vector_of_nodes = [](const std::size_t& number_of_nodes_to_create, std::vector<std::pair<int, char>>& vec) {
-        std::srand(std::time(NULL)); // random seed initialization
 
         auto find_pair_by_key_in_vector = [](const auto& key, const auto& vector) {
             for (const auto& el : vector)

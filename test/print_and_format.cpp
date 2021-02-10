@@ -5,7 +5,7 @@
 
 #include "bst.h"
 
-std::ostream& operator<<(std::ostream& os, const std::vector<int>& vec)
+std::ostream& operator<<(std::ostream& os, const std::vector<int>& vec) noexcept
 {
     os << "\n";
     for (size_t i = 0; i < vec.size(); ++i)

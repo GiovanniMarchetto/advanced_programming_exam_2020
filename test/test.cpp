@@ -3,10 +3,12 @@
 #include <string>
 #include <vector>
 
+#include "random_generator.h"
 #include "test.h"
 #include "Node.h"
 #include "bst.h"
 #include "print_and_format.h"
+
 
 //TODO: REFACTORING NEEDED
 
@@ -15,29 +17,17 @@ bst<char> bst_{};
 /** Receives a function as argument and executes it iteratively
  * for sup_limit times, that is the second argument.*/
 template <typename F>
-void iteration_func(const F& function, const int sup_limit=1)
+void iteration_func(const F& function, const int sup_limit = 0)
 {
-    //std::srand(std::time(NULL)); // random seed initialization
-    std::srand(123); // fixed seed for reproducible tests
     for (int i{ 0 }; i < sup_limit; ++i)
         function(i);
 }
 
-int random_int()
-{
-    return rand() % MAX_NUMBER_OF_KEY; // between 0 and MAX_NUMBER_OF_KEY-1
-}
-
-char random_char()
-{
-    return static_cast<char>(rand() % 26 + static_cast<int>('a')); // between 'a' and 'z'
-}
-
 void node_operations_test(const int i)
 {
-    Node<char> first_node(random_int(), random_char());
+    Node<char> first_node(random_int(MAX_NUMBER_OF_KEY), random_char());
     Node<char> cpy_node{ first_node };
-    Node<char> second_node(random_int(), random_char());
+    Node<char> second_node(random_int(MAX_NUMBER_OF_KEY), random_char());
     if (i < NUMBER_OF_PRINT)
     {
         std::cout << "---[Index " << i << " ]" << std::endl;
@@ -55,14 +45,14 @@ void node_operations_test(const int i)
         << " - Node copy assignment - after:  " << second_node << std::endl;
 
     std::string not_a_word;
-    const char a = random_char();
-    const char b = random_char();
+    const char a{ random_char() };
+    const char b{ random_char() };
     not_a_word.append(2, a);
     not_a_word.append(3, b);
 
-    Node<int, std::string> third_node(not_a_word, random_int());
+    Node<int, std::string> third_node(not_a_word, random_int(MAX_NUMBER_OF_KEY));
 
-    first_node = Node<char>(random_int(), random_char());
+    first_node = Node<char>(random_int(MAX_NUMBER_OF_KEY), random_char());
 
     if (i < NUMBER_OF_PRINT)
     {
@@ -87,15 +77,15 @@ void node_other_type_test()
     Node<std::string, std::string> sn2("key_rv", "value_rv");
     std::cout << "Move - node of string:                       " << sn2 << std::endl;
 
-    Node<int, int> sn3(random_int(), random_int());
+    Node<int, int> sn3(random_int(MAX_NUMBER_OF_KEY), random_int(MAX_NUMBER_OF_KEY));
     std::cout << "Move (but built-in types are copied anyway): " << sn3 << std::endl;
 
-    std::vector<int> vec = { random_int(), random_int(), random_int(), random_int() };
+    std::vector<int> vec = { random_int(MAX_NUMBER_OF_KEY), random_int(MAX_NUMBER_OF_KEY), random_int(MAX_NUMBER_OF_KEY), random_int(MAX_NUMBER_OF_KEY) };
     Node<std::vector<int>> vnode(12, vec);
     std::cout << "Copy - node of vector<int>:                  " << vnode << std::endl;
 
-    std::vector<int> vec2 = { random_int(), random_int(), random_int(), random_int() };
-    Node<std::vector<int>> vnode2(random_int(), std::move(vec2));
+    std::vector<int> vec2 = { random_int(MAX_NUMBER_OF_KEY), random_int(MAX_NUMBER_OF_KEY), random_int(MAX_NUMBER_OF_KEY), random_int(MAX_NUMBER_OF_KEY) };
+    Node<std::vector<int>> vnode2(random_int(MAX_NUMBER_OF_KEY), std::move(vec2));
     std::cout << "Move - node of vector<int>:                  " << vnode2 << std::endl;
 
     Node<bst<char>, int> n_bst(1, bst_);
@@ -105,7 +95,7 @@ void node_other_type_test()
 void bst_insertion_test(const int i)
 {
 
-    std::pair<int, char> paio = std::pair<int, char>(random_int(), random_char());
+    std::pair<int, char> paio = std::pair<int, char>(random_int(MAX_NUMBER_OF_KEY), random_char());
     bst_.insert(paio);
     if (i == 0)
     {
@@ -114,7 +104,7 @@ void bst_insertion_test(const int i)
         std::cout << bst_.tree_structure_to_string(str) << std::endl;
     }
 
-    bst_.insert(std::pair<int, char>(random_int(), random_char()));
+    bst_.insert(std::pair<int, char>(random_int(MAX_NUMBER_OF_KEY), random_char()));
     if (i == 0)
     {
         std::cout << formatting_title("## Move insert ") << std::endl;
@@ -122,7 +112,7 @@ void bst_insertion_test(const int i)
         std::cout << bst_.tree_structure_to_string(str) << std::endl;
     }
 
-    bst_.emplace(random_int(), random_char());
+    bst_.emplace(random_int(MAX_NUMBER_OF_KEY), random_char());
     if (i == 0)
     {
         std::cout << formatting_title("## Variadic emplace ") << std::endl;
@@ -130,7 +120,7 @@ void bst_insertion_test(const int i)
         std::cout << bst_.tree_structure_to_string(str) << std::endl;
     }
 
-    bst_.insert({ random_int(), random_char() });
+    bst_.insert({ random_int(MAX_NUMBER_OF_KEY), random_char() });
     if (i == 0)
     {
         std::cout << formatting_title("## Move insert") << std::endl;
@@ -145,7 +135,7 @@ void find_node_test(const int i)
     if (i < NUMBER_OF_PRINT)
     {
         std::cout << "---[Index " << i << " ]" << std::endl;
-        int key_to_find{ random_int() };
+        int key_to_find{ random_int(MAX_NUMBER_OF_KEY) };
         std::cout << "Key to find: " << key_to_find << std::endl;
         bst<char>::iterator it{ bst_.find(key_to_find) };
         std::cout << "Print tree by using the iterator starting from the node marked with the key to find: " << std::endl;
@@ -166,9 +156,9 @@ void find_node_test(const int i)
 
 void subscripting_node_test(const int i)
 {
-    int key_to_subscript = random_int();
+    int key_to_subscript = random_int(MAX_NUMBER_OF_KEY);
     char value_to_subscript = random_char();
-    int key_to_subscript_2 = random_int();
+    int key_to_subscript_2 = random_int(MAX_NUMBER_OF_KEY);
     char value_to_subscript_2 = random_char();
 
     if (i == NUMBER_OF_PRINT) {
@@ -204,7 +194,7 @@ void subscripting_node_test(const int i)
 
 void erase_test(const int i)
 {
-    int key_erase_node = random_int();
+    int key_erase_node = random_int(MAX_NUMBER_OF_KEY);
     bst_.erase(key_erase_node);
 
     if (i < NUMBER_OF_PRINT)

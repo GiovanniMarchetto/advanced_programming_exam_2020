@@ -4,6 +4,9 @@
 // For benchmark timing test and comparison
 #include <map>
 
+#ifndef ADVANCED_PROGRAMMING_EXAM_2020_BENCHMARK_TEST_H
+#define ADVANCED_PROGRAMMING_EXAM_2020_BENCHMARK_TEST_H
+
 // --------  CONFIGURABLE PARAMETERS FOR TESTS         --------
 
 /** Number of iterations to run a code fragment when
@@ -82,3 +85,5 @@ public:
  * a file with results is created, otherwise the std:.out will be used.
  * The flag is set to true as default.*/
 void benchmark_test(const bool to_file = true);
+
+#endif // ADVANCED_PROGRAMMING_EXAM_2020_BENCHMARK_TEST_H

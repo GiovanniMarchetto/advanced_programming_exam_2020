@@ -32,35 +32,35 @@ public:
     value_type value;
 
     /** Getter for the left children. Returns a raw pointer to the left child node.*/
-    Node* get_left() const { return left.get(); }
+    Node* get_left() const noexcept { return left.get(); }
 
     /** Getter for the right children. Returns a raw pointer to the left child node.*/
-    Node* get_right() const { return right.get(); }
+    Node* get_right() const noexcept { return right.get(); }
 
     /** Getter for the parent. Returns a raw pointer to the parent node.*/
-    Node* get_parent() const { return parent; }
+    Node* get_parent() const noexcept { return parent; }
 
     /** Release the left children. Returns a raw pointer to the left child node and releases the ownership.*/
-    Node* release_left() { return left.release(); }
+    Node* release_left() noexcept { return left.release(); }
 
     /** Release the right children. Returns a raw pointer to the right child node and releases the ownership.*/
-    Node* release_right() { return right.release(); }
+    Node* release_right() noexcept { return right.release(); }
 
     /** Setter: the left child of this instance will be set with the given pointer.*/
-    void set_left(Node* const node = nullptr) { left.reset(node); }
+    void set_left(Node* const node = nullptr) noexcept { left.reset(node); }
 
     /** Setter: the right child of this instance will be set with the given pointer.*/
-    void set_right(Node* const node = nullptr) { right.reset(node); }
+    void set_right(Node* const node = nullptr) noexcept { right.reset(node); }
 
     /** Setter: the parent of this instance will be set with the given node.*/
-    void set_parent(Node* const node = nullptr) { parent = node; }
+    void set_parent(Node* const node = nullptr) noexcept { parent = node; }
 
     /** Default constructor.*/
     Node() = default;
 
     /** Copy constructor (deep copy). The given node and all the children
      * linked by it are copied.*/
-    explicit Node(const Node& node, Node* parent = nullptr) : key{ node.key }, value{ node.value }
+    Node(const Node& node, Node* parent = nullptr) : key{ node.key }, value{ node.value }
     {
         auto tmp_left = node.get_left();
         auto tmp_right = node.get_right();
@@ -82,10 +82,10 @@ public:
     }
 
     /** Move constructor.*/
-    Node(Node&&) = default;
+    Node(Node&&) noexcept = default;
 
     /** Move assignment.*/
-    Node& operator=(Node&&) = default;
+    Node& operator=(Node&&) noexcept = default;
 
     /** Constructor. Given arguments are copied into the members of the
      * constructing instance.
@@ -100,7 +100,7 @@ public:
     Node(key_type&& key, value_type&& value) : left{}, right{}, key{ std::move(key) }, value{ std::move(value) } {}
 
     /** Default destructor.*/
-    ~Node() = default;
+    ~Node() noexcept = default;
 
     /** Comparison function according to the given Comparator
      * applied to the keys.
@@ -108,22 +108,17 @@ public:
      *          of this instance (as first argument) and the key of the given
      *          instance (as second argument).*/
     template <typename Comparator>
-    bool compare(const Node& other, const Comparator comparator) const
-    {
-        //if (!(&other))
-        return comparator(key, other.key);
-        //return false; // TODO : to handle with exceptions
-    }
+    bool compare(const Node& other, const Comparator comparator) const noexcept { return comparator(key, other.key); }
 
     /** Overload of the < operator to define an order relation
      * between two instances according to their key.
      * @returns true if the key of this instance is strictly less
      *          of the one given as parameter, false otherwise.*/
-    bool operator<(const Node& other) const { return compare(other, OP{}); }
+    bool operator<(const Node& other) const noexcept { return compare(other, OP{}); }
 
     /** Overloading of the << operator. This function provides a view
      * of the node.*/
-    friend std::ostream& operator<<(std::ostream& os, const Node& node)
+    friend std::ostream& operator<<(std::ostream& os, const Node& node) noexcept 
     {
         os << "[" << node.key << " => " << node.value << "]";
         return os;
