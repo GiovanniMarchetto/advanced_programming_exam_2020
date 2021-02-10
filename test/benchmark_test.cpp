@@ -84,7 +84,17 @@ template <typename F>
 inline void iterate(const F& lambda_fun)
 {
     for (size_t i{ 0 }; i < NUMBER_OF_ITERATIONS; ++i)
+    {
+        {
+            // Print progress according to the currrent iteration
+            int current_progress_percentage{static_cast<int>((static_cast<double>(i+1) / NUMBER_OF_ITERATIONS) *100)};
+            constexpr int STEP_PRINT_PROGRESS{5};
+            if( current_progress_percentage % STEP_PRINT_PROGRESS == 0 )
+                std::cout << "\t" << current_progress_percentage << "%" ;
+        }
         lambda_fun();
+    }
+    std::cout << std::endl;
 }
 
 /** Function to clear the given bst and map and then repopulate
