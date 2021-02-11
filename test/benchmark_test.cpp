@@ -87,10 +87,10 @@ inline void iterate(const F& lambda_fun)
     {
         {
             // Print progress according to the currrent iteration
-            int current_progress_percentage{static_cast<int>((static_cast<double>(i+1) / NUMBER_OF_ITERATIONS) *100)};
-            constexpr int STEP_PRINT_PROGRESS{5};
-            if( current_progress_percentage % STEP_PRINT_PROGRESS == 0 )
-                std::cout << "\t" << current_progress_percentage << "%" ;
+            int current_progress_percentage{ static_cast<int>((static_cast<double>(i + 1) / NUMBER_OF_ITERATIONS) * 100) };
+            constexpr int STEP_PRINT_PROGRESS{ 5 };
+            if (current_progress_percentage % STEP_PRINT_PROGRESS == 0)
+                std::cout << "\t" << current_progress_percentage << "%" << std::flush;
         }
         lambda_fun();
     }
