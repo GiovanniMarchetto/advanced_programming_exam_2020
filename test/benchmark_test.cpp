@@ -224,7 +224,7 @@ template <typename value_type,
             duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
             t1 = std::chrono::high_resolution_clock::now();
-            bst_.find(random_key);
+            map_.find(random_key);
             t2 = std::chrono::high_resolution_clock::now();
             duration_search_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
 
@@ -253,7 +253,7 @@ template <typename value_type,
     std::ostream& Benchmark_test<value_type, key_type, OP>::
     balance_and_find_test(std::ostream& os)
 {
-    return private_find_test(os, false);
+    return private_find_test(os, true);
 }
 
 template <typename value_type,
