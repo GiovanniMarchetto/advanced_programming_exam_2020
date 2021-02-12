@@ -65,7 +65,7 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 .PHONY: build
-build: build_tmp documentation
+build: build_tmp
 .PHONY: build_tmp
 build:
 	make
@@ -81,8 +81,14 @@ valgrind:
 .PHONY: all_with_valgrind
 all_with_valgrind: clean build valgrind
 
+.PHONY: all_with_documentation
+all_with_documentation: clean build documentation
+
 .PHONY: allv
 allv: all_with_valgrind
+
+.PHONY: alld
+alld: all_with_documentation
 
 
 .PHONY: documentation
