@@ -14,7 +14,7 @@
 constexpr static unsigned int NUMBER_OF_ITERATIONS{ 5 }; // TODO : set a reasonable big value
 
 /** Default value for the number of nodes of the BST to be used in a test.*/
-constexpr static size_t DEFAULT_NUMBER_OF_NODES_FOR_TEST{ 100 }; // TODO : set a reasonable big value
+constexpr static size_t DEFAULT_NUMBER_OF_NODES_FOR_TEST{ 10 }; // TODO : set a reasonable big value
 
 /** Path of the directory where to save files with the test results.*/
 const static std::string OUTPUT_RESULTS_DIR{ "./benchmark_results" };
@@ -31,7 +31,7 @@ template <typename value_type,
     class Benchmark_test
 {
     /** Header used in printed results*/
-    const std::string HEADER_FOR_RESULTS{ "size,bst [μs],std::map [μs]" };
+    const std::string HEADER_FOR_RESULTS{ "size,bst [\u00b5s],std::map [\u00b5s]" };
 
     /** Instance of BST for tests.*/
     bst<value_type, key_type, OP> bst_;
