@@ -9,21 +9,27 @@
 #include "bst.h"
 #include "print_and_format.h"
 
-
-//TODO: REFACTORING NEEDED
-
+/** Principal bst for tests.*/
 bst<char> bst_{};
 
 /** Receives a function as argument and executes it iteratively
- * for sup_limit times, that is the second argument.*/
+ * for sup_limit times, that is the second argument.
+ * @param function The function to iterate.
+ * @param sup_limit The number of iteration.
+ *  Default value of 0 (no iteration without a value).
+ */
 template <typename F>
 void iteration_func(const F& function, const int sup_limit = 0)
 {
     for (int i{ 0 }; i < sup_limit; ++i)
-        function(i);
+        function(i + 1);
 }
 
-void node_operations_test(const int i)
+/** Node test with the different types of constructors,
+ * assignments and comparison.
+ * @param int The index of iteration.
+*/
+void node_operations_test(const int i = 1)
 {
     Node<char> first_node(random_int(MAX_NUMBER_OF_KEY), random_char());
     Node<char> cpy_node{ first_node };
@@ -67,6 +73,7 @@ void node_operations_test(const int i)
     }
 }
 
+/** Node test with various types and classes.*/
 void node_other_type_test()
 {
     std::string k = "key_lv";
@@ -92,7 +99,11 @@ void node_other_type_test()
     std::cout << "Copy - node of bst<char>:                     " << n_bst << std::endl;
 }
 
-void bst_insertion_test(const int i)
+/** Test function with different types of insertion
+ *  (insert, emplace both in move and copy mode).
+ * @param int The index of iteration.
+*/
+void bst_insertion_test(const int i = 1)
 {
 
     std::pair<int, char> paio = std::pair<int, char>(random_int(MAX_NUMBER_OF_KEY), random_char());
@@ -130,7 +141,12 @@ void bst_insertion_test(const int i)
     }
 }
 
-void find_node_test(const int i)
+/** Test function for the find.
+ * It execute two times the find function and print the resulting
+ * subtree starting from the key to find.
+ * @param int The index of iteration.
+*/
+void find_node_test(const int i = 1)
 {
     if (i < NUMBER_OF_PRINT)
     {
@@ -154,7 +170,12 @@ void find_node_test(const int i)
     }
 }
 
-void subscripting_node_test(const int i)
+/** Test function for the subscripting operator.
+ * It tries to overwrite, using the subscripting operator
+ * passing first a r-value and then a l-value.
+ * @param int The index of iteration.
+*/
+void subscripting_node_test(const int i = 1)
 {
     int key_to_subscript = random_int(MAX_NUMBER_OF_KEY);
     char value_to_subscript = random_char();
@@ -192,7 +213,11 @@ void subscripting_node_test(const int i)
 
 }
 
-void erase_test(const int i)
+/** Test function for the erase.
+ * Erase a random node from the bst.
+ * @param int The index of iteration.
+*/
+void erase_test(const int i = 1)
 {
     int key_erase_node = random_int(MAX_NUMBER_OF_KEY);
     bst_.erase(key_erase_node);
@@ -251,7 +276,6 @@ void tests()
         << std::endl;
 
     std::cout << formatting_title("## Balance") << std::endl;
-    //bst_.unbalance();
     bst_.balance();
     std::cout << "Traversal: " << bst_ << std::endl
         << std::endl;
