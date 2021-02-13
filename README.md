@@ -9,34 +9,43 @@ of the project:
 - `make clean` allows to remove (if present) the directory with all the
 executable files;
 - `make build` allows to build the executable files for the program;
-- `make run` allows to run the program (if executable files are already built);
+- `make run` allows to run the program (if executable files are already built)
 - `make valgrind` allows to run the program with *Valgrind*, in order to detect
   memory errors;
 - `make all_with_valgrind` is the same as `make all`, but the program is executed
-  with *Valgrind*;
-- `make allv` is a shortcut for `make all_with_valgrind`.
+  with *Valgrind*.
 
-Benchmark tests are available: parameters can be configured from the source file
-*test/benchmark_test.h*. Benchmark results are available as CSV files in
-the directory specified as parameter in the source file *test/benchmark_test.h* . 
+
 
 ## Documentation
 Documentation was created with *Doxygen* and can be re-generated with the
 command `make documentation`.
 The output directory for the documentation can be specified from the *Makefile*
 of this project.
+There is also the command `build_with_documentation` that allows to clean, build and generate the documentation.
 
 **Important**: *Doxygen* must be installed before be used. Generating a *PDF*
 file requires to have installed *pdflatex*, too.
 
+
+
 ## Short report
+
 ### What we did
 We used the 'Pair Programming' technique: one at a time was coding and the others
 were checking. All together discussed about design choices.
 We started creating the header files and deciding the structure of the project.
 We thought a lot about best choices for the project.
+
 ### What we understood
 We understood:
 - how to create and use *Makefile*;
-- how objects are stored in memory (when in the heap, when in the stack).
+- concepts discussed during lectures;
+- how to work in group (online).
+
 ### Benchmarked
+The command `make all_with_charts` is the same as `make all` and then creates benhmark plots.
+
+Parameters for benchmark tests can be configured from the source file
+*test/benchmark_test.h*. Results are available as CSV files in
+the directory specified as parameter in the source file *test/benchmark_test.h*. 

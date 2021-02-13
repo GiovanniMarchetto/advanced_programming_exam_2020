@@ -66,6 +66,12 @@ $(BUILD_DIR)/%.o: %.cpp
 .PHONY: all
 all: clean build run
 
+.PHONY: all_with_valgrind
+all_with_valgrind: clean build valgrind
+
+.PHONY: all_with_charts
+all_with_charts: clean build run benchmark_plot
+
 .PHONY: clean
 clean:
 	rm -rf $(BUILD_DIR)
@@ -86,20 +92,8 @@ valgrind:
 benchmark_plot:
 	python ${PYTHON_SCRIPT_BENCHMARK_RESULTS}
 
-.PHONY: all_with_valgrind
-all_with_valgrind: clean build valgrind
-
-.PHONY: all_with_documentation
-all_with_documentation: clean build documentation
-
-.PHONY: all_with_charts
-all_with_charts: clean build benchmark_plot
-
-.PHONY: allv
-allv: all_with_valgrind
-
-.PHONY: alld
-alld: all_with_documentation
+.PHONY: build_with_documentation
+build_with_documentation: clean build documentation
 
 
 .PHONY: documentation
