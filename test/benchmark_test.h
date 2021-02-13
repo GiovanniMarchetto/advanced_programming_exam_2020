@@ -31,7 +31,7 @@ template <typename value_type,
     class Benchmark_test
 {
     /** Header used in printed results*/
-    const std::string HEADER_FOR_RESULTS{ "size,bst [ns],std::map [ns]" };
+    const std::string HEADER_FOR_RESULTS{ "size,bst [μs],std::map [μs]" };
 
     /** Instance of BST for tests.*/
     bst<value_type, key_type, OP> bst_;

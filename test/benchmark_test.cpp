@@ -175,13 +175,13 @@ template <typename value_type,
             auto t1 = std::chrono::high_resolution_clock::now();
             bst_.insert(pair_to_insert); // pair is copied
             auto t2 = std::chrono::high_resolution_clock::now();
-            duration_insertion_in_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+            duration_insertion_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
             // Insertion in std::map
             t1 = std::chrono::high_resolution_clock::now();
             map_.insert(pair_to_insert); // pair is copied
             t2 = std::chrono::high_resolution_clock::now();
-            duration_insertion_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+            duration_insertion_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
             // Printing results for this iteration
             os << "\n"
@@ -221,12 +221,12 @@ template <typename value_type,
             auto t1 = std::chrono::high_resolution_clock::now();
             bst_.find(random_key);
             auto t2 = std::chrono::high_resolution_clock::now();
-            duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+            duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
             t1 = std::chrono::high_resolution_clock::now();
             map_.find(random_key);
             t2 = std::chrono::high_resolution_clock::now();
-            duration_search_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+            duration_search_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
             os << "\n"
                 << i + 1 << "," << duration_search_in_our_tree << "," << duration_search_in_std_map;
@@ -276,7 +276,7 @@ template <typename value_type,
             bst_.balance();
             auto t2 = std::chrono::high_resolution_clock::now();
 
-            duration_balancing_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+            duration_balancing_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
             // os << "Time for balancing the tree (" << bst_.get_size() << " nodes in the tree): " << duration_balancing_our_tree << " us." << std::endl;
 
             os << "\n"
@@ -312,12 +312,12 @@ template <typename value_type,
             auto t1 = std::chrono::high_resolution_clock::now();
             bst<value_type, key_type, OP> bst_copy{ bst_ };
             auto t2 = std::chrono::high_resolution_clock::now();
-            duration_copy_in_our_tree += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+            duration_copy_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
             t1 = std::chrono::high_resolution_clock::now();
             std::map<key_type, value_type> map_copy{ map_ };
             t2 = std::chrono::high_resolution_clock::now();
-            duration_copy_in_std_map += std::chrono::duration_cast<std::chrono::nanoseconds>(t2 - t1).count();
+            duration_copy_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
             os << "\n"
                 << i + 1 << "," << duration_copy_in_our_tree << "," << duration_copy_in_std_map;
