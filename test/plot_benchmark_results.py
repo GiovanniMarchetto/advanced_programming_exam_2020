@@ -47,11 +47,19 @@ def get_data(df_, field_names_):
     t_container2_ = []  # mean time referring to the 1st container
 
     for n in size__:
-        t_container1_.append(mean([int(v[t1_n_]) for v in list(df_grouped_by_size.values())[n - 1]]))  # size__ start from 1 but index starts from 0
+        values_this_group = [int(v[t1_n_]) for v in list(df_grouped_by_size.values())[n - 1]]
+        # Max and min values are removed
+        values_this_group.remove(min(values_this_group))
+        values_this_group.remove(max(values_this_group))
+        t_container1_.append(mean(values_this_group))  # size__ start from 1 but index starts from 0
 
     try:
         for n in size__:
-            t_container2_.append(mean([int(v[t2_n_]) for v in list(df_grouped_by_size.values())[n - 1]]))  # size__ start from 1 but index starts from 0
+            values_this_group = [int(v[t2_n_]) for v in list(df_grouped_by_size.values())[n - 1]]
+            # Max and min values are removed
+            values_this_group.remove(min(values_this_group))
+            values_this_group.remove(max(values_this_group))
+            t_container2_.append(mean(values_this_group))  # size__ start from 1 but index starts from 0
     except Exception:
         pass  # ignore if the second y-values series is not present
 
