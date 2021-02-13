@@ -12,6 +12,12 @@
 	# Define source directories where to find source files
 	SRC_DIRS = ./src ./test ./include
 
+	# Parameters for plotting benchmark results
+	BENCHMARK_OUTPUT_DIR = benchmark_results
+	PLOT_RESOLUTION_DPI = 300
+	PLOT_FORMAT = png
+	PYTHON_SCRIPT_BENCHMARK_RESULTS = test/plot_benchmark_results.py ${BENCHMARK_OUTPUT_DIR} ${PLOT_RESOLUTION_DPI} ${PLOT_FORMAT}
+
 
 # Documentation options
 	# Folder with everything about documentation
@@ -65,14 +71,13 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 .PHONY: build
-build: build_tmp
-.PHONY: build_tmp
 build:
 	make
 
 .PHONY: run
 run:
 	$(BUILD_DIR)/$(TARGET_EXEC)
+	python ${PYTHON_SCRIPT_BENCHMARK_RESULTS} # TODO : separate command for plotting benchmark results
 
 .PHONY: valgrind
 valgrind:

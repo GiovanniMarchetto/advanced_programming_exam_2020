@@ -1,11 +1,20 @@
 #!usr/bin/env python3
 
-### PARAMETERS ####
-BENCHMARK_DIR_PATH = "../benchmark_results" # path of dir containing csv files
-DPI = 300                                   # DPI for plots
-FORMAT =  "png"                             # format for plots
-### END PARAMETERS ###
+import sys   # reading params from command line
 
+
+### PARAMETERS READ FROM COMMAND LINES ####
+# When invoking this script, following parameters must be set from command line
+BENCHMARK_DIR_PATH = str(sys.argv[1])  # path of dir containing csv files
+DPI                = int(sys.argv[2])  # DPI for plots
+FORMAT             = str(sys.argv[3])  # format for plots
+
+
+# Alternative: set parameters manually from the following lines
+# BENCHMARK_DIR_PATH = "../benchmark_results" # path of dir containing csv files
+# DPI = 300                                   # DPI for plots
+# FORMAT =  "png"                             # format for plots
+### END PARAMETERS ###
 
 # %% Getting data from the dataframe
 from statistics import mean
@@ -92,9 +101,13 @@ for file_path in files_in_dir:
         
         field_names = reader.fieldnames
         df = [row for row in reader]   # data saved into a dataframe
-        size_n, t1_n, t2_n, nodes, t_container1, t_container2 = get_data(df, field_names)
 
-        title_plot = os.path.splitext(os.path.basename(file_path))[0].replace("_"," ").capitalize() # Title of the plot is extracted from the filename
-        draw_plot(nodes, t_container1, t_container2, size_n, t1_n, t2_n,
-                  title_plot, BENCHMARK_DIR_PATH, DPI, FORMAT)
+        try:
+            size_n, t1_n, t2_n, nodes, t_container1, t_container2 = get_data(df, field_names)
+
+            title_plot = os.path.splitext(os.path.basename(file_path))[0].replace("_"," ").capitalize() # Title of the plot is extracted from the filename
+            draw_plot(nodes, t_container1, t_container2, size_n, t1_n, t2_n,
+                      title_plot, BENCHMARK_DIR_PATH, DPI, FORMAT)
+        except Exception:
+            pass    # exception can raise if csv file is ill-formed: it will be ignored
 
