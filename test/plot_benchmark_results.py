@@ -29,8 +29,10 @@ def get_data(df, field_names):
     # Header names
     size_n = field_names[0] # names of the header for the size of the bst
     t1_n   = field_names[1] # time for the first container in the comparison
-    t2_n   = field_names[2] # time for the second container in the comparison
-
+    try:
+        t2_n   = field_names[2] # time for the second container in the comparison
+    except ValueError:
+        pass # ignore if the second y-values series is not present
 
     # Grouping by bst size
     df_grouped_by_size = {int(row[size_n]):[] for row in df}
@@ -38,19 +40,22 @@ def get_data(df, field_names):
         df_grouped_by_size[int(row[size_n])].append(row)
     
     # Computing averages
-    nodes = [n for n in df_grouped_by_size.keys()]  # list of nodes
+    size_ = [n for n in df_grouped_by_size.keys()]  # list of sizes
     t_container1 = []                               # mean time referring to the 1st container
     t_container2 = []                               # mean time referring to the 1st container
     
-    for n in nodes:
+    for n in size_:
         t_container1.append(mean([int(v[t1_n]) for v in list(df_grouped_by_size.values())[n-1]]))  # nodes start from 1 but index starts from 0
-        t_container2.append(mean([int(v[t2_n]) for v in list(df_grouped_by_size.values())[n-1]]))  # nodes start from 1 but index starts from 0
+        try:
+            t_container2.append(mean([int(v[t2_n]) for v in list(df_grouped_by_size.values())[n-1]]))  # nodes start from 1 but index starts from 0
+        except Exception:
+            pass    # ignore if the second y-values series is not present
 
-    # print(nodes)
+    # print(size_)
     # print(t_container1)
     # print(t_container2)
 
-    return size_n, t1_n, t2_n, nodes, t_container1, t_container2
+    return size_n, t1_n, t2_n, size_, t_container1, t_container2
     
 
 
@@ -59,7 +64,7 @@ def get_data(df, field_names):
 import matplotlib.pyplot as plt
 import re   # Regex for extracting measure unit from data
 
-def draw_plot(nodes, t_container1, t_container2, size_n, t1_n, t2_n,
+def draw_plot(size_, t_container1, t_container2, size_n, t1_n, t2_n,
               title_plot, output_dir, dpi=300, format="png"):
     """This function creates a plot with data obtained from parameters.
     The first parameter represents the abscissa, the second and the third
@@ -74,14 +79,19 @@ def draw_plot(nodes, t_container1, t_container2, size_n, t1_n, t2_n,
     measure_unit = re.search('\[(.+)\]',t1_n).group(0) # extracts contents between [ ], brackets included
 
     plt.grid()
-    plt.plot(nodes, t_container1, label=t1_n.replace(measure_unit,''))
-    plt.plot(nodes, t_container2, label=t2_n.replace(measure_unit,''))
+    plt.plot(size_, t_container1, label=t1_n.replace(measure_unit,''))
+    try:
+        plt.plot(size_, t_container2, label=t2_n.replace(measure_unit,''))
+    except ValueError:
+        t_container2 = [0] # ignore if the second y-values series is not present
+
     plt.ylabel(f"Time {measure_unit}")
     plt.xlabel(size_n.capitalize())
     plt.legend()
     plt.title(title_plot)
-    plt.xticks(nodes)    # only integer values on x axis
-    plt.xlim(nodes[0], nodes[-1])
+    PERCENTAGE_STEP_X_AXIS = 10
+    plt.xticks([x for x in size_ if (x*PERCENTAGE_STEP_X_AXIS%len(size_))==0])  # range with step PERCENTAGE_STEP_X_AXIS%
+    plt.xlim(size_[0], size_[-1])
     plt.ylim(0, max(max(t_container1), max(t_container2)))
     #plt.show()
     plt.savefig(output_dir+"/"+title_plot.replace(" ", "_")+"."+format, dpi=dpi)    # save in png format
@@ -102,12 +112,9 @@ for file_path in files_in_dir:
         field_names = reader.fieldnames
         df = [row for row in reader]   # data saved into a dataframe
 
-        try:
-            size_n, t1_n, t2_n, nodes, t_container1, t_container2 = get_data(df, field_names)
+        size_n, t1_n, t2_n, size_, t_container1, t_container2 = get_data(df, field_names)
 
-            title_plot = os.path.splitext(os.path.basename(file_path))[0].replace("_"," ").capitalize() # Title of the plot is extracted from the filename
-            draw_plot(nodes, t_container1, t_container2, size_n, t1_n, t2_n,
-                      title_plot, BENCHMARK_DIR_PATH, DPI, FORMAT)
-        except Exception:
-            pass    # exception can raise if csv file is ill-formed: it will be ignored
+        title_plot = os.path.splitext(os.path.basename(file_path))[0].replace("_"," ").capitalize() # Title of the plot is extracted from the filename
+        draw_plot(size_, t_container1, t_container2, size_n, t1_n, t2_n,
+                    title_plot, BENCHMARK_DIR_PATH, DPI, FORMAT)
 
