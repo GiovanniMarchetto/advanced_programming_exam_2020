@@ -4,7 +4,7 @@
 
 	# Compile options
 	CXX = c++
-	CXX_FLAGS = -Wall -Wextra -g -std=c++17
+	CXX_FLAGS = -Wall -Wextra -g -std=c++17 -DNDEBUG
 
 	# Define target directory
 	BUILD_DIR = bin
@@ -77,17 +77,23 @@ build:
 .PHONY: run
 run:
 	$(BUILD_DIR)/$(TARGET_EXEC)
-	python ${PYTHON_SCRIPT_BENCHMARK_RESULTS} # TODO : separate command for plotting benchmark results
 
 .PHONY: valgrind
 valgrind:
 	valgrind $(BUILD_DIR)/$(TARGET_EXEC)
+
+.PHONY: benchmark_plot
+benchmark_plot:
+	python ${PYTHON_SCRIPT_BENCHMARK_RESULTS}
 
 .PHONY: all_with_valgrind
 all_with_valgrind: clean build valgrind
 
 .PHONY: all_with_documentation
 all_with_documentation: clean build documentation
+
+.PHONY: all_with_charts
+all_with_charts: clean build benchmark_plot
 
 .PHONY: allv
 allv: all_with_valgrind
