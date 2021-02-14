@@ -267,17 +267,33 @@ erase(const key_type& x)
     if (to_erase == nullptr) // case 0: node to delete does not exist (wrong key provided)
         return;
 
-    // Erases to_remove (and its children if it has any and they are managed smart pointers)
-    auto transpose_subtree = [this](node* to_remove, node* to_transplant) {
-        node* parent = to_remove->get_parent();
+    enum class to_erase_child_type { left, right, root };
 
-        if (parent == nullptr) //                       if to_remove hasn't parent node => to_remove is the root
+    auto get_child_type = [this](node* child) {
+
+        node* parent = child->get_parent();
+
+        if (parent == nullptr) //                       if child hasn't parent node => child is the root
+            return to_erase_child_type::root;
+
+        else if (child == parent->get_left()) //        if child is the left child of its parent
+            return to_erase_child_type::left;
+
+        else //                                         if child is the right child of its parent
+            return to_erase_child_type::right;
+    };
+
+    // Erases to_erase (and its children if it has any and they are managed smart pointers)
+    auto transpose_subtree = [this](node* to_erase, to_erase_child_type ct, node* to_transplant) {
+        node* parent = to_erase->get_parent();
+
+        if (ct == to_erase_child_type::root) //        if to_erase is the root
             set_tree_root_node(to_transplant);
 
-        else if (to_remove == parent->get_left()) //    if to_remove is the left child of its parent
+        else if (ct == to_erase_child_type::left) //   if to_erase is the left child of its parent
             parent->set_left(to_transplant);
 
-        else if (to_remove == parent->get_right()) //   if to_remove is the right child of its parent
+        else //                                         if to_erase is the right child of its parent
             parent->set_right(to_transplant);
 
         if (to_transplant)
@@ -285,24 +301,26 @@ erase(const key_type& x)
     };
 
     if (to_erase->get_left() == nullptr) // case 1: node to_erase has only the right child
-        transpose_subtree(to_erase, to_erase->release_right());
+        transpose_subtree(to_erase, get_child_type(to_erase), to_erase->release_right());
 
     else if (to_erase->get_right() == nullptr) // case 2: node to_erase has only the left child
-        transpose_subtree(to_erase, to_erase->release_left());
+        transpose_subtree(to_erase, get_child_type(to_erase), to_erase->release_left());
 
     else // case 3: node to_erase has both left and right children
     {
-        node* min = release_node(get_minimum_left_node_in_subtree(to_erase->get_right()));
+        node* min = get_minimum_left_node_in_subtree(to_erase->get_right());
+        to_erase_child_type min_ct = get_child_type(min); // We need to know the type (of child) of the min node before releasing it 
+        release_node(min);
 
         if (min->get_parent() != to_erase) // case 3ext: min is in the right subtree of node to_erase but is not its right child
         {
-            transpose_subtree(min, min->release_right());
+            transpose_subtree(min, min_ct, min->release_right());
             min->set_right(to_erase->release_right());
             min->get_right()->set_parent(min);
         }
 
         node* left_child_of_to_erase = to_erase->release_left(); // Save the left child because transpose_subtree is going to erase to_erase
-        transpose_subtree(to_erase, min);
+        transpose_subtree(to_erase, get_child_type(to_erase), min);
         min->set_left(left_child_of_to_erase);
         min->get_left()->set_parent(min);
     }
