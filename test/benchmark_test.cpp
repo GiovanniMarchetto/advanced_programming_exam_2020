@@ -204,27 +204,30 @@ template <typename value_type,
     os << HEADER_FOR_RESULTS;
 
     auto actual_test = [&os, balance_before_test]() {
-        // bst and map that will be used in the test
-        bst<char, int> bst_{};
-        std::map<int, char> map_{};
+        // bsts and maps that will be used in the test
+        bst<char, int> bsts[DEFAULT_NUMBER_OF_NODES_FOR_TEST];
+        std::map<int, char> maps[DEFAULT_NUMBER_OF_NODES_FOR_TEST];
+
+        for (std::size_t i{ 0 }; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
+            create_random_bst_and_map(bsts[i], maps[i], i);
+
+        if (balance_before_test)
+            for (std::size_t i{ 0 }; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
+                bsts[i].balance();
 
         long int duration_search_in_our_tree{},
             duration_search_in_std_map{};
         for (std::size_t i{ 0 }; i < DEFAULT_NUMBER_OF_NODES_FOR_TEST; ++i)
         {
-            create_random_bst_and_map(bst_, map_, i);
             int random_key{ rand() }; // key to find
 
-            if (balance_before_test)
-                bst_.balance();
-
             auto t1 = std::chrono::high_resolution_clock::now();
-            bst_.find(random_key);
+            bsts[i].find(random_key);
             auto t2 = std::chrono::high_resolution_clock::now();
             duration_search_in_our_tree += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
             t1 = std::chrono::high_resolution_clock::now();
-            map_.find(random_key);
+            maps[i].find(random_key);
             t2 = std::chrono::high_resolution_clock::now();
             duration_search_in_std_map += std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
