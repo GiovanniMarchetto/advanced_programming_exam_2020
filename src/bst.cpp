@@ -66,9 +66,9 @@ private_insert(K&& k, V&& v)
     while (curr)
     {
         prev = curr;
-        if (k < curr->key)
+        if (node_key_compare(k, curr->key))
             curr = curr->get_left();
-        else if (k > curr->key)
+        else if (node_key_compare(curr->key, k))
             curr = curr->get_right();
         else
         {
