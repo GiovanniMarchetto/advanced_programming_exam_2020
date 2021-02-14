@@ -17,6 +17,11 @@
 template <typename value_type,
     typename key_type = std::int32_t,
     typename OP = std::less<key_type>>
+    /*!
+     *  \authors    Massimiliano Cristarella
+     *  \authors    Matteo Ferfoglia
+     *  \authors    Giovanni Marchetto
+     */
     class Node
 {
     /** Left child of this node.*/
@@ -35,7 +40,7 @@ public:
     /** Value of the node.*/
     value_type value;
 
-    /** Getter for the left children. 
+    /** Getter for the left children.
      *  @returns The (raw) pointer to the left child node.
     */
     Node* get_left() const noexcept { return left.get(); }
@@ -50,7 +55,7 @@ public:
     */
     Node* get_parent() const noexcept { return parent; }
 
-    /** Release the left children. 
+    /** Release the left children.
      *  @returns The (raw) pointer to the left child node and releases the ownership.
      *  WARNING: The returned pointer is unmanaged and therefore it should be called delete on it.
     */

@@ -20,6 +20,11 @@ template <typename value_t,
     typename key_type,
     typename OP>
     template <typename O>
+/*!
+*  \authors    Massimiliano Cristarella
+*  \authors    Matteo Ferfoglia
+*  \authors    Giovanni Marchetto
+*/
 class bst<value_t, key_type, OP>::Iterator
 {
     O* current_node;

@@ -1,4 +1,4 @@
-// Simple utility class for random generation.
+// Simple utility functions for random generation.
 
 #include <cstdlib> // srand, rand
 #include <utility>

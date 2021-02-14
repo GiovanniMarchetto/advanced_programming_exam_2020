@@ -22,6 +22,11 @@
 template <typename value_type,
     typename key_type = std::int32_t,
     typename OP = std::less<key_type>>
+    /*!
+     *  \authors    Massimiliano Cristarella
+     *  \authors    Matteo Ferfoglia
+     *  \authors    Giovanni Marchetto
+     */
     class bst
 {
     /** Alias for a templated node. */

@@ -28,6 +28,11 @@ const static std::string OUTPUT_RESULTS_DIR{ "./benchmark_results" };
 template <typename value_type,
     typename key_type = std::int32_t,
     typename OP = std::less<key_type>>
+    /*!
+     *  \authors    Massimiliano Cristarella
+     *  \authors    Matteo Ferfoglia
+     *  \authors    Giovanni Marchetto
+     */
     class Benchmark_test
 {
     /** Header used in printed results*/
