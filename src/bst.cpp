@@ -246,17 +246,6 @@ find(const key_type& x) const
 }
 
 template <typename value_type, typename key_type, typename OP>
-std::ostream&
-operator<<(std::ostream& os, const bst<value_type, key_type, OP>& _bst) noexcept
-{
-    os << "[size=" << _bst.size << "] { ";
-    for (const auto& el : _bst)
-        os << el << " ";
-    os << "}";
-    return os;
-}
-
-template <typename value_type, typename key_type, typename OP>
 void bst<value_type, key_type, OP>::
 erase(const key_type& x)
 {

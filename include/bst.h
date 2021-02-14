@@ -179,11 +179,17 @@ public:
     /** Overloading of the << operator. This function provides a view
      * of the tree, iterating over its nodes.
      * @param os Reference to output stream.
-     * @param _bst The bst to be printed.
+     * @param x The bst to be printed.
      * @returns The reference to the output stream.
      */
-    template <typename value_type_, typename key_type_, typename OP_>
-    friend std::ostream& operator<<(std::ostream& os, const bst<value_type_, key_type_, OP_>& _bst) noexcept;
+    friend std::ostream& operator<<(std::ostream& os, const bst& x) noexcept
+    {
+        os << "[size=" << x.size << "] { ";
+        for (const auto& el : x)
+            os << el << " ";
+        os << "}";
+        return os;
+    }
 
     /** Removes the element (if one exists) with the key equivalent to key.
      * @param x The key of node to erase.
