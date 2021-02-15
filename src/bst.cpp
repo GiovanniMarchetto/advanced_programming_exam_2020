@@ -70,10 +70,8 @@ private_insert(K&& k, V&& v)
             curr = curr->get_left();
         else if (node_key_compare(curr->key, k))
             curr = curr->get_right();
-        else
-        {
+        else        // key already present in the bst
             return std::make_pair<iterator, bool>(iterator{ prev }, false);
-        }
     }
 
     node* n = new node{ std::forward<K>(k), std::forward<V>(v) };
@@ -81,7 +79,7 @@ private_insert(K&& k, V&& v)
 
     if (!prev) // if the tree was empty
         set_tree_root_node(n);
-    else if (*n < *prev)
+    else if (*n < *prev)    // operator overloading of <
         prev->set_left(n);
     else
         prev->set_right(n);
@@ -179,7 +177,7 @@ subscripting(key_type_&& x)
     if (iter == end())
     {
         auto from_insert = emplace(std::forward<key_type_>(x), value_type{});
-        return from_insert.first->value;
+        return from_insert.first->value;   // from_insert.first is the iterator
     }
     return iter->value;
 }
@@ -226,10 +224,8 @@ find(const key_type& x)
     AP_ERROR_IF_NULLPTR(x, "x", true);
 
     node* node{ private_find(x) };
-
     if (node)
         return iterator{ node };
-
     return end();
 }
 
