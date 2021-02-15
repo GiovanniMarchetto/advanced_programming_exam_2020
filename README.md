@@ -48,4 +48,15 @@ The command `make all_with_charts` is the same as `make all` and then creates be
 
 Parameters for benchmark tests can be configured from the source file
 *test/benchmark_test.h*. Results are available as CSV files in
-the directory specified as parameter in the source file *test/benchmark_test.h*. 
+the directory specified as parameter in the source file *test/benchmark_test.h*.
+
+#### Results
+We performed benchmark tests in which we compared *std::map* with our implementation of the
+*Binary Search Tree*, with 10000 nodes; we repeated the tests 20 times. The plots with
+results are listed below.
+
+![Balancing](https://github.com/GiovanniMarchetto/advanced_programming_exam_2020/blob/main/plots/Balancing.png?raw=true)
+![Copy](https://github.com/GiovanniMarchetto/advanced_programming_exam_2020/blob/main/plots/Copy.png?raw=true)
+![Find by key](https://github.com/GiovanniMarchetto/advanced_programming_exam_2020/blob/main/plots/Find_by_key.png?raw=true)
+![Find by key after balancing](https://github.com/GiovanniMarchetto/advanced_programming_exam_2020/blob/main/plots/Find_by_key_after_balancing.png?raw=true)
+![Insertion](https://github.com/GiovanniMarchetto/advanced_programming_exam_2020/blob/main/plots/Insertion.png?raw=true)
