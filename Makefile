@@ -74,6 +74,7 @@ all_with_charts: clean build run benchmark_plot
 
 .PHONY: clean
 clean:
+	rm -rf $(BENCHMARK_OUTPUT_DIR)
 	rm -rf $(BUILD_DIR)
 
 .PHONY: build
