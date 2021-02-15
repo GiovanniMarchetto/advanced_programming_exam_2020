@@ -126,14 +126,14 @@ public:
      *          of this instance (as first argument) and the key of the given
      *          instance (as second argument).*/
     template <typename Comparator>
-    bool compare(const Node& other, const Comparator comparator) const noexcept { return comparator(key, other.key); }
+    bool compare(const Node& other, const Comparator comparator) const { return comparator(key, other.key); }
 
     /** Overload of the < operator to define an order relation
      * between two instances according to their keys.
      * @param other The node to compare.
      * @returns True if the key of this instance is strictly less
      *          of the one given as parameter, false otherwise.*/
-    bool operator<(const Node& other) const noexcept { return compare(other, OP{}); }
+    bool operator<(const Node& other) const { return compare(other, OP{}); }
 
     /** Overloading of the << operator. This function provides a view
      * of the node.
