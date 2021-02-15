@@ -252,33 +252,33 @@ erase(const key_type& x)
     if (to_erase == nullptr) // case 0: node to delete does not exist (wrong key provided)
         return;
 
-    enum class to_erase_child_type { left, right, root };
+    enum class to_remove_child_type { left, right, root };
 
     auto get_child_type = [this](node* child) {
 
         node* parent = child->get_parent();
 
         if (parent == nullptr) //                       if child hasn't parent node => child is the root
-            return to_erase_child_type::root;
+            return to_remove_child_type::root;
 
         else if (child == parent->get_left()) //        if child is the left child of its parent
-            return to_erase_child_type::left;
+            return to_remove_child_type::left;
 
         else //                                         if child is the right child of its parent
-            return to_erase_child_type::right;
+            return to_remove_child_type::right;
     };
 
-    // Erases to_erase (and its children if it has any and they are managed smart pointers)
-    auto transpose_subtree = [this](node* to_erase, to_erase_child_type ct, node* to_transplant) {
-        node* parent = to_erase->get_parent();
+    // Erases to_remove (and its children if it has any and they are managed smart pointers)
+    auto transpose_subtree = [this](node* to_remove, to_remove_child_type ct, node* to_transplant) {
+        node* parent = to_remove->get_parent();
 
-        if (ct == to_erase_child_type::root) //        if to_erase is the root
+        if (ct == to_remove_child_type::root) //        if to_remove is the root
             set_tree_root_node(to_transplant);
 
-        else if (ct == to_erase_child_type::left) //   if to_erase is the left child of its parent
+        else if (ct == to_remove_child_type::left) //   if to_remove is the left child of its parent
             parent->set_left(to_transplant);
 
-        else //                                         if to_erase is the right child of its parent
+        else //                                         if to_remove is the right child of its parent
             parent->set_right(to_transplant);
 
         if (to_transplant)
@@ -294,7 +294,7 @@ erase(const key_type& x)
     else // case 3: node to_erase has both left and right children
     {
         node* min = get_minimum_left_node_in_subtree(to_erase->get_right());
-        to_erase_child_type min_ct = get_child_type(min); // We need to know the type (of child) of the min node before releasing it 
+        to_remove_child_type min_ct = get_child_type(min); // We need to know the type (of child) of the min node before releasing it 
         release_node(min);
 
         if (min->get_parent() != to_erase) // case 3ext: min is in the right subtree of node to_erase but is not its right child
