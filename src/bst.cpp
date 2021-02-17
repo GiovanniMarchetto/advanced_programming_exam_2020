@@ -206,12 +206,14 @@ private_find(const key_type& key_to_find) const
 
     node* node{ get_tree_root_node() }; // search starts from the root
 
-    while (node && key_to_find != node->key)
+    while (node)
     {
         if (node_key_compare(key_to_find, node->key))
             node = node->get_left();
-        else
+        else if (node_key_compare(node->key,key_to_find))
             node = node->get_right();
+        else
+            break;
     }
 
     return node;
