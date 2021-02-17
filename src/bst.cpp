@@ -38,7 +38,7 @@ get_minimum_left_node_in_subtree(Node<value_type, key_type, OP>* node) noexcept
 
 template <typename value_type, typename key_type, typename OP>
 bst<value_type, key_type, OP>::
-bst(const bst& other) : size{ other.size }
+bst(const bst& other) : size{ other.size }, node_key_compare{ other.node_key_compare }
 {
     if (other.get_tree_root_node())
         set_tree_root_node(new node{ *(other.get_tree_root_node()) });
@@ -210,7 +210,7 @@ private_find(const key_type& key_to_find) const
     {
         if (node_key_compare(key_to_find, node->key))
             node = node->get_left();
-        else if (node_key_compare(node->key,key_to_find))
+        else if (node_key_compare(node->key, key_to_find))
             node = node->get_right();
         else
             break;
